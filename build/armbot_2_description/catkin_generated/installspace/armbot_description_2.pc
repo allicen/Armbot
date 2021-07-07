@@ -1,0 +1,8 @@
+prefix=/home/e/ROS/Armbot/install
+
+Name: armbot_description_2
+Description: Description of armbot_description_2
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 
