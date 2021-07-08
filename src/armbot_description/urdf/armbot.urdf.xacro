@@ -106,85 +106,55 @@
   <joint name="base_to_motors" type="continuous">
     <parent link="base" />
     <child link="motors" />
-    <origin rpy="0 0 0" xyz="0 0 0.028" />
-    <axis xyz="0 0 1" />
   </joint>
-
 
   <joint name="motors_to_link1_vertical" type="continuous">
     <parent link="motors" />
     <child link="link1_vertical" />
-    <origin rpy="0 0 0" xyz="0 0 0.028" />
-    <axis xyz="0 0 1" />
   </joint>
 
   <joint name="motors_to_link2_horizontal_bottom" type="continuous">
     <parent link="motors" />
     <child link="link2_horizontal_bottom" />
-    <origin rpy="0 0 0" xyz="0 0 0.028" />
-    <axis xyz="0 0 1" />
   </joint>
 
   <joint name="motors_to_link5_vertical" type="continuous">
     <parent link="motors" />
     <child link="link5_vertical" />
-    <origin rpy="0 0 0" xyz="0 0 0.028" />
-    <axis xyz="0 0 1" />
-  </joint>
-
-  <joint name="link1_vertical_to_triangle" type="continuous">
-    <parent link="link1_vertical" />
-    <child link="triangle" />
-    <origin rpy="0 0 0" xyz="0 0 0.028" />
-    <axis xyz="0 0 1" />
   </joint>
 
   <joint name="link2_horizontal_bottom_to_link3_vertical" type="continuous">
     <parent link="link2_horizontal_bottom" />
     <child link="link3_vertical" />
-    <origin rpy="0 0 0" xyz="0 0 0.028" />
-    <axis xyz="0 0 1" />
-  </joint>
-
-  <joint name="link2_horizontal_bottom_to_tool" type="continuous">
-    <parent link="link2_horizontal_bottom" />
-    <child link="tool" />
-    <origin rpy="0 0 0" xyz="0 0 0.028" />
-    <axis xyz="0 0 1" />
   </joint>
 
   <joint name="link3_vertical_to_link4_horizontal_top_long" type="continuous">
     <parent link="link3_vertical" />
     <child link="link4_horizontal_top_long" />
-    <origin rpy="0 0 0" xyz="0 0 0.028" />
-    <axis xyz="0 0 1" />
   </joint>
 
   <joint name="link4_horizontal_top_long_to_tool" type="continuous">
     <parent link="link4_horizontal_top_long" />
     <child link="tool" />
-    <origin rpy="0 0 0" xyz="0 0 0.028" />
-    <axis xyz="0 0 1" />
   </joint>
 
   <joint name="link5_vertical_to_triangle" type="continuous">
     <parent link="link5_vertical" />
     <child link="triangle" />
-    <origin rpy="0 0 0" xyz="0 0 0.028" />
-    <axis xyz="0 0 1" />
   </joint>
 
   <joint name="triangle_to_link7_horizontal_top_short" type="continuous">
     <parent link="triangle" />
     <child link="link7_horizontal_top_short" />
-    <origin rpy="0 0 0" xyz="0 0 0.028" />
-    <axis xyz="0 0 1" />
   </joint>
 
-  <joint name="link7_horizontal_top_short_tool" type="continuous">
+  <joint name="link7_horizontal_top_short_to_tool" type="continuous">
     <parent link="link7_horizontal_top_short" />
     <child link="tool" />
-    <origin rpy="0 0 0" xyz="0 0 0.028" />
-    <axis xyz="0 0 1" />
+  </joint>
+
+  <joint name="link1_vertical_to_triangle" type="continuous">
+    <parent link="link1_vertical" />
+    <child link="triangle" />
   </joint>
 </robot>

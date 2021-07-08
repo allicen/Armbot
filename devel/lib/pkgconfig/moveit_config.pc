@@ -1,8 +1,0 @@
-prefix=/home/e/ROS/Armbot/devel
-
-Name: moveit_config
-Description: Description of moveit_config
-Version: 0.3.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 

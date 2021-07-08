@@ -20,8 +20,9 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list' && \
     apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654 && \
-    apt-get update && apt-get dist-upgrade && DEBIAN_FRONTEND=noninteractive \
+    apt-get update && DEBIAN_FRONTEND=noninteractive \
         apt-get install -y ros-melodic-desktop-full \
+            ros-melodic-moveit \
             gazebo9 \
             ros-melodic-gazebo-ros-pkgs \
             ros-melodic-ros-control \
@@ -40,13 +41,14 @@ RUN sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main"
             libcanberra-gtk3-module \
             ros-melodic-pid \
             ros-melodic-visp* && \
-    apt install ros-melodic-moveit && \
-    apt-get install ros-melodic-franka-description && \
     rosdep init && rosdep update && \
-    rosdep install -y --from-paths . --ignore-src --rosdistro melodic && \
     echo "source /opt/ros/melodic/setup.bash"  >> ~/.bashrc && \
     echo "source /workspace/devel/setup.bash"  >> ~/.bashrc
 
 RUN apt-get install -y libvisp-dev libvisp-doc
 RUN apt-get install -y python-pip
 RUN pip install pathlib statistics scipy
+
+# MoveIt
+RUN apt-get install ros-melodic-moveit
+RUN apt-get install ros-melodic-franka-description
