@@ -131,6 +131,7 @@ endif()
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   include("/home/e/ROS/Armbot/build/gtest/cmake_install.cmake")
+  include("/home/e/ROS/Armbot/build/moveit_config/cmake_install.cmake")
   include("/home/e/ROS/Armbot/build/armbot_description/cmake_install.cmake")
 
 endif()

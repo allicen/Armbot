@@ -2,4 +2,4 @@
 source_root_dir = '/home/e/ROS/Armbot/src'
 whitelisted_packages = ''.split(';') if '' != '' else []
 blacklisted_packages = ''.split(';') if '' != '' else []
-underlay_workspaces = '/opt/ros/melodic'.split(';') if '/opt/ros/melodic' != '' else []
+underlay_workspaces = '/home/e/ROS/Armbot/devel;/opt/ros/melodic'.split(';') if '/home/e/ROS/Armbot/devel;/opt/ros/melodic' != '' else []

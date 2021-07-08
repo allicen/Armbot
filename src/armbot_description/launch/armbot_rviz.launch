@@ -19,4 +19,5 @@
   <group if="$(arg open_rviz)">
     <node name="rviz" pkg="rviz" type="rviz" args="-d $(find armbot_description)/rviz/armbot.rviz"/>
   </group>
+
 </launch>

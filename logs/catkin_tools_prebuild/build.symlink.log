@@ -1,0 +1,12 @@
+Symlinking /home/e/ROS/Armbot/devel/./setup.zsh
+Symlinking /home/e/ROS/Armbot/devel/./setup.bash
+Symlinking /home/e/ROS/Armbot/devel/./env.sh
+Symlinking /home/e/ROS/Armbot/devel/./local_setup.zsh
+Symlinking /home/e/ROS/Armbot/devel/./_setup_util.py
+Symlinking /home/e/ROS/Armbot/devel/./local_setup.sh
+Symlinking /home/e/ROS/Armbot/devel/./cmake.lock
+Symlinking /home/e/ROS/Armbot/devel/./setup.sh
+Symlinking /home/e/ROS/Armbot/devel/./local_setup.bash
+Symlinking /home/e/ROS/Armbot/devel/share/catkin_tools_prebuild/cmake/catkin_tools_prebuildConfig-version.cmake
+Symlinking /home/e/ROS/Armbot/devel/share/catkin_tools_prebuild/cmake/catkin_tools_prebuildConfig.cmake
+Symlinking /home/e/ROS/Armbot/devel/lib/pkgconfig/catkin_tools_prebuild.pc

@@ -1,8 +1,0 @@
-prefix=/home/e/ROS/Armbot/devel
-
-Name: ur_driver
-Description: Description of ur_driver
-Version: 1.2.7
-Cflags: -I/home/e/ROS/Armbot/devel/include
-Libs: -L${prefix}/lib 
-Requires: dynamic_reconfigure

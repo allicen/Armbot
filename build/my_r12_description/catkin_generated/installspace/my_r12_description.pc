@@ -1,8 +1,0 @@
-prefix=/home/e/ROS/Armbot/install
-
-Name: my_r12_description
-Description: Description of my_r12_description
-Version: 1.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 
