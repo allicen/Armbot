@@ -9,79 +9,30 @@
     <!--JOINTS: When a joint is specified, the child link of that joint (which will always exist) is automatically included-->
     <!--CHAINS: When a chain is specified, all the links along the chain (including endpoints) are included in the group. Additionally, all the joints that are parents to included links are also included. This means that joints along the chain and the parent joint of the base link are included in the group-->
     <!--SUBGROUPS: Groups can also be formed by referencing to already defined group names-->
-    <group name="robot_arm">
+    <group name="arm_group">
         <joint name="virtual_joint" />
         <joint name="base_to_motors" />
-        <joint name="motors_to_link1_vertical" />
-        <joint name="link5_vertical_to_triangle" />
-        <joint name="triangle_to_link7_horizontal_top_short" />
-        <joint name="link7_horizontal_top_short_tool" />
         <joint name="motors_to_link2_horizontal_bottom" />
-        <joint name="link2_horizontal_bottom_to_link3_vertical" />
+        <joint name="link2_horizontal_bottom_link3_vertical" />
         <joint name="link3_vertical_to_link4_horizontal_top_long" />
-        <joint name="motors_to_link5_vertical" />
-    </group>
-    <group name="robot_hand">
-        <joint name="link7_horizontal_top_short_tool" />
+        <joint name="link4_horizontal_top_long_to_tool" />
     </group>
     <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
-    <group_state name="start_pose" group="robot_arm">
-        <joint name="base_to_motors" value="0" />
-        <joint name="link2_horizontal_bottom_to_link3_vertical" value="0.027" />
+    <group_state name="initial_pose" group="arm_group">
+        <joint name="base_to_motors" value="-0.1215" />
+        <joint name="link2_horizontal_bottom_link3_vertical" value="0" />
         <joint name="link3_vertical_to_link4_horizontal_top_long" value="0" />
-        <joint name="link5_vertical_to_triangle" value="0" />
-        <joint name="link7_horizontal_top_short_tool" value="0" />
-        <joint name="motors_to_link1_vertical" value="0" />
-        <joint name="motors_to_link2_horizontal_bottom" value="0" />
-        <joint name="motors_to_link5_vertical" value="0" />
-        <joint name="triangle_to_link7_horizontal_top_short" value="0" />
     </group_state>
-    <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
-    <end_effector name="hand" parent_link="tool" group="robot_hand" />
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
     <virtual_joint name="virtual_joint" type="fixed" parent_frame="world" child_link="base" />
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
-    <disable_collisions link1="base" link2="link1_vertical" reason="Never" />
     <disable_collisions link1="base" link2="link2_horizontal_bottom" reason="Never" />
-    <disable_collisions link1="base" link2="link3_vertical" reason="Never" />
-    <disable_collisions link1="base" link2="link4_horizontal_top_long" reason="Never" />
-    <disable_collisions link1="base" link2="link5_vertical" reason="Never" />
-    <disable_collisions link1="base" link2="link7_horizontal_top_short" reason="Never" />
     <disable_collisions link1="base" link2="motors" reason="Adjacent" />
-    <disable_collisions link1="base" link2="tool" reason="Never" />
-    <disable_collisions link1="base" link2="triangle" reason="Never" />
-    <disable_collisions link1="link1_vertical" link2="link3_vertical" reason="Never" />
-    <disable_collisions link1="link1_vertical" link2="link5_vertical" reason="Never" />
-    <disable_collisions link1="link1_vertical" link2="link7_horizontal_top_short" reason="Never" />
-    <disable_collisions link1="link1_vertical" link2="motors" reason="Adjacent" />
-    <disable_collisions link1="link1_vertical" link2="tool" reason="Never" />
-    <disable_collisions link1="link1_vertical" link2="triangle" reason="Adjacent" />
     <disable_collisions link1="link2_horizontal_bottom" link2="link3_vertical" reason="Adjacent" />
     <disable_collisions link1="link2_horizontal_bottom" link2="link4_horizontal_top_long" reason="Never" />
-    <disable_collisions link1="link2_horizontal_bottom" link2="link5_vertical" reason="Never" />
-    <disable_collisions link1="link2_horizontal_bottom" link2="link7_horizontal_top_short" reason="Never" />
     <disable_collisions link1="link2_horizontal_bottom" link2="motors" reason="Adjacent" />
-    <disable_collisions link1="link2_horizontal_bottom" link2="tool" reason="Adjacent" />
-    <disable_collisions link1="link2_horizontal_bottom" link2="triangle" reason="Never" />
+    <disable_collisions link1="link2_horizontal_bottom" link2="tool" reason="Never" />
     <disable_collisions link1="link3_vertical" link2="link4_horizontal_top_long" reason="Adjacent" />
-    <disable_collisions link1="link3_vertical" link2="link7_horizontal_top_short" reason="Never" />
     <disable_collisions link1="link3_vertical" link2="tool" reason="Never" />
-    <disable_collisions link1="link3_vertical" link2="triangle" reason="Never" />
-    <disable_collisions link1="link4_horizontal_top_long" link2="link7_horizontal_top_short" reason="Never" />
-    <disable_collisions link1="link4_horizontal_top_long" link2="motors" reason="Never" />
     <disable_collisions link1="link4_horizontal_top_long" link2="tool" reason="Adjacent" />
-    <disable_collisions link1="link4_horizontal_top_long" link2="triangle" reason="Always" />
-    <disable_collisions link1="link5_vertical" link2="link7_horizontal_top_short" reason="Never" />
-    <disable_collisions link1="link5_vertical" link2="motors" reason="Adjacent" />
-    <disable_collisions link1="link5_vertical" link2="tool" reason="Never" />
-    <disable_collisions link1="link5_vertical" link2="triangle" reason="Adjacent" />
-    <disable_collisions link1="link7_horizontal_top_short" link2="link7_horizontal_top_short" reason="Default" />
-    <disable_collisions link1="link7_horizontal_top_short" link2="motors" reason="Never" />
-    <disable_collisions link1="link7_horizontal_top_short" link2="tool" reason="Adjacent" />
-    <disable_collisions link1="link7_horizontal_top_short" link2="triangle" reason="Adjacent" />
-    <disable_collisions link1="motors" link2="tool" reason="Never" />
-    <disable_collisions link1="motors" link2="triangle" reason="Never" />
-    <disable_collisions link1="tool" link2="tool" reason="Default" />
-    <disable_collisions link1="tool" link2="triangle" reason="Never" />
-    <disable_collisions link1="triangle" link2="triangle" reason="Default" />
 </robot>

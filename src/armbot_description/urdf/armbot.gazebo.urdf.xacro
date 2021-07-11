@@ -32,7 +32,7 @@
     <!-- Base link -->
     <link name="base">
         <visual>
-            <origin rpy="0 0 0" xyz="0 0 0" />
+            <origin xyz="0 0 0" />
             <geometry>
                 <mesh filename="package://armbot_description/meshes/base.obj" scale="0.01 0.01 0.01" />
             </geometry>
@@ -40,157 +40,86 @@
     </link>
     <link name="motors">
         <visual>
-            <origin rpy="0 0 0" xyz="0 0 0.045" />
+            <origin xyz="0 0 0.045" />
             <geometry>
                 <mesh filename="package://armbot_description/meshes/link0.obj" scale="0.01 0.01 0.01" />
             </geometry>
         </visual>
     </link>
-    <link name="link1_vertical">
-        <visual>
-            <origin rpy="0 -1.57079632679 0" xyz="-0.00325 -0.0065 0.455" />
-            <geometry>
-                <mesh filename="package://armbot_description/meshes/link1.obj" scale="0.01 0.01 0.01" />
-            </geometry>
-        </visual>
-    </link>
+    <joint name="base_to_motors" type="continuous">
+        <parent link="base" />
+        <child link="motors" />
+        <axis xyz="0 0 1" />
+        <safety_controller k_position="1" k_velocity="1" soft_lower_limit="-1.57" soft_upper_limit="1.57" />
+    </joint>
     <link name="link2_horizontal_bottom">
+        <!--        <visual>-->
+        <!--            <origin xyz="0 0 0" rpy="0 -${pi/2} 0"/>-->
+        <!--            <geometry>-->
+        <!--                <mesh filename="package://armbot_description/meshes/link1.obj" scale="0.01 0.01 0.01"/>-->
+        <!--            </geometry>-->
+        <!--        </visual>-->
         <visual>
-            <origin rpy="0 -9.42477796077 0" xyz="-0.0052 0.01 0.45" />
+            <origin rpy="0 -9.42477796077 0" xyz="0 0 0" />
             <geometry>
                 <mesh filename="package://armbot_description/meshes/link2.obj" scale="0.01 0.01 0.01" />
             </geometry>
             <material name="grey" />
         </visual>
     </link>
+    <joint name="motors_to_link2_horizontal_bottom" type="fixed">
+        <parent link="motors" />
+        <origin xyz="-0.0052 0.01 0.45" />
+        <child link="link2_horizontal_bottom" />
+    </joint>
     <link name="link3_vertical">
         <visual>
-            <origin rpy="0 -1.57079632679 0" xyz="-0.51 0.01 0.42" />
+            <origin rpy="0 -1.57079632679 0" xyz="0 0 0" />
             <geometry>
                 <mesh filename="package://armbot_description/meshes/link3.obj" scale="0.01 0.01 0.01" />
             </geometry>
             <material name="grey" />
         </visual>
     </link>
+    <joint name="link2_horizontal_bottom_link3_vertical" type="continuous">
+        <parent link="link2_horizontal_bottom" />
+        <child link="link3_vertical" />
+        <axis xyz="0 1 0" />
+        <origin xyz="-0.5 0.01 0" />
+        <safety_controller k_position="1" k_velocity="1" soft_lower_limit="-1.57" soft_upper_limit="1.57" />
+    </joint>
     <link name="link4_horizontal_top_long">
         <visual>
-            <origin rpy="0 0 0" xyz="-0.5 0.1 2.4" />
+            <origin xyz="0 0 0" />
             <geometry>
                 <mesh filename="package://armbot_description/meshes/link4.obj" scale="0.01 0.01 0.01" />
             </geometry>
             <material name="grey" />
         </visual>
     </link>
-    <link name="link5_vertical">
-        <visual>
-            <origin rpy="0 -1.57079632679 0" xyz="-0.45 0.04 0.67" />
-            <geometry>
-                <mesh filename="package://armbot_description/meshes/link5.obj" scale="0.01 0.01 0.01" />
-            </geometry>
-            <material name="grey" />
-        </visual>
-    </link>
-    <link name="triangle">
-        <visual>
-            <origin rpy="0 6.03185789489 0" xyz="-0.45 0.06 2.65" />
-            <geometry>
-                <mesh filename="package://armbot_description/meshes/link6.obj" scale="0.01 0.01 0.01" />
-            </geometry>
-            <material name="grey" />
-        </visual>
-    </link>
-    <link name="link7_horizontal_top_short">
-        <visual>
-            <origin rpy="0 0 0" xyz="0.29 -0.005 2.8" />
-            <geometry>
-                <mesh filename="package://armbot_description/meshes/link7.obj" scale="0.01 0.01 0.01" />
-            </geometry>
-            <material name="grey" />
-        </visual>
-    </link>
+    <joint name="link3_vertical_to_link4_horizontal_top_long" type="continuous">
+        <parent link="link3_vertical" />
+        <child link="link4_horizontal_top_long" />
+        <axis xyz="0 1 0" />
+        <origin xyz="0 0.085 2" />
+        <safety_controller k_position="1" k_velocity="1" soft_lower_limit="-1.57" soft_upper_limit="1.57" />
+    </joint>
     <link name="tool">
         <visual>
-            <origin rpy="0 0 0" xyz="2 0.01 2.35" />
+            <origin rpy="0 0 0" xyz="0 0 0" />
             <geometry>
                 <mesh filename="package://armbot_description/meshes/tool.obj" scale="0.01 0.01 0.01" />
             </geometry>
             <material name="grey" />
         </visual>
     </link>
-    <joint name="base_to_motors" type="continuous">
-        <parent link="base" />
-        <child link="motors" />
-        <origin rpy="0 0 0" xyz="0 0 0.028" />
-        <axis xyz="0 0 1" />
-    </joint>
-    <joint name="motors_to_link1_vertical" type="continuous">
-        <parent link="motors" />
-        <child link="link1_vertical" />
-        <origin rpy="0 0 0" xyz="0 0 0.028" />
-        <axis xyz="0 0 1" />
-    </joint>
-    <joint name="motors_to_link2_horizontal_bottom" type="continuous">
-        <parent link="motors" />
-        <child link="link2_horizontal_bottom" />
-        <origin rpy="0 0 0" xyz="0 0 0.028" />
-        <axis xyz="0 0 1" />
-    </joint>
-    <joint name="motors_to_link5_vertical" type="continuous">
-        <parent link="motors" />
-        <child link="link5_vertical" />
-        <origin rpy="0 0 0" xyz="0 0 0.028" />
-        <axis xyz="0 0 1" />
-    </joint>
-    <joint name="link1_vertical_to_triangle" type="continuous">
-        <parent link="link1_vertical" />
-        <child link="triangle" />
-        <origin rpy="0 0 0" xyz="0 0 0.028" />
-        <axis xyz="0 0 1" />
-    </joint>
-    <joint name="link2_horizontal_bottom_to_link3_vertical" type="continuous">
-        <parent link="link2_horizontal_bottom" />
-        <child link="link3_vertical" />
-        <origin rpy="0 0 0" xyz="0 0 0.028" />
-        <axis xyz="0 0 1" />
-    </joint>
-    <joint name="link2_horizontal_bottom_to_tool" type="continuous">
-        <parent link="link2_horizontal_bottom" />
-        <child link="tool" />
-        <origin rpy="0 0 0" xyz="0 0 0.028" />
-        <axis xyz="0 0 1" />
-    </joint>
-    <joint name="link3_vertical_to_link4_horizontal_top_long" type="continuous">
-        <parent link="link3_vertical" />
-        <child link="link4_horizontal_top_long" />
-        <origin rpy="0 0 0" xyz="0 0 0.028" />
-        <axis xyz="0 0 1" />
-    </joint>
-    <joint name="link4_horizontal_top_long_to_tool" type="continuous">
+    <joint name="link4_horizontal_top_long_to_tool" type="fixed">
         <parent link="link4_horizontal_top_long" />
         <child link="tool" />
-        <origin rpy="0 0 0" xyz="0 0 0.028" />
-        <axis xyz="0 0 1" />
+        <origin xyz="2.5 -0.1 0" />
     </joint>
-    <joint name="link5_vertical_to_triangle" type="continuous">
-        <parent link="link5_vertical" />
-        <child link="triangle" />
-        <origin rpy="0 0 0" xyz="0 0 0.028" />
-        <axis xyz="0 0 1" />
-    </joint>
-    <joint name="triangle_to_link7_horizontal_top_short" type="continuous">
-        <parent link="triangle" />
-        <child link="link7_horizontal_top_short" />
-        <origin rpy="0 0 0" xyz="0 0 0.028" />
-        <axis xyz="0 0 1" />
-    </joint>
-    <joint name="link7_horizontal_top_short_tool" type="continuous">
-        <parent link="link7_horizontal_top_short" />
-        <child link="tool" />
-        <origin rpy="0 0 0" xyz="0 0 0.028" />
-        <axis xyz="0 0 1" />
-    </joint>
-    
-<transmission name="trans_base_to_motors">
+
+    <transmission name="trans_base_to_motors">
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="base_to_motors">
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
@@ -200,62 +129,12 @@
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
     </transmission>
-    <transmission name="trans_motors_to_link1_vertical">
+    <transmission name="trans_link2_horizontal_bottom_link3_vertical">
         <type>transmission_interface/SimpleTransmission</type>
-        <joint name="motors_to_link1_vertical">
+        <joint name="link2_horizontal_bottom_link3_vertical">
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
-        <actuator name="motors_to_link1_vertical_motor">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-            <mechanicalReduction>1</mechanicalReduction>
-        </actuator>
-    </transmission>
-    <transmission name="trans_motors_to_link2_horizontal_bottom">
-        <type>transmission_interface/SimpleTransmission</type>
-        <joint name="motors_to_link2_horizontal_bottom">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-        </joint>
-        <actuator name="motors_to_link2_horizontal_bottom_motor">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-            <mechanicalReduction>1</mechanicalReduction>
-        </actuator>
-    </transmission>
-    <transmission name="trans_motors_to_link5_vertical">
-        <type>transmission_interface/SimpleTransmission</type>
-        <joint name="motors_to_link5_vertical">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-        </joint>
-        <actuator name="motors_to_link5_vertical_motor">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-            <mechanicalReduction>1</mechanicalReduction>
-        </actuator>
-    </transmission>
-    <transmission name="trans_link1_vertical_to_triangle">
-        <type>transmission_interface/SimpleTransmission</type>
-        <joint name="link1_vertical_to_triangle">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-        </joint>
-        <actuator name="link1_vertical_to_triangle_motor">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-            <mechanicalReduction>1</mechanicalReduction>
-        </actuator>
-    </transmission>
-    <transmission name="trans_link2_horizontal_bottom_to_link3_vertical">
-        <type>transmission_interface/SimpleTransmission</type>
-        <joint name="link2_horizontal_bottom_to_link3_vertical">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-        </joint>
-        <actuator name="link2_horizontal_bottom_to_link3_vertical_motor">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-            <mechanicalReduction>1</mechanicalReduction>
-        </actuator>
-    </transmission>
-    <transmission name="trans_link2_horizontal_bottom_to_tool">
-        <type>transmission_interface/SimpleTransmission</type>
-        <joint name="link2_horizontal_bottom_to_tool">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-        </joint>
-        <actuator name="link2_horizontal_bottom_to_tool_motor">
+        <actuator name="link2_horizontal_bottom_link3_vertical_motor">
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
@@ -266,46 +145,6 @@
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
         <actuator name="link3_vertical_to_link4_horizontal_top_long_motor">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-            <mechanicalReduction>1</mechanicalReduction>
-        </actuator>
-    </transmission>
-    <transmission name="trans_link4_horizontal_top_long_to_tool">
-        <type>transmission_interface/SimpleTransmission</type>
-        <joint name="link4_horizontal_top_long_to_tool">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-        </joint>
-        <actuator name="link4_horizontal_top_long_to_tool_motor">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-            <mechanicalReduction>1</mechanicalReduction>
-        </actuator>
-    </transmission>
-    <transmission name="trans_link5_vertical_to_triangle">
-        <type>transmission_interface/SimpleTransmission</type>
-        <joint name="link5_vertical_to_triangle">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-        </joint>
-        <actuator name="link5_vertical_to_triangle_motor">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-            <mechanicalReduction>1</mechanicalReduction>
-        </actuator>
-    </transmission>
-    <transmission name="trans_triangle_to_link7_horizontal_top_short">
-        <type>transmission_interface/SimpleTransmission</type>
-        <joint name="triangle_to_link7_horizontal_top_short">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-        </joint>
-        <actuator name="triangle_to_link7_horizontal_top_short_motor">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-            <mechanicalReduction>1</mechanicalReduction>
-        </actuator>
-    </transmission>
-    <transmission name="trans_link7_horizontal_top_short_tool">
-        <type>transmission_interface/SimpleTransmission</type>
-        <joint name="link7_horizontal_top_short_tool">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-        </joint>
-        <actuator name="link7_horizontal_top_short_tool_motor">
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>

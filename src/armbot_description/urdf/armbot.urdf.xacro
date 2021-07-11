@@ -2,159 +2,107 @@
 <!-- Open_Manipulator Chain -->
 <robot name="armbot" xmlns:xacro="http://ros.org/wiki/xacro">
 
-  <!-- Import Rviz colors -->
-  <xacro:include filename="$(find armbot_description)/urdf/materials.xacro" />
+    <!-- Import Rviz colors -->
+    <xacro:include filename="$(find armbot_description)/urdf/materials.xacro" />
 
-  <!-- Base link -->
-  <link name="base">
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <geometry>
-        <mesh filename="package://armbot_description/meshes/base.obj" scale="0.01 0.01 0.01"/>
-      </geometry>
-    </visual>
-  </link>
+    <!-- Base link -->
+    <link name="base">
+        <visual>
+            <origin xyz="0 0 0"/>
+            <geometry>
+                <mesh filename="package://armbot_description/meshes/base.obj" scale="0.01 0.01 0.01"/>
+            </geometry>
+        </visual>
+    </link>
 
-  <link name="motors">
-    <visual>
-      <origin xyz="0 0 0.045" rpy="0 0 0"/>
-      <geometry>
-        <mesh filename="package://armbot_description/meshes/link0.obj" scale="0.01 0.01 0.01"/>
-      </geometry>
-    </visual>
-  </link>
+    <link name="motors">
+        <visual>
+            <origin xyz="0 0 0.045"/>
+            <geometry>
+                <mesh filename="package://armbot_description/meshes/link0.obj" scale="0.01 0.01 0.01"/>
+            </geometry>
+        </visual>
+    </link>
 
-  <link name="link1_vertical">
-    <visual>
-      <origin xyz="-0.00325 -0.0065 0.455" rpy="0 -${pi/2} 0"/>
-      <geometry>
-        <mesh filename="package://armbot_description/meshes/link1.obj" scale="0.01 0.01 0.01"/>
-      </geometry>
-    </visual>
-  </link>
+    <joint name="base_to_motors" type="continuous">
+        <parent link="base" />
+        <child link="motors" />
+        <axis xyz="0 0 1" />
+        <safety_controller k_velocity = "1" k_position = "1" soft_lower_limit = "-1.57" soft_upper_limit = "1.57" />
+    </joint>
 
- <link name="link2_horizontal_bottom">
-    <visual>
-      <origin xyz="-0.0052 0.01 0.45" rpy="0 -${pi*3} 0"/>
-      <geometry>
-        <mesh filename="package://armbot_description/meshes/link2.obj" scale="0.01 0.01 0.01"/>
-      </geometry>
-      <material name="grey"/>
-    </visual>
-  </link>
+    <link name="link2_horizontal_bottom">
+<!--        <visual>-->
+<!--            <origin xyz="0 0 0" rpy="0 -${pi/2} 0"/>-->
+<!--            <geometry>-->
+<!--                <mesh filename="package://armbot_description/meshes/link1.obj" scale="0.01 0.01 0.01"/>-->
+<!--            </geometry>-->
+<!--        </visual>-->
+        <visual>
+            <origin xyz="0 0 0" rpy="0 -${pi*3} 0"/>
+            <geometry>
+                <mesh filename="package://armbot_description/meshes/link2.obj" scale="0.01 0.01 0.01"/>
+            </geometry>
+            <material name="grey"/>
+        </visual>
+    </link>
 
-  <link name="link3_vertical">
-    <visual>
-      <origin xyz="-0.51 0.01 0.42" rpy="0 -${pi/2} 0"/>
-      <geometry>
-        <mesh filename="package://armbot_description/meshes/link3.obj" scale="0.01 0.01 0.01"/>
-      </geometry>
-      <material name="grey"/>
-    </visual>
-  </link>
+    <joint name="motors_to_link2_horizontal_bottom" type="fixed">
+        <parent link="motors" />
+        <origin xyz="-0.0052 0.01 0.45"/>
+        <child link="link2_horizontal_bottom" />
+    </joint>
 
-  <link name="link4_horizontal_top_long">
-    <visual>
-      <origin xyz="-0.5 0.1 2.4" rpy="0 0 0"/>
-      <geometry>
-        <mesh filename="package://armbot_description/meshes/link4.obj" scale="0.01 0.01 0.01"/>
-      </geometry>
-      <material name="grey"/>
-    </visual>
-  </link>
+    <link name="link3_vertical">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 -${pi/2} 0"/>
+            <geometry>
+                <mesh filename="package://armbot_description/meshes/link3.obj" scale="0.01 0.01 0.01"/>
+            </geometry>
+            <material name="grey"/>
+        </visual>
+    </link>
 
-  <link name="link5_vertical">
-    <visual>
-      <origin xyz="-0.45 0.04 0.67" rpy="0 -${pi/2} 0"/>
-      <geometry>
-        <mesh filename="package://armbot_description/meshes/link5.obj" scale="0.01 0.01 0.01"/>
-      </geometry>
-      <material name="grey"/>
-    </visual>
-  </link>
+    <joint name="link2_horizontal_bottom_link3_vertical" type="continuous">
+        <parent link="link2_horizontal_bottom" />
+        <child link="link3_vertical" />
+        <axis xyz="0 1 0" />
+        <origin xyz="-0.5 0.01 0"/>
+        <safety_controller k_velocity = "1" k_position = "1" soft_lower_limit = "-1.57" soft_upper_limit = "1.57" />
+    </joint>
 
-  <link name="triangle">
-    <visual>
-      <origin xyz="-0.45 0.06 2.65" rpy="0 ${pi*1.92} 0"/>
-      <geometry>
-        <mesh filename="package://armbot_description/meshes/link6.obj" scale="0.01 0.01 0.01"/>
-      </geometry>
-      <material name="grey"/>
-    </visual>
-  </link>
+    <link name="link4_horizontal_top_long">
+        <visual>
+            <origin xyz="0 0 0"/>
+            <geometry>
+                <mesh filename="package://armbot_description/meshes/link4.obj" scale="0.01 0.01 0.01"/>
+            </geometry>
+            <material name="grey"/>
+        </visual>
+    </link>
 
-  <link name="link7_horizontal_top_short">
-    <visual>
-      <origin xyz="0.29 -0.005 2.8" rpy="0 0 0"/>
-      <geometry>
-        <mesh filename="package://armbot_description/meshes/link7.obj" scale="0.01 0.01 0.01"/>
-      </geometry>
-      <material name="grey"/>
-    </visual>
-  </link>
+    <joint name="link3_vertical_to_link4_horizontal_top_long" type="continuous">
+        <parent link="link3_vertical" />
+        <child link="link4_horizontal_top_long" />
+        <axis xyz="0 1 0" />
+        <origin xyz="0 0.085 2"/>
+        <safety_controller k_velocity = "1" k_position = "1" soft_lower_limit = "-1.57" soft_upper_limit = "1.57" />
+    </joint>
 
-  <link name="tool">
-    <visual>
-      <origin xyz="2 0.01 2.35" rpy="0 0 0"/>
-      <geometry>
-        <mesh filename="package://armbot_description/meshes/tool.obj" scale="0.01 0.01 0.01"/>
-      </geometry>
-      <material name="grey"/>
-    </visual>
-  </link>
+    <link name="tool">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://armbot_description/meshes/tool.obj" scale="0.01 0.01 0.01"/>
+            </geometry>
+            <material name="grey"/>
+        </visual>
+    </link>
 
-  <joint name="base_to_motors" type="continuous">
-    <parent link="base" />
-    <child link="motors" />
-  </joint>
+    <joint name="link4_horizontal_top_long_to_tool" type="fixed">
+        <parent link="link4_horizontal_top_long" />
+        <child link="tool" />
+        <origin xyz="2.5 -0.1 0"/>
+    </joint>
 
-  <joint name="motors_to_link1_vertical" type="continuous">
-    <parent link="motors" />
-    <child link="link1_vertical" />
-  </joint>
-
-  <joint name="motors_to_link2_horizontal_bottom" type="continuous">
-    <parent link="motors" />
-    <child link="link2_horizontal_bottom" />
-  </joint>
-
-  <joint name="motors_to_link5_vertical" type="continuous">
-    <parent link="motors" />
-    <child link="link5_vertical" />
-  </joint>
-
-  <joint name="link2_horizontal_bottom_to_link3_vertical" type="continuous">
-    <parent link="link2_horizontal_bottom" />
-    <child link="link3_vertical" />
-  </joint>
-
-  <joint name="link3_vertical_to_link4_horizontal_top_long" type="continuous">
-    <parent link="link3_vertical" />
-    <child link="link4_horizontal_top_long" />
-  </joint>
-
-  <joint name="link4_horizontal_top_long_to_tool" type="continuous">
-    <parent link="link4_horizontal_top_long" />
-    <child link="tool" />
-  </joint>
-
-  <joint name="link5_vertical_to_triangle" type="continuous">
-    <parent link="link5_vertical" />
-    <child link="triangle" />
-  </joint>
-
-  <joint name="triangle_to_link7_horizontal_top_short" type="continuous">
-    <parent link="triangle" />
-    <child link="link7_horizontal_top_short" />
-  </joint>
-
-  <joint name="link7_horizontal_top_short_to_tool" type="continuous">
-    <parent link="link7_horizontal_top_short" />
-    <child link="tool" />
-  </joint>
-
-  <joint name="link1_vertical_to_triangle" type="continuous">
-    <parent link="link1_vertical" />
-    <child link="triangle" />
-  </joint>
 </robot>

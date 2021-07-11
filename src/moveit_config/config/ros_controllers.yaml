@@ -1,7 +1,7 @@
 # Simulation settings for using moveit_sim_controllers
 moveit_sim_hw_interface:
-  joint_model_group: robot_arm
-  joint_model_group_pose: start_pose
+  joint_model_group: arm_group
+  joint_model_group_pose: initial_pose
 # Settings for ros_control_boilerplate control loop
 generic_hw_control_loop:
   loop_hz: 300
@@ -10,19 +10,8 @@ generic_hw_control_loop:
 hardware_interface:
   joints:
     - base_to_motors
-    - motors_to_link1_vertical
-    - link5_vertical_to_triangle
-    - triangle_to_link7_horizontal_top_short
-    - link7_horizontal_top_short_tool
-    - motors_to_link2_horizontal_bottom
-    - link2_horizontal_bottom_to_link3_vertical
+    - link2_horizontal_bottom_link3_vertical
     - link3_vertical_to_link4_horizontal_top_long
-    - link7_horizontal_top_short_tool
-    - link7_horizontal_top_short_tool
-    - motors_to_link5_vertical
-    - link5_vertical_to_triangle
-    - triangle_to_link7_horizontal_top_short
-    - link7_horizontal_top_short_tool
   sim_control_mode: 1  # 0: position, 1: velocity
 # Publish all joint states
 # Creates the /joint_states topic necessary in ROS
@@ -34,58 +23,6 @@ controller_list:
 arm_position_controller:
   type: position_controllers/JointPositionController
   joints:
-    - base_to_motors
-    - motors_to_link1_vertical
-    - motors_to_link2_horizontal_bottom
-    - link2_horizontal_bottom_to_link3_vertical
-    - link3_vertical_to_link4_horizontal_top_long
-    - motors_to_link5_vertical
-    - link5_vertical_to_triangle
-    - triangle_to_link7_horizontal_top_short
-    - link7_horizontal_top_short_tool
+    []
   gains:
-    base_to_motors:
-      p: 100
-      d: 1
-      i: 1
-      i_clamp: 1
-    motors_to_link1_vertical:
-      p: 100
-      d: 1
-      i: 1
-      i_clamp: 1
-    motors_to_link2_horizontal_bottom:
-      p: 100
-      d: 1
-      i: 1
-      i_clamp: 1
-    link2_horizontal_bottom_to_link3_vertical:
-      p: 100
-      d: 1
-      i: 1
-      i_clamp: 1
-    link3_vertical_to_link4_horizontal_top_long:
-      p: 100
-      d: 1
-      i: 1
-      i_clamp: 1
-    motors_to_link5_vertical:
-      p: 100
-      d: 1
-      i: 1
-      i_clamp: 1
-    link5_vertical_to_triangle:
-      p: 100
-      d: 1
-      i: 1
-      i_clamp: 1
-    triangle_to_link7_horizontal_top_short:
-      p: 100
-      d: 1
-      i: 1
-      i_clamp: 1
-    link7_horizontal_top_short_tool:
-      p: 100
-      d: 1
-      i: 1
-      i_clamp: 1
+    {}
