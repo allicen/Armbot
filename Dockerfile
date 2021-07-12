@@ -49,6 +49,5 @@ RUN apt-get install -y libvisp-dev libvisp-doc
 RUN apt-get install -y python-pip
 RUN pip install pathlib statistics scipy
 
-# MoveIt
-RUN apt-get install ros-melodic-moveit
+RUN apt-get install ros-melodic-joint-state-publisher-gui
 RUN apt-get install ros-melodic-franka-description
