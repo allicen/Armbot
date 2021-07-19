@@ -15,7 +15,7 @@
   <!-- Combine joint values to TF-->
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
 
-  <!-- Show in Rviz -->
+  <!-- Showin Rviz -->
   <group if="$(arg open_rviz)">
     <node name="rviz" pkg="rviz" type="rviz" args="-d $(find armbot_description)/rviz/armbot.rviz"/>
   </group>

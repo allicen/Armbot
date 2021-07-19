@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="magician_first_test">
+
+	<executable package_path="magician_flexbe_behaviors.magician_first_test_sm" class="magician_first_testSM" />
+	<tagstring></tagstring>
+	<author>Gerard Harkema</author>
+	<date>Tue Jun 08 2021</date>
+	<description>
+		This is the first test of controlling the Dobot
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>
