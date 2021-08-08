@@ -1,23 +1,29 @@
 <launch>
-  <arg name="robot_name"     default="armbot"/>
-  <arg name="open_rviz"      default="true" />
-  <arg name="use_gui"        default="true" />
+  <arg
+    name="dobot" />
+  <arg
+    name="gui"
+    default="True" />
+  <param
+    name="robot_description"
+    textfile="$(find armbot_description)/urdf/dobot.urdf" />
+  <param
+    name="use_gui"
+    value="$(arg gui)" />
 
-  <param name="robot_description"
-         command="$(find xacro)/xacro --inorder '$(find armbot_description)/urdf/armbot.urdf.xacro'"/>
+  <node
+    name="rviz"
+    pkg="rviz"
+    type="rviz"
+    args="-d $(find armbot_description)/config/armbot.rviz"/>
 
-  <!-- Send joint values -->
-  <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher">
-    <param name="/use_gui" value="$(arg use_gui)"/>
-    <rosparam param="source_list" subst_value="true">["$(arg robot_name)/joint_states"]</rosparam>
-  </node>
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/>
 
-  <!-- Combine joint values to TF-->
-  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
+  <node
+    name="robot_state_publisher"
+    pkg="robot_state_publisher"
+    type="state_publisher" />
 
-  <!-- Showin Rviz -->
-  <group if="$(arg open_rviz)">
-    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find armbot_description)/rviz/armbot.rviz"/>
-  </group>
+
 
 </launch>
