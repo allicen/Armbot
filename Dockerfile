@@ -40,6 +40,8 @@ RUN sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main"
             libcanberra-gtk-module \
             libcanberra-gtk3-module \
             ros-melodic-pid \
+            ros-melodic-rosserial-arduino \
+            ros-melodic-rosserial \
             ros-melodic-visp* && \
     rosdep init && rosdep update && \
     echo "source /opt/ros/melodic/setup.bash"  >> ~/.bashrc && \
