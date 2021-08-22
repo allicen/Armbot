@@ -12,6 +12,8 @@ find_package(catkin REQUIRED COMPONENTS
     rospy
     sensor_msgs
     std_msgs
+    urdf
+    message_generation
 )
 
 ## System dependencies are found with CMake's conventions
@@ -48,11 +50,12 @@ find_package(catkin REQUIRED COMPONENTS
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
+add_message_files(
+   FILES
+   move_position.msg
 #   Message1.msg
 #   Message2.msg
-# )
+)
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -69,10 +72,10 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs  # Or other packages containing msgs
-# )
+generate_messages(
+   DEPENDENCIES
+   std_msgs  # Or other packages containing msgs
+)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -104,6 +107,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
+   CATKIN_DEPENDS message_runtime
 #  INCLUDE_DIRS include
 #  LIBRARIES armbot_move
 #  CATKIN_DEPENDS roscpp
@@ -134,7 +138,9 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(simple_move src/simple_move.cpp)
+add_executable(subscriber src/subscriber.cpp)
+add_executable(publisher src/move_publisher.cpp)
+add_executable(position src/position.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -147,7 +153,14 @@ add_executable(simple_move src/simple_move.cpp)
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(simple_move
+target_link_libraries(subscriber
+   ${catkin_LIBRARIES}
+)
+target_link_libraries(publisher
+   ${catkin_LIBRARIES}
+)
+
+target_link_libraries(position
    ${catkin_LIBRARIES}
 )
 
