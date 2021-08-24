@@ -3,34 +3,44 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <sstream>
+#include <iterator>
+#include <vector>
 
 
 int main(int argc, char**argv) {
     ros::init(argc, argv, "writer");
     
-    ROS_INFO_STREAM("Writer is ready.\n");
+    ROS_INFO_STREAM("Writer is ready.");
     
-    ros::NodeHandle n;
-    ros::Publisher pub = n.advertise<armbot_move::move_position>("Position", 10);
-    
-    std::vector<std::string> messageList;
-    messageList.push_back("first");
-    messageList.push_back("second");
+    ros::NodeHandle n("~");
+    ros::Publisher pub = n.advertise<armbot_move::move_position>("Position", 1000);
+    ros::Duration(1).sleep();
 
-    sleep(1);
-    
-    ros::Rate loop_rate(5);
-    for (int i = 0; i < messageList.size(); i++)
-    {
-        armbot_move::move_position message;
-        message.position = messageList[i];
+    std::vector<std::string> params;
+    std::string param;
+    n.getParam("param", param);
+    // ROS_INFO("Got parameter : %s", param.c_str());
 
-        pub.publish(message);
-        
-        ROS_INFO("%s", messageList[i].c_str());
-        ros::Duration(10.0).sleep();
-        ros::spinOnce();
+    std::stringstream data(param);
+
+    std::string line;
+    while(std::getline(data, line,' ')) {
+        params.push_back(line); 
     }
+
+    double delay = atof(params[5].c_str());
+
+    armbot_move::move_position message;
+    message.position = params[0].c_str();
+    message.joint_1 = std::stof(params[1].c_str());
+    message.joint_2 = std::stof(params[2].c_str());
+    message.joint_3 = std::stof(params[3].c_str());
+    message.joint_4 = std::stof(params[4].c_str());
+
+    pub.publish(message);
+    
+    ros::Duration(delay).sleep();
+    ros::spinOnce();
     
     ROS_INFO_STREAM("Publishing is finished!\n");
     return 0;

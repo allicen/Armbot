@@ -21,8 +21,7 @@ urdf::JointConstSharedPtr joint_4;
 urdf::JointConstSharedPtr joint_grip;
 
 float currentPosition[JOINT_COUNT] = {0, 0, 0, 0};
-float firstPosition[JOINT_COUNT] = {-1.0, 1.03, 1.0, -0.02};
-float secondPosition[JOINT_COUNT] = {1.0, 1.27, 1.57, 0.28};
+float receivedPosition[JOINT_COUNT] = {1, 0, 0, 0};
 
 void reader(const armbot_move::move_position & message) {}
 
@@ -56,11 +55,7 @@ void publishMessage (ros::Publisher pub, float step, int jointId) {
 void goToPosition (ros::Publisher pub, std::string position) {
      float positions[JOINT_COUNT];
 
-     if (position == "first") {
-          memcpy(positions, firstPosition, sizeof firstPosition);
-     } else if (position == "second") {
-          memcpy(positions, secondPosition, sizeof secondPosition);
-     }
+     memcpy(positions, receivedPosition, sizeof receivedPosition);
 
      for (int jointId = 0; jointId < JOINT_COUNT; jointId++) {
 
@@ -82,9 +77,9 @@ int main(int argc, char *argv[]) {
      ros::init(argc, argv, "publisher");
      ros::NodeHandle n;
 
-     ros::Subscriber sub = n.subscribe("Position", 1000, reader);
      ros::Publisher pub = n.advertise<sensor_msgs::JointState>("joint_states", 1000);
-     ros::Rate loop_rate(1);
+     ros::Subscriber sub = n.subscribe("Position", 1000, reader);
+     ros::Duration(1).sleep();
 
      std::string urdf_file_name;
      ros::param::get("/file", urdf_file_name);
@@ -103,8 +98,12 @@ int main(int argc, char *argv[]) {
 
      while (ros::ok()) {
 
+          ROS_INFO("dsvsdgsdfg:");
+
           boost::shared_ptr<armbot_move::move_position const> positions;
-          positions = ros::topic::waitForMessage<armbot_move::move_position>("Position", ros::Duration(1.0));
+          positions = ros::topic::waitForMessage<armbot_move::move_position>("Position", ros::Duration(0.5));
+
+          std::cout << "----------------------" << positions.use_count()  << std::endl;
 
           // ждем пока придет сообщение
           if (positions.use_count() == 0) {
@@ -112,13 +111,18 @@ int main(int argc, char *argv[]) {
           }
 
           position = positions.get()[0].position.c_str();
+          receivedPosition[0] = positions.get()[0].joint_1;
+          receivedPosition[1] = positions.get()[0].joint_2;
+          receivedPosition[2] = positions.get()[0].joint_3;
+          receivedPosition[3] = positions.get()[0].joint_4;
+
 
           goToPosition(pub, position);
 
-          loop_rate.sleep();
+          ros::Duration(1).sleep();
      }
 
-    ros::spin();
+    ros::spinOnce();
 
     return 0;
 }

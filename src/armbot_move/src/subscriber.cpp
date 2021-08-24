@@ -33,6 +33,7 @@ int main(int argc, char **argv) {
     //ros::Subscriber sub = n.subscribe("joint_states", 1000, callback);
 
     ros::Subscriber sub = n.subscribe("Position", 1000, reader);
+    ROS_INFO("fgsgsdg");
     ros::spin(); // не передает управление ноде, пирерывать только из другого потока или из терминала
 
     return 0;
