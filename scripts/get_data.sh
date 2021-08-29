@@ -1,7 +1,7 @@
 #!/bin/bash
 
-commandsFile="$(pwd)/scripts/commands.txt"
-commandsDescriptionFile="$(pwd)/scripts/command_description.txt"
+commandsFile="$(pwd)/data/commands.txt"
+commandsDescriptionFile="$(pwd)/data/command_description.txt"
 
 declare -A commandsMap
 

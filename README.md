@@ -20,3 +20,8 @@ source devel/setup.bash
 <p>Создать группу docker: <code>sudo groupadd docker</code></p>
 <p>Добавить пользователя в группу docker: <code>sudo usermod -aG docker $USER</code></p>
 <p>Применить изменения: <code>newgrp docker</code></p>
+
+<h3>Передача данных</h3>
+<p>Запуск из корня проекта (папка Armbot).</p>
+<p>Без докера: <code>./scripts/run.sh start</code></p>
+<p>С докером: <code>./scripts/run.sh start docker</code></p>
