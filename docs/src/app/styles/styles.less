@@ -1,0 +1,31 @@
+@container-width: 1200px;
+
+@background: #200772;
+@white-color: #ffffff;
+@black-color: #000000;
+@code-color: rgba(175, 184, 193, 0.2);
+
+.container {
+  max-width: @container-width;
+  margin: 0 auto;
+}
+
+.code {
+  background-color: @code-color;
+  border-radius: 2px;
+  font-size: 85%;
+  margin: 0;
+  padding: .2em .4em;
+  position: relative;
+  justify-content: center;
+  display: inline-flex;
+
+  i{
+    position: absolute;
+    margin-top: 20px;
+    background: red;
+    color: white;
+    padding: 1px 5px;
+    border-radius: 2px;
+  }
+}

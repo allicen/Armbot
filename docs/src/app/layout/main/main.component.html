@@ -1,0 +1,17 @@
+<app-header></app-header>
+<main>
+  <div class="container">
+    <mat-button-toggle-group>
+      <mat-button-toggle routerLink="/">
+        Главная
+      </mat-button-toggle>
+      <mat-button-toggle *ngFor="let i of objectKeys(selectors)" routerLink="/{{i}}">
+        {{selectors[i]}}
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+    <article>
+      <router-outlet></router-outlet>
+    </article>
+  </div>
+</main>
+<app-footer></app-footer>
