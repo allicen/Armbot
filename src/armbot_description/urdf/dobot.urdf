@@ -42,7 +42,7 @@
         <parent link="base_link"/>
         <child link="link_1"/>
         <axis xyz="0 0 1"/>
-        <limit effort="150.0" lower="-2.25" upper="2.25" velocity="3.15"/>
+        <limit effort="150.0" lower="-2.25" upper="2.25" velocity="3.15"/> <!--  от -128,916° до 128,916° -->
     </joint>
 
     <link name="link_1">
@@ -67,7 +67,7 @@
         <parent link="link_1"/>
         <child link="link_2"/>
         <axis xyz="0 0 1"/>
-        <limit effort="150.0" lower="0" upper="1.570796325" velocity="3.15"/>
+        <limit effort="150.0" lower="0" upper="1.570796325" velocity="3.15"/> <!--  от 0° до 90° -->
     </joint>
 
     <link name="link_2">
@@ -91,7 +91,7 @@
         <parent link="link_2"/>
         <child link="link_3"/>
         <axis xyz="0 0 1"/>
-        <limit effort="150.0" lower="0" upper="1.570796325" velocity="3.15"/>
+        <limit effort="150.0" lower="0" upper="1.570796325" velocity="3.15"/> <!--  от 0° до 90° -->
     </joint>
 
     <link name="link_3">
@@ -115,7 +115,7 @@
         <parent link="link_3"/>
         <child link="link_4"/>
         <axis xyz="0 0 1"/>
-        <limit effort="150.0" lower="-3.14159265" upper="3.14159265" velocity="3.15"/>
+        <limit effort="150.0" lower="-3.14159265" upper="3.14159265" velocity="3.15"/> <!-- от -180° до 180° -->
 
     </joint>
 
@@ -140,7 +140,7 @@
         <parent link="link_4"/>
         <child link="link_end"/>
         <axis xyz="0 0 1"/>
-        <limit effort="150.0" lower="-3.14159265" upper="3.14159265" velocity="3.15"/>
+        <limit effort="150.0" lower="-3.14159265" upper="3.14159265" velocity="3.15"/> <!-- от -180° до 180° -->
         
     </joint>
 
@@ -165,8 +165,7 @@
         <parent link="link_end"/>
         <child link="link_grip"/>
         <axis xyz="0 0 1"/>
-        <limit effort="150.0" lower="-2.5" upper="2.5" velocity="3.15"/>
-        
+        <limit effort="150.0" lower="-2.5" upper="2.5" velocity="3.15"/> <!-- от -114,592° до 114,592° -->
     </joint>
 
     <link name="link_grip">

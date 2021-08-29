@@ -8,3 +8,9 @@
 <p>Собрать проект <code>catkin_make</code></p>
 <p>Запустить <code>roscore</code> и gazebo: <code>rosrun gazebo_ros gazebo</code></p>
 <p><br /></p>
+<h2>Gazebo & MoveIt</h2>
+<p>Запуск в пустом мире:</p>
+<p><code>roslaunch gazebo_ros empty_world.launch paused:=true use_sim_time:=false gui:=true throttled:=false recording:=false debug:=true</code></p>
+
+<p>Запуск робота</p>
+<p><code>rosrun gazebo_ros spawn_model -file path_to_new_urdf/file_name.urdf -urdf -x 0 -y 0 -z 1 -model panda</code></p>

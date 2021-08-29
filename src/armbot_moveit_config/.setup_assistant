@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: armbot_description
+    relative_path: urdf/dobot.urdf
+    xacro_args: ""
+  SRDF:
+    relative_path: config/dobot.srdf
+  CONFIG:
+    author_name: Elena Rubleva
+    author_email: elena@erubleva.ru
+    generated_timestamp: 1630280470
