@@ -25,6 +25,7 @@ export class MainComponent {
     'moveit': 'MoveIt!',
     'arduino': 'Arduino',
     'tf': 'TF',
+    'linux': 'Linux',
     'more': 'Прочее'
   };
 

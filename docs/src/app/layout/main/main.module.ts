@@ -21,6 +21,7 @@ const routes: Routes = [
       { path: 'arduino', loadChildren: () => import('../../pages/arduino/arduino.module').then(m => m.ArduinoModule) },
       { path: 'tf', loadChildren: () => import('../../pages/tf/tf.module').then(m => m.TfModule) },
       { path: 'more', loadChildren: () => import('../../pages/more/more.module').then(m => m.MoreModule) },
+      { path: 'linux', loadChildren: () => import('../../pages/linux/linux.module').then(m => m.LinuxModule) },
       { path: '**', loadChildren: () => import('../../components/not-found/not-found.module').then(m => m.NotFoundModule) }]
   }];
 

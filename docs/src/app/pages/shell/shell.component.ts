@@ -1,10 +1,11 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {ViewService} from "../../serviсes/view.service";
 
 @Component({
-  selector: 'app-gazebo',
+  selector: 'app-shell',
   templateUrl: './shell.component.html',
-  styleUrls: ['./shell.component.less']
+  styleUrls: ['./shell.component.less'],
+  encapsulation: ViewEncapsulation.None
 })
 export class ShellComponent implements OnInit {
   constructor(private viewService: ViewService) {}

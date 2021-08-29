@@ -1,6 +1,7 @@
 @container-width: 1200px;
 
-@background: #200772;
+@base-color: #200772;
+@contrast-color: red;
 @white-color: #ffffff;
 @black-color: #000000;
 @code-color: rgba(175, 184, 193, 0.2);
@@ -21,9 +22,10 @@
   display: inline-flex;
 
   i{
+    z-index: 10;
     position: absolute;
     margin-top: 20px;
-    background: red;
+    background: @contrast-color;
     color: white;
     padding: 1px 5px;
     border-radius: 2px;

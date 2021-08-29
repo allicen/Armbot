@@ -1,1 +1,17 @@
 <h1>MoveIt!</h1>
+<p><a href="http://docs.ros.org/en/melodic/api/moveit_tutorials/html/doc/getting_started/getting_started.html#install-ros-and-catkin" target="_blank">Руководство</a></p>
+<p><a href="https://github.com/ros-planning/moveit_tutorials/tree/melodic-devel" target="_blank">Руководство на GitHub</a></p>
+<p><a href="http://docs.ros.org/en/melodic/api/moveit_tutorials/html/doc/setup_assistant/setup_assistant_tutorial.html" target="_blank">Создание конфигурации</a></p>
+<p><a href="http://docs.ros.org/en/melodic/api/moveit_tutorials/html/doc/ikfast/ikfast_tutorial.html" target="_blank">Кинематика робота</a></p>
+<p>Уставновить зависимости в рабочее пространство:</p>
+<pre>
+<code>cd ~/ws_moveit/src</code>
+<code>rosdep install -y --from-paths . --ignore-src --rosdistro melodic</code>
+</pre>
+<p>Сконфигурировать рабочее пространство:</p>
+<pre>
+<code>catkin config --extend /opt/ros/melodic --cmake-args -DCMAKE_BUILD_TYPE=Release</code>
+<code>catkin build</code>
+<code>source devel/setup.bash</code>
+</pre>
+<p>Прописать ссылки: <code>source ~/ws_moveit/devel/setup.bash</code></p>

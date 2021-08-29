@@ -1,1 +1,64 @@
 <h1>Основы ROS</h1>
+<h2>Установка доп.пакета</h2>
+<p>Скачать доп. пакет: <code>sudo apt-get install ros-melodic-gmapping</code></p>
+<p>Путь до пакета: <code>rospack find gmapping</code></p>
+<p>Содержимое пакета: <code>rosls gmapping</code></p>
+<p><br /></p>
+
+<h2>Запуск простой ноды</h2>
+<p>Запуск ROS в 1м терминале: <code>roscore</code></p>
+<p>Запустить ноду (черепаха) во 2м терминале: <code>rosrun turtlesim turtlesim_node</code></p>
+<p>Запустить ноду (движение с клавиатуры) в 3м терминале: <code>rosrun turtlesim turtle_teleop_key</code></p>
+<p>Посмотреть ноды: <code>rosnode list</code></p>
+<p>Запустить ноду с именем: <code>rosrun turtlesim turtlesim_node __name:=node_second</code></p>
+<p>Узнать информацию о ноде: <code>rosnode info /node_second</code></p>
+<p>Узнать информацию о топике: <code>rostopic info /turtle1/cmd_vel</code></p>
+<p>Узнать информацию о типе топика: <code>rosmsg show geometry_msgs/Twist</code></p>
+<p>Распечатать сообщение из топика: <code>rostopic echo /turtle1/cmd_vel</code></p>
+<p>Построить RQT-граф связи нод: <code>rosrun rqt_graph rqt_graph</code></p>
+<p>Топик - сообщение от одного ко многим. Не ожидает подтверждения подписчика.</p>
+<p>Сервис - сообщение от одного к одному. Ожидает подтверждения от подписчика.</p>
+<p>Посмотреть список сервисов: <code>rosservice list</code></p>
+<p>Вызвать сервис: <code>rosservice call /clear</code></p>
+<p>Показать информацию о сервисе: <code>rossrv show turtlesim/TeleportAbsolute</code> (поля и возвращаемое значение после ---)</p>
+<p>Вызвать сервис: <code>rosservice call /turtle1/teleport_absolute</code> + 2 tab</p>
+<p><br /></p>
+
+<h2>Создание пакета</h2>
+<p>Создать папку: <code>mkdir -p workspace/src</code></p>
+<p>Перейти в папку: <code>cd workspace/src</code></p>
+<p>Создать ссылку на CMake-файл: <code>catkin_init_workspace</code> (вызывать из workspace/src)</p>
+<p>Создать пакет: <code>catkin_create_pkg hello</code></p>
+<p>Собрать пакет: <code>catkin_make</code> (вызвать из workspace)</p>
+<p>Создать пакет для С++: <code>catkin_create_pkg talkers roscpp</code></p>
+<p>Просмотр файла: <code>gedit talkers/package.xml</code></p>
+<p>Создать пакет сразу с зависимостями <code>catkin_create_pkg my_service message_generation message_runtime</code></p>
+<p><br /></p>
+
+<h2>Запуск ноды</h2>
+<pre>
+<code>catkin_make</code>
+<code>roscore</code>
+<code>rosrun turtlesim turtlesim_node</code>
+<code>source devel/setup.bash</code> // чтобы находить путь
+<code>rosrun talkers publisher</code>
+</pre>
+<p><br /></p>
+
+<h2>Сообщения</h2>
+<p>Просмотр всех сообщений: <code>rosmsg list</code></p>
+<p>Свои сообщения сохранять в папке <code>msg</code> внутри пакета</p>
+<p><br /></p>
+
+<h2>Создание сервиса</h2>
+<p>Все сервисы располагаются внутри пакета в папке <code>srv</code></p>
+<p>Просмотр сервиса <code>rossrv show my_service/AddInts</code> (AddInts - название сервиса)</p>
+<p>Команда <code>rossrv</code> работает с типами. <code>rossrv list</code> выведет все сервисы, которые есть в ROS</p>
+<p>Команда <code>service list</code> выводит сервисы, которые используются в данный момент эмуляции.</p>
+<p>Вызвать сервис <code>rosservice call /add_two_ints "first: 10 second: 52"</code> (add_two_ints - функция, в кавычувх шаблонные поля)</p>
+<p><br /></p>
+
+<h2>rViz</h2>
+<p>Запустить ноду <code>rosrun rviz rviz</code></p>
+<p>Shift+мышь - перемещение вверх/вниз</p>
+<p><br /></p>
