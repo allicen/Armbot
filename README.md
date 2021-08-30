@@ -25,3 +25,10 @@ source devel/setup.bash
 <p>Запуск из корня проекта (папка Armbot).</p>
 <p>Без докера: <code>./scripts/run.sh start</code></p>
 <p>С докером: <code>./scripts/run.sh start docker</code></p>
+<p><br /></p>
+<h3>Документация</h3>
+<p>Папка <code>docs</code>.</p>
+<p>Собрать docker: <code>docker build -t docs .</code></p>
+<p>Запустить docker: <code>docker run -d --name docs -p 80:80 docs</code></p>
+<p>Загрузить образ docker: <code>docker load < docker-img/docs.tar</code></p>
+<p>Перейти в браузер: <code>http://localhost:80</code></p>
