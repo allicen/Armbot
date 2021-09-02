@@ -1,0 +1,7 @@
+<launch>
+  <node name="pose" pkg="armbot_move" type="pose" respawn="false" output="screen">
+    <rosparam command="load" file="$(find armbot_moveit_config)/config/kinematics.yaml"/>
+    <param name="planning_plugin" value="ompl_interface/OMPLPlanner"/>
+    <rosparam command="load" file="$(find armbot_moveit_config)/config/ompl_planning.yaml"/>
+  </node>
+</launch>
