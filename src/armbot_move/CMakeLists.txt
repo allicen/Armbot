@@ -9,15 +9,20 @@ project(armbot_move)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
     roscpp
-    rospy
+    # rospy
     sensor_msgs
     std_msgs
     urdf
     message_generation
+    moveit_core 
+    moveit_ros_planning 
+    moveit_ros_planning_interface 
+    moveit_visual_tools
 )
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
+find_package(Eigen3 REQUIRED)
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -123,7 +128,10 @@ catkin_package(
 include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
+  SYSTEM ${EIGEN3_INCLUDE_DIRS}
 )
+
+add_definitions(-DBOOST_ERROR_CODE_HEADER_ONLY)
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
@@ -138,9 +146,10 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(subscriber src/subscriber.cpp)
-add_executable(publisher src/move_publisher.cpp)
-add_executable(position src/position.cpp)
+add_executable(subscriber src/joint_publisher/subscriber.cpp)
+add_executable(publisher src/joint_publisher/move_publisher.cpp)
+add_executable(position src/joint_publisher/position.cpp)
+add_executable(pose src/planner/pose.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -162,6 +171,11 @@ target_link_libraries(publisher
 
 target_link_libraries(position
    ${catkin_LIBRARIES}
+)
+
+target_link_libraries(pose
+   ${catkin_LIBRARIES}
+   ${Boost_LIBRARIES}
 )
 
 #############
@@ -205,6 +219,17 @@ target_link_libraries(position
 #   # myfile2
 #   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 # )
+
+install(TARGETS pose 
+    DESTINATION 
+    ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+install(DIRECTORY 
+   launch 
+   DESTINATION 
+   ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
 
 #############
 ## Testing ##
