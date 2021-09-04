@@ -48,7 +48,7 @@ Visualization Manager:
           base_bellow_link:
             Alpha: 1
             Show Axes: false
-            Show Trail: false
+            Show Trail: true
             Value: true
           base_footprint:
             Alpha: 1

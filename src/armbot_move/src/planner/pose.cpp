@@ -11,7 +11,7 @@
 #include <moveit/kinematic_constraints/utils.h>
 #include <moveit_msgs/DisplayTrajectory.h>
 #include <moveit_msgs/PlanningScene.h>
-#include <moveit_visual_tools/moveit_visual_tools.h>
+// #include <moveit_visual_tools/moveit_visual_tools.h>
 
 #include <boost/scoped_ptr.hpp>
 
@@ -48,17 +48,17 @@ int main(int argc, char *argv[]) {
       ROS_FATAL_STREAM("Exception while creating planning plugin loader " << ex.what());
     }
 
-    namespace rvt = rviz_visual_tools;
-    moveit_visual_tools::MoveItVisualTools visual_tools("link_end");
-    visual_tools.loadRobotStatePub("/display_robot_state");
-    visual_tools.enableBatchPublishing();
-    visual_tools.deleteAllMarkers();
-    visual_tools.trigger();
-    visual_tools.loadRemoteControl();
+   // namespace rvt = rviz_visual_tools;
+   // moveit_visual_tools::MoveItVisualTools visual_tools("link_end");
+   // visual_tools.loadRobotStatePub("/display_robot_state");
+   // visual_tools.enableBatchPublishing();
+   // visual_tools.deleteAllMarkers();
+   // visual_tools.trigger();
+   // visual_tools.loadRemoteControl();
     Eigen::Isometry3d text_pose = Eigen::Isometry3d::Identity();
     text_pose.translation().z() = 1.75;
-    visual_tools.publishText(text_pose, "Motion Planning API Demo", rvt::WHITE, rvt::XLARGE);
-    visual_tools.trigger();
+    // visual_tools.publishText(text_pose, "Motion Planning API Demo", rvt::WHITE, rvt::XLARGE);
+    // visual_tools.trigger();
 
 
     move_group.setPlanningTime(60*5);
@@ -86,6 +86,7 @@ int main(int argc, char *argv[]) {
         std::cout<<"start : "<<std::endl;
         start_state.setFromIK(joint_model_group, pose);
         move_group.setStartState(start_state);
+        move_group.execute();
 
 
         std::vector<double> test = move_group.getCurrentJointValues();
