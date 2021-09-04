@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
 
     ros::init(argc, argv, "pose");
     ros::NodeHandle node_handle("~");
-    ros::AsyncSpinner spinner(1);
+    ros::AsyncSpinner spinner(10);
     spinner.start();
 
     static const std::string PLANNING_GROUP = "arm";
@@ -29,6 +29,7 @@ int main(int argc, char *argv[]) {
     
     robot_model_loader::RobotModelLoader robot_model_loader("robot_description");
 
+    robot_state::RobotState start_state(*move_group.getCurrentState());
     const robot_state::JointModelGroup* joint_model_group = move_group.getCurrentState()->getJointModelGroup(PLANNING_GROUP);
 
     boost::scoped_ptr<pluginlib::ClassLoader<planning_interface::PlannerManager>> planner_plugin_loader;
@@ -74,20 +75,26 @@ int main(int argc, char *argv[]) {
     pose.orientation.w = 0.173631;
 
 
-    move_group.setPoseTarget(pose,"link_end");
+    move_group.setApproximateJointValueTarget(pose,"link_end");
     moveit::planning_interface::MoveGroupInterface::Plan my_plan;
-    bool success = (move_group.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+    bool success = (move_group.move() == moveit::planning_interface::MoveItErrorCode::SUCCESS);
 
     ROS_INFO("Visualizing plan 1 (pose goal) %s",success?"":"FAILED");
 
 
     if (success) {
         std::cout<<"start : "<<std::endl;
+        start_state.setFromIK(joint_model_group, pose);
+        move_group.setStartState(start_state);
 
-        move_group.setPoseTarget(pose);
-        ros::Duration(0.5).sleep();
 
-        move_group.move();
+        std::vector<double> test = move_group.getCurrentJointValues();
+        std::cout << "The length is: " << test.size() << '\n';
+
+        for (auto const &element: test)
+          std::cout << element << ' ';
+
+        std::cout << '\n';
     }
 
     geometry_msgs::PoseStamped robot_pose;
@@ -107,7 +114,7 @@ int main(int argc, char *argv[]) {
     std::cout<<"Robot Orientation : "<<exact_orientation.x<<"\t"<<exact_orientation.y<<"\t"<<exact_orientation.z<<"\t"<<exact_orientation.w<<std::endl;
 
     sleep(5.0);
-    ros::shutdown(); 
+    ros::shutdown();
 
     return 0;
 }

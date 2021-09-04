@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+    <arg name="dobot" />
+    <arg name="gui" default="True" />
+    <param
+        name="robot_description"
+        textfile="$(find armbot_description)/urdf/dobot.urdf" />
+
+    <param name="file" type="str" value="$(find armbot_description)/urdf/dobot.urdf" />
+
+    <param
+        name="use_gui"
+        value="$(arg gui)" />
+
+    <node
+        name="rviz"
+        pkg="rviz"
+        type="rviz"
+        args="-d $(find armbot_description)/config/armbot.rviz"/>
+
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+        <rosparam param="source_list">["joint_states"]</rosparam>
+    </node>
+
+    <node name="publisher" pkg="armbot_move" type="publisher" />
+
+    <node
+        name="robot_state_publisher"
+        pkg="robot_state_publisher"
+        type="robot_state_publisher" />
+</launch>

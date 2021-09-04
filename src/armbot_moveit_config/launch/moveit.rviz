@@ -325,7 +325,7 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
-        Loop Animation: true
+        Loop Animation: false
         Robot Alpha: 0.5
         Show Robot Collision: false
         Show Robot Visual: true
@@ -350,7 +350,7 @@ Visualization Manager:
         Show Workspace: false
         Start State Alpha: 1
         Start State Color: 0; 255; 0
-      Planning Scene Topic: move_group/monitored_planning_scene
+      Planning Scene Topic: /planning_scene
       Robot Description: robot_description
       Scene Geometry:
         Scene Alpha: 1
@@ -651,9 +651,9 @@ Visualization Manager:
     Fixed Frame: world
   Name: root
   Tools:
+    - Class: rviz/MoveCamera
     - Class: rviz/Interact
       Hide Inactive Objects: true
-    - Class: rviz/MoveCamera
     - Class: rviz/Select
   Value: true
   Views:
