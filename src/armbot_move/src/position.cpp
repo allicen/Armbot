@@ -31,16 +31,15 @@ int main(int argc, char**argv) {
         params.push_back(line); 
     }
 
-    double delay = atof(params[5].c_str());
+    double delay = atof(params[3].c_str());
 
     sleep(1);
 
     armbot_move::move_position message;
     message.position = params[0].c_str();
-    message.joint_1 = std::stof(params[1].c_str());
-    message.joint_2 = std::stof(params[2].c_str());
-    message.joint_3 = std::stof(params[3].c_str());
-    message.joint_4 = std::stof(params[4].c_str());
+
+    message.x = std::stof(params[1].c_str());
+    message.y = std::stof(params[2].c_str());
 
     pub.publish(message);
     

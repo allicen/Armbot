@@ -1,5 +1,5 @@
-first 5
-second 3
-th 5
-second 3
-th 1
+direct 5
+right 3
+left 5
+direct 3
+left 1

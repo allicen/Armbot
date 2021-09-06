@@ -42,7 +42,6 @@
         <child link="link_1" />
         <axis xyz="0 0 1" />
         <limit effort="150.0" lower="-2.25" upper="2.25" velocity="3.15" />
-        <!--  от -128,916° до 128,916° -->
     </joint>
     <link name="link_1">
         <visual>
@@ -58,7 +57,7 @@
                 <mesh filename="package://armbot_description/meshes/link_1.STL" />
             </geometry>
         </collision>
-        
+
 <inertial>
             <mass value="0.1" />
             <inertia ixx="0.03" iyy="0.03" izz="0.03" ixy="0.0" ixz="0.0" iyz="0.0" />
@@ -71,7 +70,6 @@
         <child link="link_2" />
         <axis xyz="0 0 1" />
         <limit effort="150.0" lower="0" upper="1.570796325" velocity="3.15" />
-        <!--  от 0° до 90° -->
     </joint>
     <link name="link_2">
         <visual>
@@ -87,7 +85,7 @@
                 <mesh filename="package://armbot_description/meshes/link_2.STL" />
             </geometry>
         </collision>
-        
+
 <inertial>
             <mass value="0.1" />
             <inertia ixx="0.03" iyy="0.03" izz="0.03" ixy="0.0" ixz="0.0" iyz="0.0" />
@@ -100,7 +98,6 @@
         <child link="link_3" />
         <axis xyz="0 0 1" />
         <limit effort="150.0" lower="0" upper="1.570796325" velocity="3.15" />
-        <!--  от 0° до 90° -->
     </joint>
     <link name="link_3">
         <visual>
@@ -116,7 +113,7 @@
                 <mesh filename="package://armbot_description/meshes/link_3.dae" />
             </geometry>
         </collision>
-        
+
 <inertial>
             <mass value="0.1" />
             <inertia ixx="0.03" iyy="0.03" izz="0.03" ixy="0.0" ixz="0.0" iyz="0.0" />
@@ -129,7 +126,6 @@
         <child link="link_4" />
         <axis xyz="0 0 1" />
         <limit effort="150.0" lower="-3.14159265" upper="3.14159265" velocity="3.15" />
-        <!-- от -180° до 180° -->
     </joint>
     <link name="link_4">
         <visual>
@@ -145,7 +141,7 @@
                 <mesh filename="package://armbot_description/meshes/link_4.STL" />
             </geometry>
         </collision>
-        
+
 <inertial>
             <mass value="0.1" />
             <inertia ixx="0.03" iyy="0.03" izz="0.03" ixy="0.0" ixz="0.0" iyz="0.0" />
@@ -158,7 +154,6 @@
         <child link="link_end" />
         <axis xyz="0 0 1" />
         <limit effort="150.0" lower="-3.14159265" upper="3.14159265" velocity="3.15" />
-        <!-- от -180° до 180° -->
     </joint>
     <link name="link_end">
         <visual>
@@ -174,7 +169,7 @@
                 <mesh filename="package://armbot_description/meshes/link_end.STL" />
             </geometry>
         </collision>
-        
+
 <inertial>
             <mass value="0.1" />
             <inertia ixx="0.03" iyy="0.03" izz="0.03" ixy="0.0" ixz="0.0" iyz="0.0" />
@@ -187,7 +182,6 @@
         <child link="link_grip" />
         <axis xyz="0 0 1" />
         <limit effort="150.0" lower="-2.5" upper="2.5" velocity="3.15" />
-        <!-- от -114,592° до 114,592° -->
     </joint>
     <link name="link_grip">
         <visual>
@@ -203,61 +197,61 @@
                 <mesh filename="package://armbot_description/meshes/link_grip.STL" />
             </geometry>
         </collision>
-        
+
 <inertial>
             <mass value="0.1" />
             <inertia ixx="0.03" iyy="0.03" izz="0.03" ixy="0.0" ixz="0.0" iyz="0.0" />
         </inertial>
 
     </link>
-    
+
 <transmission name="trans_joint_1">
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="joint_1">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
         </joint>
         <actuator name="joint_1_motor">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
     </transmission>
     <transmission name="trans_joint_2">
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="joint_2">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
         </joint>
         <actuator name="joint_2_motor">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
     </transmission>
     <transmission name="trans_joint_3">
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="joint_3">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
         </joint>
         <actuator name="joint_3_motor">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
     </transmission>
     <transmission name="trans_joint_4">
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="joint_4">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
         </joint>
         <actuator name="joint_4_motor">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
     </transmission>
     <transmission name="trans_joint_grip">
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="joint_grip">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
         </joint>
         <actuator name="joint_grip_motor">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
     </transmission>

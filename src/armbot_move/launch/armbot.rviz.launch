@@ -2,7 +2,7 @@
 <launch>
 
     <arg name="dobot" />
-    <arg name="gui" default="True" />
+    <arg name="gui" default="false" />
     <param
         name="robot_description"
         textfile="$(find armbot_description)/urdf/dobot.urdf" />
@@ -22,8 +22,6 @@
     <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
         <rosparam param="source_list">["joint_states"]</rosparam>
     </node>
-
-    <node name="publisher" pkg="armbot_move" type="publisher" />
 
     <node
         name="robot_state_publisher"

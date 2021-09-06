@@ -35,8 +35,42 @@ Visualization Manager:
       Plane Cell Count: 10
       Reference Frame: <Fixed Frame>
       Value: true
-    - Class: moveit_rviz_plugin/MotionPlanning
+    - Class: rviz/TF
       Enabled: true
+      Frame Timeout: 15
+      Frames:
+        All Enabled: true
+        base_link:
+          Value: true
+        link_1:
+          Value: true
+        link_2:
+          Value: true
+        link_3:
+          Value: true
+        link_4:
+          Value: true
+        link_end:
+          Value: true
+        link_grip:
+          Value: true
+      Marker Scale: 0.30000001192092896
+      Name: TF
+      Show Arrows: true
+      Show Axes: true
+      Show Names: true
+      Tree:
+        base_link:
+          link_1:
+            link_2:
+              link_3:
+                link_4:
+                  link_end:
+                    link_grip
+      Update Interval: 0
+      Value: true
+    - Class: moveit_rviz_plugin/MotionPlanning
+      Enabled: false
       MoveIt_Goal_Tolerance: 0
       MoveIt_Planning_Time: 5
       MoveIt_Use_Constraint_Aware_IK: true

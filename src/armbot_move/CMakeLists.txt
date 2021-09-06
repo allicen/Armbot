@@ -146,10 +146,9 @@ add_definitions(-DBOOST_ERROR_CODE_HEADER_ONLY)
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(subscriber src/joint_publisher/subscriber.cpp)
-add_executable(publisher src/joint_publisher/move_publisher.cpp)
-add_executable(position src/joint_publisher/position.cpp)
-add_executable(pose src/planner/pose.cpp)
+add_executable(joint_subscriber src/joint_subscriber.cpp)
+add_executable(move src/move.cpp)
+add_executable(position src/position.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -162,20 +161,15 @@ add_executable(pose src/planner/pose.cpp)
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(subscriber
+target_link_libraries(joint_subscriber
    ${catkin_LIBRARIES}
 )
-target_link_libraries(publisher
+target_link_libraries(move
    ${catkin_LIBRARIES}
 )
 
 target_link_libraries(position
    ${catkin_LIBRARIES}
-)
-
-target_link_libraries(pose
-   ${catkin_LIBRARIES}
-   ${Boost_LIBRARIES}
 )
 
 #############
@@ -219,11 +213,6 @@ target_link_libraries(pose
 #   # myfile2
 #   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 # )
-
-install(TARGETS pose 
-    DESTINATION 
-    ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
 
 install(DIRECTORY 
    launch 
