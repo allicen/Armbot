@@ -1,5 +1,5 @@
-direct 5
-right 3
-left 5
-direct 3
-left 1
+direct 20
+right 20
+left 20
+direct 20
+left 20

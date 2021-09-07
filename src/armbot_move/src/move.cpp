@@ -61,11 +61,11 @@ int main(int argc, char *argv[]) {
      }
 
      move_group.setPlanningTime(60*5);
-     move_group.setGoalTolerance(.001);
+     move_group.setGoalTolerance(.0001);
 
      while (ros::ok()) {
           boost::shared_ptr<armbot_move::move_position const> positions;
-          positions = ros::topic::waitForMessage<armbot_move::move_position>("Position", ros::Duration(0.5));
+          positions = ros::topic::waitForMessage<armbot_move::move_position>("Position", ros::Duration(0.01));
 
           // ждем пока придет сообщение
           if (positions.use_count() == 0) {
@@ -94,12 +94,15 @@ int main(int argc, char *argv[]) {
               start_state.setFromIK(joint_model_group, pose);
               move_group.setStartState(start_state);
 
+              std::cout<<"Output : "<<pose.position.x<<"\t"<<pose.position.y<<"\t"<<pose.position.z<<"\t"<<pose.orientation.x
+                                             <<"\t"<<pose.orientation.y<<"\t"<<pose.orientation.z<<"\t"<<pose.orientation.w<<std::endl;
+
               std::vector<double> joints;
               joints = move_group.getCurrentJointValues();
               std::cout<<"Joints : "<<joints.at(0)<<"\t"<<joints.at(1)<<"\t"<<joints.at(2)<<"\t"<<joints.at(3)<<std::endl;
           }
 
-          ros::Duration(1).sleep();
+          //ros::Duration(1).sleep();
      }
 
     ros::spinOnce();

@@ -42,7 +42,6 @@ int main(int argc, char**argv) {
     message.y = std::stof(params[2].c_str());
 
     pub.publish(message);
-    
     ros::Duration(delay).sleep();
     ros::spinOnce();
     
