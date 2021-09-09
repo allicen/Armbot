@@ -1,8 +1,0 @@
-prefix=/home/e/ROS/Armbot/devel_isolated/armbot_move
-
-Name: armbot_move
-Description: Description of armbot_move
-Version: 0.0.0
-Cflags: -I/home/e/ROS/Armbot/devel_isolated/armbot_move/include
-Libs: -L${prefix}/lib 
-Requires: message_runtime

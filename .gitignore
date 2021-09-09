@@ -1,6 +1,8 @@
 armbot-img.*
 build
 devel
+devel_isolated
+build_isolated
 logs
 .idea
 /src/CMakeLists.txt

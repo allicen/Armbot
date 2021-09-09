@@ -1,8 +1,0 @@
-prefix=/home/e/ROS/Armbot/devel_isolated/armbot_moveit_config
-
-Name: armbot_moveit_config
-Description: Description of armbot_moveit_config
-Version: 0.3.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 
