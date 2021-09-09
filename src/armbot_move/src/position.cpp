@@ -1,5 +1,6 @@
 #include <ros/ros.h>
 #include <armbot_move/move_position.h>
+#include <armbot_move/SetPosition.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <sstream>
@@ -22,7 +23,11 @@ int main(int argc, char**argv) {
     ROS_INFO("Got parameter : %s", param.c_str());
 
     ros::NodeHandle nh;
-    ros::Publisher pub = nh.advertise<armbot_move::move_position>("Position", 1000);
+
+    ros::ServiceClient client=nh.serviceClient<armbot_move::SetPosition>("set_position");
+    armbot_move::SetPosition srv;
+
+    //ros::Publisher pub = nh.advertise<armbot_move::move_position>("Position", 1000);
 
     std::stringstream data(param);
 
@@ -35,13 +40,26 @@ int main(int argc, char**argv) {
 
     sleep(1);
 
-    armbot_move::move_position message;
-    message.position = params[0].c_str();
+    srv.request.position = params[0].c_str();
+    srv.request.x = std::stof(params[1].c_str());
+    srv.request.y = std::stof(params[2].c_str());
 
-    message.x = std::stof(params[1].c_str());
-    message.y = std::stof(params[2].c_str());
+    if (client.call(srv)) {
+        std::cout<<"Result="<<srv.response.result<<std::endl;
+    } else {
+        std::cout<<"Failed to call service set_position"<<std::endl;
+        return 1;
+    }
 
-    pub.publish(message);
+    // armbot_move::move_position message;
+    // message.position = params[0].c_str();
+
+    // message.x = std::stof(params[1].c_str());
+    // message.y = std::stof(params[2].c_str());
+
+
+
+    //pub.publish(message);
     ros::Duration(delay).sleep();
     ros::spinOnce();
     

@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/e/ROS/Armbot/devel_isolated/armbot_description/setup.sh

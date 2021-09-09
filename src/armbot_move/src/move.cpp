@@ -1,6 +1,7 @@
 #include <ros/ros.h>
 #include <pluginlib/class_loader.h>
 #include <armbot_move/move_position.h>
+#include <armbot_move/SetPosition.h>
 #include <std_msgs/String.h>
 
 #include <moveit/move_group_interface/move_group_interface.h>
@@ -15,96 +16,96 @@
 #include <math.h> 
 #include <stdio.h>
 
+//#include "MoveOperationClass.hpp"
 #include "settings.h"
 
 
-void reader(const armbot_move::move_position & message) {}
+//moveit::planning_interface::MoveGroupInterface move_group("arm");
+
+
+bool setPosition(armbot_move::SetPosition::Request &req, 
+                armbot_move::SetPosition::Response &res) {
+
+     Orientation orientation;
+
+     geometry_msgs::Pose pose;
+     pose.position.x = req.x;
+     pose.position.y = req.y;
+     pose.position.z = zPositionDefault;
+     pose.orientation.x = orientation.x;
+     pose.orientation.y = orientation.y;
+     pose.orientation.z = orientation.z;
+     pose.orientation.w = orientation.w;
+
+    // move_group.setApproximateJointValueTarget(pose,"link_grip");
+    // bool success = (move_group.move->move() == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+
+    // ROS_INFO("Visualizing move 1 (pose goal) %s",success?"":"FAILED");
+
+    // if (success) {
+    //     std::cout<<"Start move"<<std::endl;
+    //     //start_state.setFromIK(joint_model_group, pose);
+    //     move_group.move->setStartState(start_state);
+
+    //     std::cout<<"Output : "<<pose.position.x<<"\t"<<pose.position.y<<"\t"<<pose.position.z<<"\t"<<pose.orientation.x
+    //                          <<"\t"<<pose.orientation.y<<"\t"<<pose.orientation.z<<"\t"<<pose.orientation.w<<std::endl;
+
+    //     std::vector<double> joints;
+    //     joints = move_group.move->getCurrentJointValues();
+    //     std::cout<<"Joints : "<<joints.at(0)<<"\t"<<joints.at(1)<<"\t"<<joints.at(2)<<"\t"<<joints.at(3)<<std::endl;
+    // }
+
+    return true;
+}
+
 
 int main(int argc, char *argv[]) {
-     ROS_INFO("start:");
-     ros::init(argc, argv, "move");
+    ROS_INFO("start:");
+    ros::init(argc, argv, "move");
 
-     // Подписка на позицию
-     ros::NodeHandle n;
-     ros::Subscriber sub = n.subscribe("Position", 1000, reader);
-     ros::Duration(1).sleep();
+    ros::NodeHandle node_handle("~");
+    ros::AsyncSpinner spinner(10);
+    spinner.start();
 
-     ros::NodeHandle node_handle("~");
-     ros::AsyncSpinner spinner(10);
-     spinner.start();
+    std::string planner_plugin_name;
+    if (!node_handle.getParam("planning_plugin", planner_plugin_name)) {
+        ROS_FATAL_STREAM("Could not find planner plugin name");
+    }
 
-     static const std::string PLANNING_GROUP = "arm";
-     moveit::planning_interface::MoveGroupInterface move_group(PLANNING_GROUP);
 
-     robot_model_loader::RobotModelLoader robot_model_loader("robot_description");
+//    std::string PLANNING_GROUP = "arm";
+//    MoveOperationClass *move_group;
+//    move_group = new MoveOperationClass(PLANNING_GROUP);
 
-     robot_state::RobotState start_state(*move_group.getCurrentState());
-     const robot_state::JointModelGroup* joint_model_group = move_group.getCurrentState()->getJointModelGroup(PLANNING_GROUP);
+    // robot_model_loader::RobotModelLoader robot_model_loader("robot_description");
 
-     const moveit::core::RobotModelPtr& kinematic_model = robot_model_loader.getModel();
-     moveit::core::RobotStatePtr kinematic_state(new moveit::core::RobotState(kinematic_model));
-     kinematic_state->setToDefaultValues();
-     const std::vector<std::string>& joint_names = joint_model_group->getVariableNames();
+    // robot_state::RobotState start_state(*move_group.move->getCurrentState());
+    // const robot_state::JointModelGroup* joint_model_group = move_group.move->getCurrentState()->getJointModelGroup(PLANNING_GROUP);
 
-     boost::scoped_ptr<pluginlib::ClassLoader<planning_interface::PlannerManager>> planner_plugin_loader;
-     planning_interface::PlannerManagerPtr planner_instance;
-     std::string planner_plugin_name;
+    // const moveit::core::RobotModelPtr& kinematic_model = robot_model_loader.getModel();
+    // moveit::core::RobotStatePtr kinematic_state(new moveit::core::RobotState(kinematic_model));
+    // kinematic_state->setToDefaultValues();
 
-     if (!node_handle.getParam("planning_plugin", planner_plugin_name)) {
-         ROS_FATAL_STREAM("Could not find planner plugin name");
-     }
+    // boost::scoped_ptr<pluginlib::ClassLoader<planning_interface::PlannerManager>> planner_plugin_loader;
+    // planning_interface::PlannerManagerPtr planner_instance;
 
-     try {
-       planner_plugin_loader.reset(new pluginlib::ClassLoader<planning_interface::PlannerManager>("moveit_core", "planning_interface::PlannerManager"));
-     } catch (pluginlib::PluginlibException& ex) {
-       ROS_FATAL_STREAM("Exception while creating planning plugin loader " << ex.what());
-     }
+    // try {
+    //     planner_plugin_loader.reset(new pluginlib::ClassLoader<planning_interface::PlannerManager>("moveit_core", "planning_interface::PlannerManager"));
+    // } catch (pluginlib::PluginlibException& ex) {
+    //     ROS_FATAL_STREAM("Exception while creating planning plugin loader " << ex.what());
+    // }
 
-     move_group.setPlanningTime(60*5);
-     move_group.setGoalTolerance(.0001);
+    // move_group.move->setPlanningTime(60*5);
+    // move_group.move->setGoalTolerance(.0001);
 
-     while (ros::ok()) {
-          boost::shared_ptr<armbot_move::move_position const> positions;
-          positions = ros::topic::waitForMessage<armbot_move::move_position>("Position", ros::Duration(0.01));
+    // Получает позицию
+    ros::NodeHandle n;
 
-          // ждем пока придет сообщение
-          if (positions.use_count() == 0) {
-               continue;
-          }
+    ros::ServiceServer service = n.advertiseService<armbot_move::SetPosition::Request, armbot_move::SetPosition::Response>
+                                ("set_position", boost::bind(setPosition, _1, _2));
 
-          armbot_move::move_position position = positions.get()[0];
-          Orientation orientation;
+    ros::Duration(1).sleep();
 
-          geometry_msgs::Pose pose;
-          pose.position.x = position.x;
-          pose.position.y = position.y;
-          pose.position.z = zPositionDefault;
-          pose.orientation.x = orientation.x;
-          pose.orientation.y = orientation.y;
-          pose.orientation.z = orientation.z;
-          pose.orientation.w = orientation.w;
-
-          move_group.setApproximateJointValueTarget(pose,"link_grip");
-          bool success = (move_group.move() == moveit::planning_interface::MoveItErrorCode::SUCCESS);
-
-          ROS_INFO("Visualizing move 1 (pose goal) %s",success?"":"FAILED");
-
-          if (success) {
-              std::cout<<"Start move"<<std::endl;
-              start_state.setFromIK(joint_model_group, pose);
-              move_group.setStartState(start_state);
-
-              std::cout<<"Output : "<<pose.position.x<<"\t"<<pose.position.y<<"\t"<<pose.position.z<<"\t"<<pose.orientation.x
-                                             <<"\t"<<pose.orientation.y<<"\t"<<pose.orientation.z<<"\t"<<pose.orientation.w<<std::endl;
-
-              std::vector<double> joints;
-              joints = move_group.getCurrentJointValues();
-              std::cout<<"Joints : "<<joints.at(0)<<"\t"<<joints.at(1)<<"\t"<<joints.at(2)<<"\t"<<joints.at(3)<<std::endl;
-          }
-
-          //ros::Duration(1).sleep();
-     }
-
-    ros::spinOnce();
+    ros::waitForShutdown();
     return 0;
 }

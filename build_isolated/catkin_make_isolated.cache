@@ -1,0 +1,2 @@
+armbot_description:armbot_move:armbot_moveit_config
+-G Unix Makefiles -DCATKIN_DEVEL_PREFIX=/home/e/ROS/Armbot/devel_isolated -DCMAKE_INSTALL_PREFIX=/home/e/ROS/Armbot/install_isolated
