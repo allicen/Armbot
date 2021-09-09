@@ -1,5 +1,2 @@
-direct 5
 right 6
 left 4
-direct 2
-left 5

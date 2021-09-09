@@ -8,6 +8,22 @@
 #include <vector>
 
 
+int startMoveToPosition(ros::ServiceClient client, armbot_move::SetPosition srv, std::string position, std::vector<std::string> params) {
+    srv.request.position = position;
+    srv.request.x = std::stof(params[1].c_str());
+    srv.request.y = std::stof(params[2].c_str());
+
+    if (client.call(srv)) {
+        ROS_INFO("Result: %s", srv.response.result.c_str());
+    } else {
+        ROS_ERROR("Failed to call service set_position: %s", position.c_str());
+        return 1;
+    }
+
+    return 0;
+}
+
+
 int main(int argc, char**argv) {
     ros::init(argc, argv, "writer");
     
@@ -20,14 +36,12 @@ int main(int argc, char**argv) {
     std::vector<std::string> params;
     std::string param;
     n.getParam("param", param);
-    ROS_INFO("Got parameter : %s", param.c_str());
+    ROS_INFO("Got parameter: %s", param.c_str());
 
     ros::NodeHandle nh;
 
-    ros::ServiceClient client=nh.serviceClient<armbot_move::SetPosition>("set_position");
+    ros::ServiceClient client = nh.serviceClient<armbot_move::SetPosition>("set_position");
     armbot_move::SetPosition srv;
-
-    //ros::Publisher pub = nh.advertise<armbot_move::move_position>("Position", 1000);
 
     std::stringstream data(param);
 
@@ -40,29 +54,20 @@ int main(int argc, char**argv) {
 
     sleep(1);
 
-    srv.request.position = params[0].c_str();
-    srv.request.x = std::stof(params[1].c_str());
-    srv.request.y = std::stof(params[2].c_str());
+    int result = 0;
 
-    if (client.call(srv)) {
-        std::cout<<"Result="<<srv.response.result<<std::endl;
-    } else {
-        std::cout<<"Failed to call service set_position"<<std::endl;
-        return 1;
-    }
+    // Goal position
+    result = startMoveToPosition(client, srv, params[0].c_str(), params);
 
-    // armbot_move::move_position message;
-    // message.position = params[0].c_str();
+    // Button pressed
+    result = startMoveToPosition(client, srv, "button-pressed", params);
 
-    // message.x = std::stof(params[1].c_str());
-    // message.y = std::stof(params[2].c_str());
+    // Button up
+    result = startMoveToPosition(client, srv, params[0].c_str(), params);
 
-
-
-    //pub.publish(message);
     ros::Duration(delay).sleep();
     ros::spinOnce();
     
     ROS_INFO_STREAM("Publishing is finished!\n");
-    return 0;
+    return result;
 }

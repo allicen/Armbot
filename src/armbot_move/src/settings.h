@@ -2,7 +2,8 @@
 #ifndef settings
 #define settings
 
-float zPositionDefault = 0.00479969;
+float zPositionDefault = 0.0166816;
+float zPositionDefaultDown = 0.00264523;
 
 typedef struct GripperOrientationDefault {
     float x = 0.00724986;
