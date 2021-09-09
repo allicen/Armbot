@@ -1,6 +1,5 @@
 #include <ros/ros.h>
 #include <pluginlib/class_loader.h>
-#include <armbot_move/move_position.h>
 #include <armbot_move/SetPosition.h>
 #include <std_msgs/String.h>
 

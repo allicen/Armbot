@@ -1,5 +1,4 @@
 #include <ros/ros.h>
-#include <armbot_move/move_position.h>
 #include <armbot_move/SetPosition.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -28,18 +27,15 @@ int main(int argc, char**argv) {
     ros::init(argc, argv, "writer");
     
     ROS_INFO_STREAM("Writer is ready.");
-    
-    ros::NodeHandle n("~");
-    ros::Publisher p = n.advertise<armbot_move::move_position>("GetPosition", 1000);
-    // ros::Duration(1).sleep();
 
     std::vector<std::string> params;
     std::string param;
+
+    ros::NodeHandle n("~");
     n.getParam("param", param);
     ROS_INFO("Got parameter: %s", param.c_str());
 
     ros::NodeHandle nh;
-
     ros::ServiceClient client = nh.serviceClient<armbot_move::SetPosition>("set_position");
     armbot_move::SetPosition srv;
 
