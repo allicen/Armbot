@@ -143,7 +143,7 @@ add_definitions(-DBOOST_ERROR_CODE_HEADER_ONLY)
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(joint_subscriber src/joint_subscriber.cpp)
+add_executable(joint_subscriber src/jointSubscriber.cpp)
 add_executable(move src/move.cpp)
 add_executable(position src/position.cpp)
 

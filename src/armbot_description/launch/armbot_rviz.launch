@@ -24,6 +24,7 @@
     pkg="robot_state_publisher"
     type="state_publisher" />
 
+  <include file="$(find keyboard_description)/launch/keyboard.launch" />
 
 
 </launch>

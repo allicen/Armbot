@@ -4,9 +4,10 @@
 <p><br /></p>
 <hr>
 <h2>Запустить робота</h2>
-<p>1 терминал: <code>roslaunch armbot_move armbot.rviz.launch</code> (модель)</p>
-<p>2 терминал: <code>roslaunch armbot_move move.rviz.launch</code> (подписчик на движения)</p>
-<p>3 терминал: <code>./scripts/run.sh start</code> (публикатор движений)</p>
+<p>1 терминал: <code>roslaunch armbot_move armbot.rviz.launch</code> (модель робота)</p>
+<p>2 терминал: <code>roslaunch keyboard_description keyboard.launch</code> (модель клавиатуры)</p>
+<p>3 терминал: <code>roslaunch armbot_move move.rviz.launch</code> (подписчик на движения)</p>
+<p>4 терминал: <code>./scripts/run.sh start</code> (публикатор движений)</p>
 <p><br /></p>
 <hr>
 <p><br /></p>

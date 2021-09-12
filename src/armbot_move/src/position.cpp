@@ -24,7 +24,7 @@ int startMoveToPosition(ros::ServiceClient client, armbot_move::SetPosition srv,
 
 
 int main(int argc, char**argv) {
-    ros::init(argc, argv, "writer");
+    ros::init(argc, argv, "position");
     
     ROS_INFO_STREAM("Writer is ready.");
 
