@@ -1,2 +1,2 @@
-right 6
-left 4
+keyEnter 1
+keySpace 1
