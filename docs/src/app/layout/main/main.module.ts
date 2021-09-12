@@ -13,6 +13,7 @@ const routes: Routes = [
   { path: '', component: MainComponent,
     children: [
       { path: '', loadChildren: () => import('../../pages/general/general.module').then(m => m.GeneralModule) },
+      { path: 'ros', loadChildren: () => import('../../pages/ros/ros.module').then(m => m.RosModule) },
       { path: 'launch', loadChildren: () => import('../../pages/launch/launch.module').then(m => m.LaunchModule) },
       { path: 'gazebo', loadChildren: () => import('../../pages/gazebo/gazebo.module').then(m => m.GazeboModule) },
       { path: 'docker', loadChildren: () => import('../../pages/docker/docker.module').then(m => m.DockerModule) },

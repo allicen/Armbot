@@ -1,5 +1,5 @@
 <h1>Docker</h1>
-<p>Официальный образ ROS: https://registry.hub.docker.com/_/ros/</p>
+<p>Официальный образ ROS: <a href="https://registry.hub.docker.com/_/ros/" target="_blank">https://registry.hub.docker.com/_/ros/</a></p>
 <h2>Загрузить docker</h2>
 <p>Собрать контейнер: <code>docker build -t armbot-img -f /home/e/ROS/Armbot/Dockerfile /home/e/ROS/Armbot --network=host --build-arg from=ubuntu:18.04</code></p>
 <p>Сохранить docker-образ в tar-файл:docker <code>docker save armbot-img > /home/e/ROS/Armbot/armbot-img.tar</code></p>
@@ -18,9 +18,9 @@
     -v /home/e/ROS-demo:/workspace \
    --net=host \
    --privileged \
-   --name ros ros-img</code>
+   --name armbot armbot-img</code>
 </pre>
-<p>Зайти в контейнер: <code>sudo docker exec -ti ros bash</code></p>
+<p>Зайти в контейнер: <code>sudo docker exec -ti armbot bash</code></p>
 <p><br /></p>
 
 <h2>Дать права на docker</h2>
@@ -29,5 +29,3 @@
 <p>Добавить пользователя в группу docker: <code>sudo usermod -aG docker $USER</code></p>
 <p>Применить изменения: <code>newgrp docker</code></p>
 <p><br ></p>
-<h2>Запустить документацию</h2>
-<p><code>docker run -d --name docs -p 80:80 docs</code></p>
