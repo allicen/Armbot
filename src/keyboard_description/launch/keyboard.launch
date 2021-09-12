@@ -1,6 +1,3 @@
 <launch>
-    <node
-        name="keyboard"
-        pkg="keyboard_description"
-        type="keyboard" />
+    <node name="keyboard" pkg="keyboard_description" type="keyboard" />
 </launch>
