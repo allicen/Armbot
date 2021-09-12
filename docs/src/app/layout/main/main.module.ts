@@ -8,6 +8,9 @@ import {FooterModule} from "../footer/footer.module";
 import {MatGridListModule} from "@angular/material/grid-list";
 import {MatListModule} from "@angular/material/list";
 import {MatButtonToggleModule} from "@angular/material/button-toggle";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatIconModule} from "@angular/material/icon";
+import {MatInputModule} from "@angular/material/input";
 
 const routes: Routes = [
   { path: '', component: MainComponent,
@@ -37,7 +40,10 @@ const routes: Routes = [
     FooterModule,
     MatGridListModule,
     MatListModule,
-    MatButtonToggleModule
+    MatButtonToggleModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule
   ],
   bootstrap: [MainComponent]
 })
