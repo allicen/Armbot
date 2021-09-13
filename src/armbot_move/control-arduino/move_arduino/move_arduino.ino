@@ -1,4 +1,5 @@
 #include <AccelStepper.h>
+#include <MultiStepper.h>
 #include <Servo.h>
 
 #include <ros.h>
@@ -7,9 +8,19 @@
 #include <std_msgs/String.h>
 
 // 1 joint
-#define Z_STEP_PIN 46
-#define Z_DIR_PIN 48
+#define Z_STEP_PIN   46
+#define Z_DIR_PIN    48
 #define Z_ENABLE_PIN 62
+
+// 2 joint
+#define X_STEP_PIN   54
+#define X_DIR_PIN    55
+#define X_ENABLE_PIN 38
+
+// 3 joint
+#define Y_STEP_PIN   60
+#define Y_DIR_PIN    61
+#define Y_ENABLE_PIN 56
 
 #define SERVO_COUNT 2
 #define JOINT_1_PIN 11
@@ -27,8 +38,16 @@ boolean lastButton = LOW;
 boolean currentButton = LOW;
 boolean ledOn = false;
 
-AccelStepper stepper(1, Z_STEP_PIN, Z_DIR_PIN);
+AccelStepper stepper_z(1, Z_STEP_PIN, Z_DIR_PIN);
+AccelStepper stepper_x(1, X_STEP_PIN, X_DIR_PIN);
+AccelStepper stepper_y(1, Y_STEP_PIN, Y_DIR_PIN);
+
+MultiStepper steppers;
+
 Servo robotServos[SERVO_COUNT];
+
+
+long positions[5]; // 3 ШД и 2 сервопривода
 
 void motorControlSubscriberCallbackJointState(const sensor_msgs::JointState& msg) {
   float joint_1 = msg.position[0];
@@ -54,22 +73,33 @@ void motorControlSubscriberCallbackJointState(const sensor_msgs::JointState& msg
 
 ros::Subscriber<sensor_msgs::JointState> motorControlSubscriberJointState("joint_states", &motorControlSubscriberCallbackJointState);
 
-void setup() {
-  pinMode(Z_STEP_PIN, OUTPUT);
-  pinMode(Z_DIR_PIN, OUTPUT);
-  pinMode(Z_ENABLE_PIN, OUTPUT);
+// Инициализация двигателей
+void initStepper(AccelStepper stepper, int stepPin, int dirPin, int enablePin) {
+  pinMode(stepPin, OUTPUT);
+  pinMode(dirPin, OUTPUT);
+  pinMode(enablePin, OUTPUT);
 
   stepper.setPinsInverted(false, false, true);
+  digitalWrite(enablePin, LOW);
+
+  stepper.move(0);
+  stepper.setMaxSpeed(speed);
+  stepper.setSpeed(speed);
+}
+
+void setup() {
+  initStepper(stepper_z, Z_STEP_PIN, Z_DIR_PIN, Z_ENABLE_PIN);
+  initStepper(stepper_x, X_STEP_PIN, X_DIR_PIN, X_ENABLE_PIN);
+  initStepper(stepper_y, Y_STEP_PIN, Y_DIR_PIN, Y_ENABLE_PIN);
+
+  steppers.addStepper(stepper_z);
+  steppers.addStepper(stepper_x);
+  steppers.addStepper(stepper_y);
 
   pinMode(buttonPin, INPUT);
   pinMode(ledPin, OUTPUT);
 
-  digitalWrite(Z_ENABLE_PIN, LOW);
-
   Serial.begin(115200);
-
-  stepper.move(0);
-  stepper.setMaxSpeed(speed);
 
   nodeHandle.getHardware()->setBaud(115200);
   nodeHandle.initNode();
@@ -81,8 +111,6 @@ void loop() {
 }
 
 void start() {
-  stepper.setSpeed(speed); // скорость в секунду
-  
   buttonPressed();
   runStepper();
 }
@@ -91,7 +119,11 @@ void runStepper() {
   if (ledOn) {
 
     while (ledOn) {
-      stepper.runSpeed();
+      positions[0] = -100; // Пример
+      positions[1] = 100;
+      
+      steppers.moveTo(positions);
+      steppers.runSpeedToPosition();
       buttonPressed();
     }
   }

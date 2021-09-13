@@ -1,6 +1,7 @@
 <h1>Запуск робота</h1>
 <h2>Запустить документацию</h2>
-<p><code>docker run -d --name docs -p 80:80 docs</code></p>
+<p>Собрать контейнер: <code>docker build -t armbot .</code></p>
+<p>Запустить контейнер: <code>docker run -d --name docs -p 80:80 docs</code></p>
 <p><br /></p>
 <h2>Запустить робота</h2>
 <p>1 терминал: <code>roslaunch armbot_move armbot.rviz.launch</code> (модель)</p>
