@@ -6,7 +6,9 @@ case "$1" in
 
       # Заходит в docker
       if [[ "$2" = "docker" ]]; then
-      sudo docker exec --tty -i armbot bash -c "cd workspace && sudo chmod +x scripts/*sh && ./scripts/get_data.sh"
+      sudo docker exec --tty -i armbot bash -c "cd workspace && sudo chmod +x scripts/*sh && 
+                                                sed -i -e 's/\r$//' scripts/run.sh && 
+                                                ./scripts/get_data.sh"
       else
         sudo chmod +x ./scripts/*sh
         ./scripts/get_data.sh

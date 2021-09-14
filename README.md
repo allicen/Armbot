@@ -1,6 +1,9 @@
 <h1>Armbot</h1>
 <h2>Запустить документацию</h2>
-<p><code>docker run -d --name docs -p 80:80 docs</code></p>
+<p>Дать права на запуск скриптов: <code>sudo chmod +x scripts/*sh</code></p>
+<p>Исправить ошибку переда запуском скриптов (преобразование окончаний строк из формата DOS в формат UNIX): <code>sed -i -e 's/\r$//' scripts/run_docs_docker.sh</code>, <code>sed -i -e 's/\r$//' scripts/run_armbot_docker.sh</code>, <code></code></p>
+<p>Запустить docker-контейнер с документацией: <code>./scripts/run_docs_docker.sh</code></p>
+<p>Запустить docker-контейнер с окружением для робота: <code>./scripts/run_armbot_docker.sh</code></p>
 <p><br /></p>
 <hr>
 <h2>Запустить робота</h2>

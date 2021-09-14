@@ -28,4 +28,8 @@
 <p>Создать группу docker: <code>sudo groupadd docker</code></p>
 <p>Добавить пользователя в группу docker: <code>sudo usermod -aG docker $USER</code></p>
 <p>Применить изменения: <code>newgrp docker</code></p>
-<p><br ></p>
+<p><br /></p>
+
+<h2>Документация</h2>
+<p>Собрать контейнер: <code>docker build -t armbot .</code></p>
+<p>Запустить контейнер: <code>docker run -d --rm --name docs -p 80:80 docs</code></p>

@@ -1,13 +1,57 @@
-<h1>Запуск робота</h1>
-<h2>Запустить документацию</h2>
-<p>Собрать контейнер: <code>docker build -t armbot .</code></p>
-<p>Запустить контейнер: <code>docker run -d --name docs -p 80:80 docs</code></p>
+<h1>Инструкция</h1>
+<h2>1. Настройка окружения</h2>
+<h3>Вариант 1. Собрать docker-образ</h3>
+<p>Собрать docker-образ, если есть доступ к интернету.</p>
+<p>Документация:</p>
+<pre><code>cd docs</code>
+<code>docker build -t docs-img .</code>
+</pre>
+<p>Робот:</p>
+<pre><code>docker build -t armbot-img . --network=host --build-arg from=ubuntu:18.04</code></pre>
 <p><br /></p>
-<h2>Запустить робота</h2>
-<p>1 терминал: <code>roslaunch armbot_move armbot.rviz.launch</code> (модель)</p>
-<p>2 терминал: <code>roslaunch armbot_move move.rviz.launch</code> (подписчик на движения)</p>
-<p>3 терминал: <code>./scripts/run.sh start</code> или <code>./scripts/run.sh start docker</code> (публикатор движений)</p>
+
+<h3>Вариант 2. Загрузить docker-образ</h3>
+<p>Загрузить docker-образ с флешки. Перед этим нужно собрать docker-образ на компьютере с доступом в интернет.</p>
+<p>Документация: <code>docker load < docs-img.tar</code></p>
+<p>Робот: <code>docker load < armbot-img.tar</code></p>
 <p><br /></p>
+
+<h2>2. Запустить окружение</h2>
+<p>1. Дать права на запуск скриптов: <code>sudo chmod +x scripts/*sh</code></p>
+<p>1*. Исправить ошибку перед запуском скриптов (преобразование окончаний строк из формата DOS в формат UNIX): <code>sed -i -e 's/\r$//' scripts/run_docs_docker.sh</code>, <code>sed -i -e 's/\r$//' scripts/run_armbot_docker.sh</code>, <code></code></p>
+<p>2. Запустить docker-контейнер с документацией: <code>./scripts/run_docs_docker.sh</code></p>
+<p>3. Запустить docker-контейнер с окружением для робота: <code>./scripts/run_armbot_docker.sh</code></p>
+<p>* - опционально</p>
+<p><br /></p>
+
+<h2>3. Запустить робота</h2>
+<p>Открыть скетч <code>/armbot_move/control-arduino/move_arduino/move_arduino.ino</code> в Arduino IDE. Загрузить скетч.</p>
+<p>1 терминал:</p>
+<ul>
+  <li>Зайти в docker-контейнер <code>sudo docker exec -ti armbot bash</code></li>
+  <li>Перейти в рабочую директорию <code>cd workspace</code></li>
+  <li>Собрать проект <code>catkin_make</code> (если будут ошибки сборки, можно попробовать собрать пакеты изолированно <code>catkin_make_isolated</code>)</li>
+  <li>Прописать пути <code>source devel/setup.bash</code></li>
+  <li>Запустить модель робота <code>roslaunch armbot_move armbot.rviz.launch</code></li>
+</ul>
+<p>2 терминал:</p>
+<ul>
+  <li>Зайти в docker-контейнер <code>sudo docker exec -ti armbot bash</code></li>
+  <li>Перейти в рабочую директорию <code>cd workspace</code></li>
+  <li>Прописать пути <code>source devel/setup.bash</code></li>
+  <li>Запустить подписчик на движения <code>roslaunch armbot_move move.rviz.launch</code></li>
+</ul>
+<p>3 терминал:</p>
+<ul>
+  <li>Запустить публикацию движений с докером <code>./scripts/run.sh start docker</code> (без докера <code>./scripts/run.sh start</code>)</li>
+</ul>
+<p>4 терминал **:</p>
+<ul>
+  <li>Запустить подписчик движений на Arduino <code>rosrun rosserial_python serial_node.py _port:=/dev/ttyUSB0 _baud:=115200</code></li>
+</ul>
+<p>** - пока не реализовано</p>
+<p><br /></p>
+
 <h2>Описание команд</h2>
 <p>Файл command_description.txt. Пример описания команды:</p>
 <pre><code>direct:0.2872 4.83407e-10

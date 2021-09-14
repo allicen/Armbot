@@ -99,7 +99,7 @@ void setup() {
   pinMode(buttonPin, INPUT);
   pinMode(ledPin, OUTPUT);
 
-  Serial.begin(115200);
+  //Serial.begin(57600);
 
   nodeHandle.getHardware()->setBaud(115200);
   nodeHandle.initNode();

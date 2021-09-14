@@ -1,3 +1,5 @@
+#!/bin/bash
+
 xhost +local:docker || true
 docker run  -it --rm \
         -e "DISPLAY" \

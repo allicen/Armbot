@@ -3,8 +3,8 @@
   <div class="container">
     <section>
       <mat-button-toggle-group>
-        <mat-button-toggle routerLink="/">
-          Главная
+        <mat-button-toggle routerLink="/" class="main-button">
+          Инструкция
         </mat-button-toggle>
         <mat-button-toggle *ngFor="let i of objectKeys(selectors)" routerLink="/{{i}}">
           {{selectors[i]}}
