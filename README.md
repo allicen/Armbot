@@ -1,49 +1,19 @@
 <h1>Armbot</h1>
-<h2>Запустить документацию</h2>
-<p>Дать права на запуск скриптов: <code>sudo chmod +x scripts/*sh</code></p>
-<p>Исправить ошибку переда запуском скриптов (преобразование окончаний строк из формата DOS в формат UNIX): <code>sed -i -e 's/\r$//' scripts/run_docs_docker.sh</code>, <code>sed -i -e 's/\r$//' scripts/run_armbot_docker.sh</code>, <code></code></p>
-<p>Запустить docker-контейнер с документацией: <code>./scripts/run_docs_docker.sh</code></p>
-<p>Запустить docker-контейнер с окружением для робота: <code>./scripts/run_armbot_docker.sh</code></p>
+<h3>Запустить документацию</h3>
+<p>1. Установить Docker с официального сайта или запустить docker-сервер командой <code>dockerd</code>.</p>
+<p>2. Перейти в папку с документацией: <code>cd docs</code>.</p>
+<p>3. Собрать документацию в docker-контейнер: <code>docker build -t docs-img .</code> (нужен доступ к интернету).</p>
+<p>4. Сохранить docker-образ в папку docker-img: <code>docker save docs-img > docker-img/docs-img.tar</code>.</p>
+<p>5. Заархивировать docker-образ: <code>tar -zcvf docker-img/docs-img.tar.gz docker-img/docs-img.tar</code>.</p>
+<p>6. Скачать архивы docs-img.tar.gz и armbot-img.tar.gz на флешку. Скопировать на целевую машину.</p>
+<p>7. Разархивировать docs-img.tar.gz: <code>tar -xvf docs-img.tar.gz</code>.</p>
+<p>8. Загрузить docker-образ документации: <code>docker load < docs-img.tar</code></p>
+<p>9. Перейти в папку проекта Armbot.</p>
+<p>10. Дать права на запуск скриптов: <code>sudo chmod +x scripts/*sh</code>.</p>
+<p>11. Исправить ошибку переда запуском скриптов (преобразование окончаний строк из формата DOS в формат UNIX): 
+<code>sed -i -e 's/\r$//' scripts/run_docs_docker.sh</code>.</p>
+<p>12. Запустить docker-контейнер с документацией: <code>./scripts/run_docs_docker.sh</code></p>
+<p>13. Открыть документацию в браузере по адресу <code>localhost</code>.</p>
 <p><br /></p>
-<hr>
-<h2>Запустить робота</h2>
-<p>1 терминал: <code>roslaunch armbot_move armbot.rviz.launch</code> (модель робота)</p>
-<p>2 терминал: <code>roslaunch keyboard_description keyboard.launch</code> (модель клавиатуры)</p>
-<p>3 терминал: <code>roslaunch armbot_move move.rviz.launch</code> (подписчик на движения)</p>
-<p>4 терминал: <code>./scripts/run.sh start</code> (публикатор движений)</p>
-<p><br /></p>
-<hr>
-<p><br /></p>
-<p>Собрать контейнер: <code>docker build -t armbot-img -f /home/e/ROS/Armbot/Dockerfile /home/e/ROS/Armbot --network=host --build-arg from=ubuntu:18.04</code></p>
-<p>Сохранить docker-образ в tar-файл:docker <code>docker save armbot-img > /home/e/ROS/Armbot/armbot-img.tar</code></p>
-<p>Запаковать в архив: <code>tar -zcvf armbot-img.tar.gz /home/e/ROS/Armbot/armbot-img.tar</code></p>
-<p>Распаковать из архива: <code>tar -xvf armbot-img.tar.gz</code></p>
-<p>Загрузить docker-образ с помощью команды: <code>docker load < /home/e/ROS/Armbot/armbot-img.tar</code></p>
-
-<h3>Configure your catkin workspace (MoveIt!)</h3>
-<pre>
-catkin config --extend /opt/ros/melodic --cmake-args -DCMAKE_BUILD_TYPE=Release
-catkin build
-source devel/setup.bash
-</pre>
-
-<h3>Linux</h3>
-<p>Удалить папку с содержимым: <code>rm -r devel</code></p>
-
-<h3>Дать права на docker</h3>
-<p>Дать права на выполнение скриптов: <code>sudo chmod +x docker/*sh</code></p>
-<p>Создать группу docker: <code>sudo groupadd docker</code></p>
-<p>Добавить пользователя в группу docker: <code>sudo usermod -aG docker $USER</code></p>
-<p>Применить изменения: <code>newgrp docker</code></p>
-
-<h3>Передача данных</h3>
-<p>Запуск из корня проекта (папка Armbot).</p>
-<p>Без докера: <code>./scripts/run.sh start</code></p>
-<p>С докером: <code>./scripts/run.sh start docker</code></p>
-<p><br /></p>
-<h3>Документация</h3>
-<p>Папка <code>docs</code>.</p>
-<p>Собрать docker: <code>docker build -t docs .</code></p>
-<p>Запустить docker: <code>docker run -d --name docs -p 80:80 docs</code></p>
-<p>Загрузить образ docker: <code>docker load < docker-img/docs.tar</code></p>
-<p>Перейти в браузер: <code>http://localhost:80</code></p>
+<h3>Запустить робота</h3>
+<p>Как запустить робота, описано в документации во вкладке "Инструкция".</p>
