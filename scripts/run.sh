@@ -1,6 +1,9 @@
 #!/bin/bash
 
-pidFile="$(pwd)/scripts/run.pid"
+sed -i -e 's/\r$//' scripts/functions.sh
+source ./scripts/functions.sh
+
+pidFile="$(getPidFile)"
 
 function killProcess {
 
@@ -8,26 +11,28 @@ function killProcess {
     local re='^[0-9]+$'
 
     if ! [[ $procPid =~ $re ]] ; then
-       echo "Error: PID must be a number" >&2; exit 1
+       printLog "Ошибка! PID должен быть числом"
+       exit 1
     fi
 
     # Убить процесс и всех потомков
-    kill -- -"$(ps -o pgid= $procPid | grep -o [0-9]*)"
+    kill -- -"$(ps -o pgid= "$procPid" | grep -o [0-9]*)"
 
     # удалить файл, где записан PID
     rm "$pidFile"
 
-    echo "Процесс остановлен."
+    printLog "Процесс остановлен."
 }
 
 case "$1" in
     start)
-      echo "Запускаю процесс..."
+      printLog "Запускаю процесс..."
       echo $$ > "$pidFile"
 
       # Заходит в docker
       if [[ "$2" = "docker" ]]; then
-      sudo docker exec --tty -i armbot bash -c "cd workspace && sudo chmod +x scripts/*sh && 
+        printLog "Запускаю docker..."
+        sudo docker exec --tty -i armbot bash -c "cd workspace && sudo chmod +x scripts/*sh &&
                                                 sed -i -e 's/\r$//' scripts/get_data.sh &&
                                                 ./scripts/get_data.sh $3 $4"
       else
@@ -37,11 +42,11 @@ case "$1" in
       ;;
 
     stop)
-      echo "Останавливаю процесс..."
+      printLog "Останавливаю процесс..."
       if [ -f "$pidFile" ]; then
             killProcess
         else
-            echo "Файл с записью PID не существует"
+            printLog "Файл с записью PID не существует"
         fi
     ;;
 

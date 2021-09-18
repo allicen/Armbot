@@ -2,13 +2,8 @@
 
 commandsFile="$(pwd)/data/commands.txt"
 commandsDescriptionFile="$(pwd)/data/command_description.txt"
-pidFile="$(pwd)/scripts/run.pid"
 
-echo "========="
-echo "Получены адреса файлов:"
-echo "1. $1"
-echo "2. $2"
-echo "========="
+source ./scripts/functions.sh
 
 function getPath {
   firstChar=$(echo "$1" | cut -c1-1)
@@ -29,6 +24,8 @@ function readArgument {
    fi
 }
 
+printLog "Получены адреса файлов: 1) $1, 2) $2"
+
 commandsFirstArg=$(readArgument "$1" 'commands')
 commandsSecondArg=$(readArgument "$2" 'commands')
 descriptionFirstArg=$(readArgument "$1" 'description')
@@ -46,9 +43,8 @@ elif [[ $descriptionSecondArg != NULL && $(getPath "$descriptionSecondArg") != N
   commandsDescriptionFile="$(getPath "$descriptionSecondArg")"
 fi
 
-echo "Загружено описание команд из файла  '$commandsDescriptionFile'"
-echo "Загружена последовательность выполнения команд из файла '$commandsFile'"
-echo "========="
+printLog "Загружено описание команд из файла '$commandsDescriptionFile'"
+printLog "Загружена последовательность выполнения команд из файла '$commandsFile'"
 
 declare -A commandsMap
 
@@ -71,5 +67,13 @@ do
 
 done < "$commandsFile"
 
+printLog "Заканчиваю работу..."
+
 # Удалиить файл c PID после завершения процесса
-rm "$pidFile"
+rm "$(getPidFile)"
+
+if [ -f "$(getPidFile)" ]; then
+    printLog "PID-файл не был удален."
+else
+    printLog "PID-файл успешно удален."
+fi
