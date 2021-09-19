@@ -5,7 +5,11 @@
 #include <ros.h>
 #include <std_msgs/Int32.h>
 #include <sensor_msgs/JointState.h>
+#include <ArduinoHardware.h>
 #include <std_msgs/String.h>
+#include <std_srvs/Empty.h>
+
+#include "button.h"
 
 // 1 joint (шаговый двигатель)
 #define Z_STEP_PIN   46
@@ -42,12 +46,17 @@
 std_msgs::String str;
 ros::NodeHandle nodeHandle;
 
-// Кнопка и светодиод
-int buttonPin = 16;
-int ledPin = 17;
-boolean lastButton = LOW;
-boolean currentButton = LOW;
-boolean ledOn = false;
+
+// Кнопка включения и светодиод
+#define BUTTON_ON_PIN 16
+#define LED_ON_PIN 17
+
+// Кнопка для записи координат
+#define BUTTON_PUBLISHER_PIN 18
+
+Button buttonOn(BUTTON_ON_PIN);
+Button buttonPublisher(BUTTON_PUBLISHER_PIN);
+boolean buttonOnPressed = false;
 
 AccelStepper stepper_z(1, Z_STEP_PIN, Z_DIR_PIN);
 AccelStepper stepper_x(1, X_STEP_PIN, X_DIR_PIN);
@@ -84,8 +93,7 @@ void stepperMoveTo (AccelStepper stepper, long stepCount) {
     stepper.moveTo(stepCount);
     while (stepper.currentPosition() != stepCount) {
         stepper.run();
-        buttonPressed();
-        if (!ledOn) {
+        if (!buttonOnPressed) {
             break;
         }
     }
@@ -94,7 +102,7 @@ void stepperMoveTo (AccelStepper stepper, long stepCount) {
 // Зспуск двигателя без ускорения
 void stepperRun (AccelStepper stepper, long stepCount) {
     stepper.setSpeed(SPEED);
-    buttonPressed();
+    //buttonPressed();
     stepper.runSpeed();
 }
 
@@ -105,7 +113,7 @@ void writeMotors() {
     for (int i = 0; i < MOTOR_STEP_COUNT; i++) {
       long stepCount;
       if (i == 0) {
-        nodeHandle.logwarn("test ----- ");
+        //nodeHandle.logwarn("test ----- ");
         stepCount = targetJointPositions[0] * RADIAN * STEP_IN_ANGLE;
 
         // с ускорением
@@ -115,7 +123,7 @@ void writeMotors() {
         // без ускорения
         stepperRun(stepper_z, stepCount);
 
-        nodeHandle.logwarn("test ----- end ");
+        //nodeHandle.logwarn("test ----- end ");
       }
     }
 
@@ -184,16 +192,23 @@ void motorControlSubscriberCallbackJointState(const sensor_msgs::JointState& msg
     targetJointPositions[i] = joints_correct[i];
   }
 
-  buttonPressed();
-
   // записываем на моторы только при нажатой кнопке
-  if (ledOn) {
-     writeMotors();
+  if (buttonOn.wasPressed()) {
+    buttonOnPressed = !buttonOnPressed;
   }
+
+  if (buttonOnPressed) {
+    if (buttonPublisher.wasPressed()) {
+       // Тут сделать сохранение координат
+    }
+    
+    writeMotors();
+  }
+
+  digitalWrite(LED_ON_PIN, buttonOnPressed);
 }
 
 ros::Subscriber<sensor_msgs::JointState> motorControlSubscriberJointState("joint_states", &motorControlSubscriberCallbackJointState);
-
 
 
 // Инициализация двигателей
@@ -221,9 +236,7 @@ void setup() {
   steppers.addStepper(stepper_x);
   steppers.addStepper(stepper_y);
 
-  pinMode(buttonPin, INPUT);
-  pinMode(ledPin, OUTPUT);
-
+  pinMode(LED_ON_PIN, OUTPUT);
 
   // Инициализировать сервоприводы
   for (unsigned int i = 0; i < SERVO_COUNT; i++) {
@@ -241,34 +254,12 @@ void loop() {
 }
 
 //void runStepper() {
-//  if (ledOn) {
+//  if (buttonOnPressed) {
 //
-//    while (ledOn) {
+//    while (buttonOnPressed) {
 //      steppers.moveTo(positions);
 //      steppers.runSpeedToPosition();
 //      buttonPressed();
 //    }
 //  }
 //}
-
-// стабилизация нажатия на кнопку
-boolean debounce (boolean last) {
-  boolean current = digitalRead(buttonPin);
-  if (last != current) {
-    delay(5);
-    current = digitalRead(buttonPin);
-  }
-
-  return current;
-}
-
-// обработка нажатия на кнопку
-void buttonPressed () {
-    currentButton = debounce(lastButton);
-    if (currentButton == HIGH && lastButton == LOW) {
-      ledOn = !ledOn;
-    }
-
-    lastButton = currentButton;
-    digitalWrite(ledPin, ledOn);
-}

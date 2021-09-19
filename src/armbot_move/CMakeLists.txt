@@ -64,6 +64,7 @@ find_package(Eigen3 REQUIRED)
 add_service_files(
    FILES
    SetPosition.srv
+   SavePosition.srv
 )
 
 ## Generate actions in the 'action' folder
