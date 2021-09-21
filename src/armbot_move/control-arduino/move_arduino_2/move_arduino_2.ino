@@ -5,7 +5,7 @@
 #include <ros.h>
 #include <std_msgs/Int32.h>
 #include <sensor_msgs/JointState.h>
-#include <ArduinoHardware.h>
+//#include <ArduinoHardware.h>
 #include <std_msgs/String.h>
 #include <std_srvs/Empty.h>
 
@@ -43,9 +43,8 @@
 // 200 шагов * 5,18 передаточное отношение * 16 микрошаг / 360 градусов
 #define STEP_IN_ANGLE 46
 
-std_msgs::String str;
+std_msgs::String savePointMessage;
 ros::NodeHandle nodeHandle;
-
 
 // Кнопка включения и светодиод
 #define BUTTON_ON_PIN 16
@@ -200,6 +199,7 @@ void motorControlSubscriberCallbackJointState(const sensor_msgs::JointState& msg
   if (buttonOnPressed) {
     if (buttonPublisher.wasPressed()) {
        // Тут сделать сохранение координат
+       nodeHandle.logwarn("button pressed process .......");
     }
     
     writeMotors();
@@ -246,6 +246,14 @@ void setup() {
   nodeHandle.getHardware()->setBaud(115200);
   nodeHandle.initNode();
   nodeHandle.subscribe(motorControlSubscriberJointState);
+
+  ros::ServiceClient<std_srvs::Empty::Request, std_srvs::Empty::Response> savePointClient("save_point");
+  nodeHandle.serviceClient(savePointClient);
+  std_srvs::Empty srv;
+
+//  if (savePointClient.call(srv)) {
+//    nodeHandle.logwarn("call service process....";
+//  }
 }
 
 void loop() {

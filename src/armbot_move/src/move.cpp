@@ -1,6 +1,7 @@
 #include <ros/ros.h>
 #include <pluginlib/class_loader.h>
 #include <armbot_move/SetPosition.h>
+#include <armbot_move/SavePosition.h>
 #include <std_msgs/String.h>
 
 #include <moveit/move_group_interface/move_group_interface.h>
@@ -65,6 +66,12 @@ bool setPosition(armbot_move::SetPosition::Request &req,
 }
 
 
+bool savePosition(armbot_move::SavePosition::Request &req, armbot_move::SavePosition::Response &res) {
+    ROS_INFO("get signal from arduino process .....");
+    return true;
+}
+
+
 
 int main(int argc, char *argv[]) {
     ROS_INFO("start:");
@@ -107,8 +114,11 @@ int main(int argc, char *argv[]) {
     // Получает позицию
     ros::NodeHandle n;
 
-    ros::ServiceServer service = n.advertiseService<armbot_move::SetPosition::Request, armbot_move::SetPosition::Response>
+    ros::ServiceServer setPositionService = n.advertiseService<armbot_move::SetPosition::Request, armbot_move::SetPosition::Response>
                                 ("set_position", boost::bind(setPosition, _1, _2, move_group, start_state, joint_model_group));
+
+    // Получает сохранение позиции
+    ros::ServiceServer savePositionService = n.advertiseService ("save_position", savePosition);
 
     ros::Duration(1).sleep();
 
