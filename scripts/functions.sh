@@ -1,6 +1,7 @@
 #!/bin/bash
 
-logFile="$(pwd)/logs/log-$(date +%d-%m-%Y).log"
+logPath="$(pwd)/logs/"
+logFile="log-$(date +%d-%m-%Y).log"
 pidFile="$(pwd)/scripts/run.pid"
 
 function dateTimePrint {
@@ -10,7 +11,18 @@ function dateTimePrint {
 }
 
 function printLog {
-    printf "%s%s\n" "$(dateTimePrint)" "$1" >> "$logFile"
+
+    if ! [[ -d "$logPath" ]]; then
+        mkdir -p "$logPath"
+    fi
+
+
+    if ! [[ -e "$logPath$logFile" ]] ; then
+        cd "$logPath"
+        > "$logFile"
+    fi
+
+    printf "%s%s\n" "$(dateTimePrint)" "$1" >> "$logPath$logFile"
 }
 
 function getPidFile {
