@@ -3,11 +3,10 @@
 #include <Servo.h>
 
 #include <ros.h>
-#include <std_msgs/Int32.h>
+//#include <std_msgs/Int32.h>
 #include <sensor_msgs/JointState.h>
 //#include <ArduinoHardware.h>
 #include <std_msgs/String.h>
-#include <std_srvs/Empty.h>
 
 #include "button.h"
 
@@ -85,6 +84,11 @@ long positions[3] = {0, 0, 0};
 
 
 /////////// end
+
+
+std_msgs::String str_msg;
+ros::Publisher chatter("save_position", &str_msg);
+char message[13] = "save";
 
 // Блокирующая функция, которая работает только с ускорением (!!!!!)
 // Эта функция, скорее всего, не подойдет (тк блокирующая)
@@ -178,7 +182,7 @@ void motorControlSubscriberCallbackJointState(const sensor_msgs::JointState& msg
         dtostrf(joint_4, 1, 5, joint_4_current);
         dtostrf(joint_grip, 1, 5, joint_grip_current);
 
-        nodeHandle.logerror("==============");
+        nodeHandle.logerror("==============1");
         nodeHandle.logwarn(joint_1_current);
         nodeHandle.logwarn(joint_2_current);
         nodeHandle.logwarn(joint_3_current);
@@ -198,8 +202,10 @@ void motorControlSubscriberCallbackJointState(const sensor_msgs::JointState& msg
 
   if (buttonOnPressed) {
     if (buttonPublisher.wasPressed()) {
-       // Тут сделать сохранение координат
-       nodeHandle.logwarn("button pressed process .......");
+       nodeHandle.logwarn("Button pressed save process .......");
+
+       str_msg.data = message;
+       chatter.publish( &str_msg );
     }
     
     writeMotors();
@@ -209,7 +215,6 @@ void motorControlSubscriberCallbackJointState(const sensor_msgs::JointState& msg
 }
 
 ros::Subscriber<sensor_msgs::JointState> motorControlSubscriberJointState("joint_states", &motorControlSubscriberCallbackJointState);
-
 
 // Инициализация двигателей
 void initStepper(AccelStepper stepper, int stepPin, int dirPin, int enablePin) {
@@ -228,6 +233,7 @@ void initStepper(AccelStepper stepper, int stepPin, int dirPin, int enablePin) {
 
 
 void setup() {
+  
   initStepper(stepper_z, Z_STEP_PIN, Z_DIR_PIN, Z_ENABLE_PIN);
   initStepper(stepper_x, X_STEP_PIN, X_DIR_PIN, X_ENABLE_PIN);
   initStepper(stepper_y, Y_STEP_PIN, Y_DIR_PIN, Y_ENABLE_PIN);
@@ -247,16 +253,12 @@ void setup() {
   nodeHandle.initNode();
   nodeHandle.subscribe(motorControlSubscriberJointState);
 
-  ros::ServiceClient<std_srvs::Empty::Request, std_srvs::Empty::Response> savePointClient("save_point");
-  nodeHandle.serviceClient(savePointClient);
-  std_srvs::Empty srv;
-
-//  if (savePointClient.call(srv)) {
-//    nodeHandle.logwarn("call service process....";
-//  }
+  nodeHandle.advertise(chatter);
+  
+  nodeHandle.loginfo("Startup complete");
 }
 
-void loop() {
+void loop() {  
   nodeHandle.spinOnce();
   delay(1);
 }
