@@ -6,6 +6,8 @@
 #include <armbot_move/SavePosition.h>
 #include <std_msgs/String.h>
 
+#include <tf/transform_listener.h>
+
 #include <moveit/move_group_interface/move_group_interface.h>
 #include <moveit/planning_scene_interface/planning_scene_interface.h>
 #include <moveit/robot_model_loader/robot_model_loader.h>
@@ -17,16 +19,54 @@
 #include <iostream>
 #include <math.h> 
 #include <stdio.h>
+#include <string>
+#include <fstream>
 
 #include "MoveOperationClass.hpp"
 #include "settings.hpp"
 
 
 void savePosition(const std_msgs::String::ConstPtr& msg){
-  ROS_INFO("get signal from arduino process .....");
-  ROS_INFO("I heard: [%s]", msg->data.c_str());
+    ROS_INFO("Get command: [%s]", msg->data.c_str());
 
-  return;
+    tf::TransformListener listener;
+
+    tf::StampedTransform transform;
+    try{
+         listener.waitForTransform("/link_grip","/base_link", ros::Time(), ros::Duration(5.0));
+         listener.lookupTransform("/link_grip", "/base_link", ros::Time(), transform);
+         auto x = std::to_string(transform.getOrigin().x());
+         auto y = std::to_string(transform.getOrigin().y());
+         auto z = std::to_string(transform.getOrigin().z());
+
+         ROS_INFO("Input command name:");
+         std::string commandName;
+         std::cin >> commandName;
+
+         ROS_INFO("commandName .....%s", commandName.c_str());
+         ROS_INFO("X .....%s", x.c_str());
+         ROS_INFO("Y .....%s", y.c_str());
+         ROS_INFO("Z .....%s", z.c_str());
+
+         std::ifstream iff(commandDescriptionFile);
+         if (iff.bad() == true) {
+            ROS_ERROR("File is not exist");
+         } else {
+             std::ofstream out;
+             out.open(commandDescriptionFile, std::ios::app);
+             std::string command = "keyEnter:" + commandName + " " + x + " " + y + " " + z;
+
+             ROS_INFO("save command .....%s", command.c_str());
+             out << command;
+             out.close();
+         }
+
+    } catch (tf::TransformException ex){
+        ROS_ERROR("%s",ex.what());
+        ros::Duration(1.0).sleep();
+    }
+
+    return;
 }
 
 bool setPosition(armbot_move::SetPosition::Request &req, 
@@ -119,10 +159,9 @@ int main(int argc, char *argv[]) {
     ros::ServiceServer setPositionService = n.advertiseService<armbot_move::SetPosition::Request, armbot_move::SetPosition::Response>
                                 ("set_position", boost::bind(setPosition, _1, _2, move_group, start_state, joint_model_group));
 
-    ros::Duration(1).sleep();
-
     ros::Subscriber savePositionSubscriber = n.subscribe("save_position", 1000, savePosition);
 
+    ros::Duration(1).sleep();
     ros::waitForShutdown();
     return 0;
 }
