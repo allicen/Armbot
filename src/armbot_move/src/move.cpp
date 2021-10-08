@@ -29,17 +29,65 @@
 char FILENAME[20] = "move.cpp";
 LogClass logs;
 
+
 bool isEmpty(std::ifstream& file) {
     return file.peek() == std::ifstream::traits_type::eof();
 }
 
-void savePosition(const std_msgs::String::ConstPtr& msg){
-    ROS_INFO("Get command: [%s]", msg->data.c_str());
 
-    char log[100];
-    strcpy(log, "Get command: ");
-    strcpy(log, msg->data.c_str());
+/// Logs Start ///
+void logSimple(const char* logText, const char* data) {
+    char log[255];
+    strcpy(log, logText);
+    strcat(log, data);
     logs.writeLog(log, FILENAME);
+}
+
+void logGetCoordinates(const std::string* x, const std::string* y, const std::string* z) {
+    char log[255];
+    strcpy(log, "Coordinates obtained for saving: x=");
+    strcat(log, x->c_str());
+    strcat(log, ", y=");
+    strcat(log, y->c_str());
+    strcat(log, ", z=");
+    strcat(log, z->c_str());
+    logs.writeLog(log, FILENAME);
+}
+
+void logPrintPose(const geometry_msgs::Pose pose) {
+    char log[255];
+    strcpy(log, "Get pose: position_X=");
+    strcat(log, boost::lexical_cast<std::string>(pose.position.x).c_str());
+    strcat(log, ", position_Y=");
+    strcat(log, boost::lexical_cast<std::string>(pose.position.y).c_str());
+    strcat(log, ", position_Z=");
+    strcat(log, boost::lexical_cast<std::string>(pose.position.z).c_str());
+    strcat(log, ", orientation_X=");
+    strcat(log, boost::lexical_cast<std::string>(pose.orientation.x).c_str());
+    strcat(log, ", orientation_Y=");
+    strcat(log, boost::lexical_cast<std::string>(pose.orientation.y).c_str());
+    strcat(log, ", orientation_Z=");
+    strcat(log, boost::lexical_cast<std::string>(pose.orientation.z).c_str());
+    logs.writeLog(log, FILENAME);
+}
+
+void logPrintJoints(const std::vector<double> joints) {
+    char log[255];
+    strcpy(log, "Get joints value: 1=");
+    strcat(log, boost::lexical_cast<std::string>(joints.at(0)).c_str());
+    strcat(log, ", 2=");
+    strcat(log, boost::lexical_cast<std::string>(joints.at(1)).c_str());
+    strcat(log, ", 3=");
+    strcat(log, boost::lexical_cast<std::string>(joints.at(2)).c_str());
+    strcat(log, ", 4=");
+    strcat(log, boost::lexical_cast<std::string>(joints.at(3)).c_str());
+    logs.writeLog(log, FILENAME);
+}
+/// Logs End ///
+
+
+void savePosition(const std_msgs::String::ConstPtr& msg){
+    logSimple("Get command: ", msg->data.c_str());
 
     tf::TransformListener listener;
 
@@ -54,15 +102,10 @@ void savePosition(const std_msgs::String::ConstPtr& msg){
          ROS_INFO("Input command name:");
          std::string commandName;
          std::cin >> commandName;
-
-         ROS_INFO("commandName .....%s", commandName.c_str());
-         ROS_INFO("X .....%s", x.c_str());
-         ROS_INFO("Y .....%s", y.c_str());
-         ROS_INFO("Z .....%s", z.c_str());
+         logSimple("User input command name: ", commandName.c_str());
 
          std::ifstream file(commandDescriptionFile);
          if (file.bad() == true) {
-            ROS_ERROR("File is not exist");
             logs.writeLog("File is not exist", FILENAME);
          } else {
              std::ofstream out;
@@ -77,12 +120,8 @@ void savePosition(const std_msgs::String::ConstPtr& msg){
 
              out << command;
              out.close();
-             ROS_INFO("Save command '%s'", command.c_str());
 
-             char log[100];
-             strcpy(log, "Save command ---");
-             strcpy(log, msg->data.c_str());
-             logs.writeLog(log, FILENAME);
+             logSimple("Point coordinates saved:  ", command.c_str());
          }
 
     } catch (tf::TransformException ex){
@@ -92,6 +131,7 @@ void savePosition(const std_msgs::String::ConstPtr& msg){
 
     return;
 }
+
 
 bool setPosition(armbot_move::SetPosition::Request &req, 
                 armbot_move::SetPosition::Response &res,
@@ -115,32 +155,23 @@ bool setPosition(armbot_move::SetPosition::Request &req,
     move_group->move->setApproximateJointValueTarget(pose,"link_grip");
     bool success = (move_group->move->move() == moveit::planning_interface::MoveItErrorCode::SUCCESS);
 
-    ROS_INFO("Visualizing move 1 (pose goal) %s",success?"":"FAILED");
+    ROS_INFO("Visualizing move 1 (pose goal) %s", success ? "" : "FAILED");
 
     if (success) {
         std::cout<<"Start move"<<std::endl;
         start_state.setFromIK(joint_model_group, pose);
         move_group->move->setStartState(start_state);
 
-        std::cout<<"Output : "<<pose.position.x<<"\t"<<pose.position.y<<"\t"<<pose.position.z<<"\t"<<pose.orientation.x
-                             <<"\t"<<pose.orientation.y<<"\t"<<pose.orientation.z<<"\t"<<pose.orientation.w<<std::endl;
-
-        std::vector<double> joints;
-        joints = move_group->move->getCurrentJointValues();
-        std::cout<<"Joints : "<<joints.at(0)<<"\t"<<joints.at(1)<<"\t"<<joints.at(2)<<"\t"<<joints.at(3)<<std::endl;
+        logPrintJoints(move_group->move->getCurrentJointValues());
 
         result = "SUCCESS. Position: " + req.position;
-
-        char log[100];
-        strcpy(log, result.c_str());
-        logs.writeLog(log, FILENAME);
+        logSimple("Command execution result: ", result.c_str());
     }
 
     res.result = result;
 
     return true;
 }
-
 
 
 int main(int argc, char *argv[]) {
@@ -154,8 +185,8 @@ int main(int argc, char *argv[]) {
     std::string planner_plugin_name;
     if (!node_handle.getParam("planning_plugin", planner_plugin_name)) {
         ROS_FATAL_STREAM("Could not find planner plugin name");
+        logs.writeLog("Could not find planner plugin name", FILENAME);
     }
-
 
     std::string PLANNING_GROUP = "arm";
     MoveOperationClass *move_group = new MoveOperationClass(PLANNING_GROUP);
@@ -176,6 +207,7 @@ int main(int argc, char *argv[]) {
         planner_plugin_loader.reset(new pluginlib::ClassLoader<planning_interface::PlannerManager>("moveit_core", "planning_interface::PlannerManager"));
     } catch (pluginlib::PluginlibException& ex) {
         ROS_FATAL_STREAM("Exception while creating planning plugin loader " << ex.what());
+        logSimple("Exception while creating planning plugin loader ", boost::lexical_cast<std::string>(ex.what()).c_str());
     }
 
     move_group->move->setPlanningTime(60*5);

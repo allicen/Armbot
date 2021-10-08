@@ -16,7 +16,7 @@ int startMoveToPosition(ros::ServiceClient client, armbot_move::SetPosition srv,
     srv.request.x = std::stof(params[1].c_str());
     srv.request.y = std::stof(params[2].c_str());
 
-    char log[60];
+    char log[100];
 
     if (client.call(srv)) {
         ROS_INFO("Result: %s", srv.response.result.c_str());

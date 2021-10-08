@@ -11,10 +11,12 @@ class LogClass {
 };
 
 inline void LogClass::writeLog(const char* log, char* fileName) {
-
-    char shell[255] = "$ARMBOT_PATH/scripts/functions_log_cpp.sh '";
+    char type[10] = "INFO";
+    char shell[255] = "$ARMBOT_PATH/scripts/functions_log_cpp.sh '[";
+    strcat (shell, type);
+    strcat (shell, "] — ");
     strcat (shell, fileName);
-    strcat (shell, " --- ");
+    strcat (shell, " — ");
     strcat (shell, log);
     strcat (shell, "'");
     system (shell);
