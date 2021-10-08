@@ -1,7 +1,7 @@
 #!/bin/bash
 
-sed -i -e 's/\r$//' scripts/functions.sh
-source ./scripts/functions.sh
+sed -i -e 's/\r$//' "$ARMBOT_PATH/scripts/functions.sh"
+source "$ARMBOT_PATH/scripts/functions.sh"
 
 pidFile="$(getPidFile)"
 
@@ -33,11 +33,11 @@ case "$1" in
       if [[ "$2" = "docker" ]]; then
         printLog "Запускаю docker..."
         sudo docker exec --tty -i armbot bash -c "cd workspace && sudo chmod +x scripts/*sh &&
-                                                sed -i -e 's/\r$//' scripts/get_data.sh &&
-                                                ./scripts/get_data.sh $3 $4"
+                                                sed -i -e 's/\r$//' $ARMBOT_PATH/scripts/get_data.sh &&
+                                                $ARMBOT_PATH/scripts/get_data.sh $3 $4"
       else
         sudo chmod +x ./scripts/*sh
-        ./scripts/get_data.sh "$2" "$3"
+        "$ARMBOT_PATH/scripts/get_data.sh" "$2" "$3"
       fi
       ;;
 

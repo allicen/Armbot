@@ -19,19 +19,30 @@
 <p>1.3.5. Загрузить docker-образ робота: <code>docker load < armbot-img.tar</code></p>
 <p><br /></p>
 
-<h2>2. Запустить документацию, настроить скрипты</h2>
-<p>1. Дать права на запуск скриптов: <code>sudo chmod +x scripts/*sh</code></p>
-<p>1*. Исправить ошибку перед запуском скриптов (преобразование окончаний строк из формата DOS в формат UNIX):</p>
+<h2>Установить переменные среды</h2>
+<p>Нужно прописать путь до проекта.</p>
+<p><strong>1 вариант</strong></p>
+<p>Открыть редактор: <code>vi /etc/bash.profile</code> (важно! файл должен существовать и путь к файлу с переменными среды может отличаться от '/etc/bash.profile', добавьте свой путь)</p>
+<p>Добавить переменную: <code>export ARMBOT_PATH='/home/e/ROS/Armbot'</code> (вместо '/home/e/ROS/Armbot' напишите свой путь к корневой папке проекта)</p>
+<p>Обновите файл: <code>source /etc/bash.bashrc</code> (путь '/etc/bash.bashrc' может отличаться)</p>
+<p><strong>2 вариант</strong></p>
+<p>Добавьте переменные среды в файл <code>.bashrc</code></p>
+<p>Примените изменения <code>source ~/.bashrc</code></p>
+<p><br /></p>
+
+<h2>3. Запустить документацию, настроить скрипты</h2>
+<p>3.1. Дать права на запуск скриптов: <code>sudo chmod +x scripts/*sh</code></p>
+<p>3.1*. Исправить ошибку перед запуском скриптов (преобразование окончаний строк из формата DOS в формат UNIX):</p>
   <pre><code>sed -i -e 's/\r$//' scripts/run_docs_docker.sh</code>
 <code>sed -i -e 's/\r$//' scripts/run_armbot_docker.sh</code>
 <code>sed -i -e 's/\r$//' scripts/run.sh</code>
 <code>sed -i -e 's/\r$//' scripts/get_data.sh</code>
 </pre>
-<p>2. Запустить docker-контейнер с документацией: <code>./scripts/run_docs_docker.sh</code>. Перейти на <code>localhost</code></p>
+<p>3.2. Запустить docker-контейнер с документацией: <code>./scripts/run_docs_docker.sh</code>. Перейти на <code>localhost</code></p>
 <p>* - опционально</p>
 <p><br /></p>
 
-<h2>3. Запустить робота</h2>
+<h2>4. Запустить робота</h2>
 <p>Открыть скетч <code>/armbot_move/control-arduino/move_arduino/move_arduino.ino</code> в Arduino IDE. Загрузить скетч. **</p>
 <p>Перейти в корень проекта. Открыть 3 окна терминала.</p>
 <p>1 терминал:</p>
@@ -51,13 +62,12 @@
 </ul>
 <p>3 терминал:</p>
 <ul>
-  <li>Запустить публикацию движений с докером <code>./scripts/run.sh start docker</code> (без докера <code>./scripts/run.sh start</code>)</li>
-</ul>
-<p>4 терминал **:</p>
-<ul>
   <li>Запустить подписчик движений на Arduino <code>rosrun rosserial_python serial_node.py _port:=/dev/ttyUSB0 _baud:=115200</code></li>
 </ul>
-<p>** - пока не реализовано</p>
+<p>4 терминал:</p>
+<ul>
+  <li>Запустить публикацию движений с докером <code>./scripts/run.sh start docker</code> (без докера <code>./scripts/run.sh start</code>)</li>
+</ul>
 <p><br /></p>
 
 <h2>Описание команд</h2>

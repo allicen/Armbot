@@ -1,8 +1,8 @@
 #!/bin/bash
 
-logPath="$(pwd)/logs/"
+logPath="$ARMBOT_PATH/logs/"
 logFile="log-$(date +%d-%m-%Y).log"
-pidFile="$(pwd)/scripts/run.pid"
+pidFile="$ARMBOT_PATH/scripts/run.pid"
 
 function dateTimePrint {
     date="$(date +%d.%m.%Y)"

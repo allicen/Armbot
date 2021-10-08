@@ -6,13 +6,10 @@
 #include <iterator>
 #include <vector>
 
+#include "LogClass.hpp"
 
-void writeLog(const char* log) {
-    char shell[100] = "./scripts/functions_log_cpp.sh 'position.cpp ";
-    strcat (shell, log);
-    strcat (shell, "'");
-    system(shell);
-}
+char FILENAME[20] = "position.cpp";
+LogClass logs;
 
 int startMoveToPosition(ros::ServiceClient client, armbot_move::SetPosition srv, std::string position, std::vector<std::string> params) {
     srv.request.position = position;
@@ -23,14 +20,14 @@ int startMoveToPosition(ros::ServiceClient client, armbot_move::SetPosition srv,
 
     if (client.call(srv)) {
         ROS_INFO("Result: %s", srv.response.result.c_str());
-        strcat (log, "Result: ");
-        strcat (log, srv.response.result.c_str());
-        writeLog(log);
+        strcpy (log, "Result: ");
+        strcpy (log, srv.response.result.c_str());
+        logs.writeLog(log, FILENAME);
     } else {
         ROS_ERROR("Failed to call service set_position: %s", position.c_str());
-        strcat (log, "Failed to call service set_position: ");
-        strcat (log, position.c_str());
-        writeLog(log);
+        strcpy (log, "Failed to call service set_position: ");
+        strcpy (log, position.c_str());
+        logs.writeLog(log, FILENAME);
         return 1;
     }
 
@@ -42,7 +39,7 @@ int main(int argc, char**argv) {
     ros::init(argc, argv, "position");
     
     ROS_INFO_STREAM("Writer is ready.");
-    writeLog("Writer is ready.");
+    logs.writeLog("Writer is ready.", FILENAME);
 
     std::vector<std::string> params;
     std::string param;
@@ -51,9 +48,10 @@ int main(int argc, char**argv) {
     n.getParam("param", param);
     ROS_INFO("Got parameter: %s", param.c_str());
 
-    char log[100] = "Got parameter: ";
-    strcat (log, param.c_str());
-    writeLog(log);
+    char log[100];
+    strcpy(log, "Got parameter: ");
+    strcpy(log, param.c_str());
+    logs.writeLog(log, FILENAME);
 
     ros::NodeHandle nh;
     ros::ServiceClient client = nh.serviceClient<armbot_move::SetPosition>("set_position");
@@ -85,6 +83,6 @@ int main(int argc, char**argv) {
     ros::spinOnce();
     
     ROS_INFO_STREAM("Publishing is finished!\n");
-    writeLog("Publishing is finished!");
+    logs.writeLog("Publishing is finished!", FILENAME);
     return result;
 }

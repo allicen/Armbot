@@ -1,16 +1,16 @@
 #!/bin/bash
 
-commandsFile="$(pwd)/data/commands.txt"
-commandsDescriptionFile="$(pwd)/data/command_description.txt"
+commandsFile="$ARMBOT_PATH/data/commands.txt"
+commandsDescriptionFile="$ARMBOT_PATH/data/command_description.txt"
 
-source ./scripts/functions.sh
+source "$ARMBOT_PATH/scripts/functions.sh"
 
 function getPath {
   firstChar=$(echo "$1" | cut -c1-1)
   if [ "$firstChar" = '/' ] && [ -f "$1" ]; then
     echo "$1"
-  elif [ -f "$(pwd)/$1" ]; then
-    echo "$(pwd)/$1"
+  elif [ -f "$ARMBOT_PATH/$1" ]; then
+    echo "$ARMBOT_PATH/$1"
   else
     echo NULL
   fi

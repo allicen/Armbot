@@ -7,7 +7,7 @@ docker run  -it --rm \
         -v "/tmp/.X11-unix:/tmp/.X11-unix:rw" \
         -e XAUTHORITY \
         -v /dev:/dev \
-        -v /home/rubleva/Desktop/R/Armbot:/workspace \
+        -v "$ARMBOT_PATH":/workspace \
        --net=host \
        --privileged \
        --name armbot armbot-img

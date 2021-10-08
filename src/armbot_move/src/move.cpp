@@ -24,10 +24,22 @@
 
 #include "MoveOperationClass.hpp"
 #include "settings.hpp"
+#include "LogClass.hpp"
 
+char FILENAME[20] = "move.cpp";
+LogClass logs;
+
+bool isEmpty(std::ifstream& file) {
+    return file.peek() == std::ifstream::traits_type::eof();
+}
 
 void savePosition(const std_msgs::String::ConstPtr& msg){
     ROS_INFO("Get command: [%s]", msg->data.c_str());
+
+    char log[100];
+    strcpy(log, "Get command: ");
+    strcpy(log, msg->data.c_str());
+    logs.writeLog(log, FILENAME);
 
     tf::TransformListener listener;
 
@@ -48,17 +60,29 @@ void savePosition(const std_msgs::String::ConstPtr& msg){
          ROS_INFO("Y .....%s", y.c_str());
          ROS_INFO("Z .....%s", z.c_str());
 
-         std::ifstream iff(commandDescriptionFile);
-         if (iff.bad() == true) {
+         std::ifstream file(commandDescriptionFile);
+         if (file.bad() == true) {
             ROS_ERROR("File is not exist");
+            logs.writeLog("File is not exist", FILENAME);
          } else {
              std::ofstream out;
              out.open(commandDescriptionFile, std::ios::app);
-             std::string command = "keyEnter:" + commandName + " " + x + " " + y + " " + z;
+             std::string command = commandName + ":" + x + " " + y + " " + z;
 
-             ROS_INFO("save command .....%s", command.c_str());
+             // Если файл не пустой, делаем перенос строки
+             std::ifstream file(commandDescriptionFile);
+             if (!isEmpty(file)) {
+                 out << std::endl;
+             }
+
              out << command;
              out.close();
+             ROS_INFO("Save command '%s'", command.c_str());
+
+             char log[100];
+             strcpy(log, "Save command ---");
+             strcpy(log, msg->data.c_str());
+             logs.writeLog(log, FILENAME);
          }
 
     } catch (tf::TransformException ex){
@@ -106,6 +130,10 @@ bool setPosition(armbot_move::SetPosition::Request &req,
         std::cout<<"Joints : "<<joints.at(0)<<"\t"<<joints.at(1)<<"\t"<<joints.at(2)<<"\t"<<joints.at(3)<<std::endl;
 
         result = "SUCCESS. Position: " + req.position;
+
+        char log[100];
+        strcpy(log, result.c_str());
+        logs.writeLog(log, FILENAME);
     }
 
     res.result = result;

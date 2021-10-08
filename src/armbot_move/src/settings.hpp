@@ -2,7 +2,7 @@
 #ifndef settings
 #define settings
 
-#define commandDescriptionFile "/home/e/ROS/Armbot/data/command_description.txt"
+#define commandDescriptionFile std::string(getenv("ARMBOT_PATH")) + "/data/command_description.txt"
 
 float zPositionDefault = 0.036107;
 float zPositionDefaultDown = 0.0198367;

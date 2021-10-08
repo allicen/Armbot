@@ -2,5 +2,5 @@
 
 # Логирование из cpp-файлов
 
-source ./scripts/functions.sh
+source "$ARMBOT_PATH/scripts/functions.sh"
 printLog "$1"
