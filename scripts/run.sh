@@ -5,65 +5,52 @@ source "$ARMBOT_PATH/scripts/functions.sh"
 
 pidFile="$(getPidFile)"
 
-function killProcess {
-
-    local procPid=$(cat "$pidFile")
-    local re='^[0-9]+$'
-
-    if ! [[ $procPid =~ $re ]] ; then
-       printLog "Ошибка! PID должен быть числом"
-       exit 1
-    fi
-
-    # Убить процесс и всех потомков
-    kill -- -"$(ps -o pgid= "$procPid" | grep -o [0-9]*)"
-
-    # удалить файл, где записан PID
-    rm "$pidFile"
-
-    printLog "Процесс остановлен."
-}
-
 case "$1" in
     start)
-      printLog "Запускаю процесс..."
-      echo $$ > "$pidFile"
+        printLog "Запускаю процесс..."
 
-      # Заходит в docker
-      if [[ "$2" = "docker" ]]; then
-        printLog "Запускаю docker..."
-        sudo docker exec --tty -i armbot bash -c "cd workspace && sudo chmod +x scripts/*sh &&
-                                                sed -i -e 's/\r$//' $ARMBOT_PATH/scripts/get_data.sh &&
-                                                $ARMBOT_PATH/scripts/get_data.sh $3 $4"
-      else
-        sudo chmod +x ./scripts/*sh
-        "$ARMBOT_PATH/scripts/get_data.sh" "$2" "$3"
-      fi
-      ;;
+        # Заходит в docker
+        if [[ "$2" = "docker" ]]; then
+            printLog "Запускаю docker..."
+            pidFile="/workspace/$pidFile"
+
+            printLog "Запускаю docker..."
+            sudo docker exec --tty -i armbot bash -c "cd workspace && sudo chmod +x scripts/*sh &&
+                                                    sed -i -e 's/\r$//' /workspace/scripts/get_data.sh &&
+                                                    /workspace/scripts/get_data.sh $3 $4"
+        else
+            echo $$ > "$pidFile"
+            sudo chmod +x ./scripts/*sh
+            "$ARMBOT_PATH/scripts/get_data.sh" "$2" "$3"
+        fi
+    ;;
 
     stop)
-      printLog "Останавливаю процесс..."
-      if [ -f "$pidFile" ]; then
-            killProcess
+        printLog "Останавливаю процесс..."
+
+        if [[ "$2" = 'docker' ]]; then
+            printLog "Запускаю docker..."
+            sudo docker exec --tty -i armbot bash -c "cd workspace && sudo chmod +x scripts/*sh &&
+                                                    sed -i -e 's/\r$//' /workspace/scripts/stop.sh &&
+                                                    /workspace/scripts/stop.sh"
         else
-            printLog "Файл с записью PID не существует"
+            "$ARMBOT_PATH/scripts/stop.sh"
         fi
     ;;
 
     help)
-      echo "
+        echo "
   Запустите скрипт ./run.sh с аргументами.
 
   1 аргумент — название команды (обязателено). Значения:
     · help — вызов справки;
     · start — запуск скрипта;
-    · stop — остановка скрипта;
-    · restart — перезапуск скрипта.
+    · stop — остановка скрипта.
 
-  2 аргумент — запуск с докером (необязателено). Значения:
+  2 аргумент (для команд 'start' и 'stop') — запуск с докером (необязателено). Значения:
     · docker — запуск скрипта с докером;
 
-  3 аргумент и 4 аргумент — путь до файла со списком команд (необязательно) и путь до файла с описанием команд. Значения:
+  3 аргумент и 4 аргумент (для команды 'start') — путь до файла со списком команд (необязательно) и путь до файла с описанием команд. Значения:
     · commands=текстовая строка (относительный или абсолютный путь);
     · description=текстовая строка (относительный или абсолютный путь).
 
@@ -72,9 +59,10 @@ case "$1" in
 
   Относительный без слеша (например, commands=scripts/commands.txt), абсолютный со слешем (например, commands=/home/user/scripts/commands.txt).
   "
-      ;;
-	  *)
-      echo "Command $1 not supported"
-      ;;
+       ;;
+	   *)
+        echo "Command $1 not supported
+Help command: ./scripts/run.sh help"
+        ;;
 esac
 

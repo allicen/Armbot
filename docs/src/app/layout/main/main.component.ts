@@ -18,6 +18,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
 
 export class MainComponent {
   selectors:  {[id: string]: string} = {
+    'errors': 'Решение проблем',
     'ros': 'ROS',
     'docker': 'Docker',
     'shell': 'Shell',

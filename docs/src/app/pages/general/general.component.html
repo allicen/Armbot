@@ -43,8 +43,9 @@
 <p><br /></p>
 
 <h2>4. Запустить робота</h2>
-<p>Открыть скетч <code>/armbot_move/control-arduino/move_arduino/move_arduino.ino</code> в Arduino IDE. Загрузить скетч. **</p>
-<p>Перейти в корень проекта. Открыть 3 окна терминала.</p>
+<p>0<sup>*</sup>. Открыть скетч <code>/armbot_move/control-arduino/move_arduino/move_arduino.ino</code> в Arduino IDE. Загрузить скетч.</p>
+<p><i><sup>*</sup> Пропустить этот шаг, если нужный скетч уже загружен на плату Arduino.</i></p>
+<p>Перейти в корень проекта. Открыть 4 окна терминала.</p>
 <p>1 терминал:</p>
 <ul>
   <li>Запустить docker-контейнер с окружением для робота: <code>./scripts/run_armbot_docker.sh</code></li>
@@ -62,6 +63,9 @@
 </ul>
 <p>3 терминал:</p>
 <ul>
+  <li>Зайти в docker-контейнер <code>sudo docker exec -ti armbot bash</code></li>
+  <li>Перейти в рабочую директорию <code>cd workspace</code></li>
+  <li>Прописать пути <code>source devel/setup.bash</code></li>
   <li>Запустить подписчик движений на Arduino <code>rosrun rosserial_python serial_node.py _port:=/dev/ttyUSB0 _baud:=115200</code></li>
 </ul>
 <p>4 терминал:</p>

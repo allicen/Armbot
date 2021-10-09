@@ -1,8 +1,14 @@
 #!/bin/bash
 
-logPath="$ARMBOT_PATH/logs/"
+PATH="$ARMBOT_PATH"
+
+if [[ $2 = 'docker' ]]; then
+  PATH='docker'
+fi
+
+logPath="$PATH/logs/"
 logFile="log-$(date +%d-%m-%Y).log"
-pidFile="$ARMBOT_PATH/scripts/run.pid"
+pidFile="$PATH/scripts/run.pid"
 
 function dateTimePrint {
     date="$(date +%d.%m.%Y)"
