@@ -3,7 +3,7 @@
 commandsFile="$ARMBOT_PATH/data/commands.txt"
 commandsDescriptionFile="$ARMBOT_PATH/data/command_description.txt"
 
-source "$ARMBOT_PATH/scripts/functions.sh"
+source "$ARMBOT_PATH/scripts/extended/functions.sh"
 
 function getPath {
   firstChar=$(echo "$1" | cut -c1-1)

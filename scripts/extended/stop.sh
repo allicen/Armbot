@@ -1,7 +1,7 @@
 #!/bin/bash
 
-sed -i -e 's/\r$//' "$ARMBOT_PATH/scripts/functions.sh"
-source "$ARMBOT_PATH/scripts/functions.sh"
+sed -i -e 's/\r$//' "$ARMBOT_PATH/scripts/extended/functions.sh"
+source "$ARMBOT_PATH/scripts/extended/functions.sh"
 
 pidFile="$(getPidFile)"
 
@@ -16,7 +16,7 @@ function killProcess {
     fi
 
     # Убить процесс и всех потомков
-    kill -- -"$(ps -o pgid="$procPid" | grep -o [0-9]*)"
+    pkill -P "$procPid"
 
     # удалить файл, где записан PID
     rm "$pidFile"
