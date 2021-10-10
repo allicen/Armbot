@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "LogClass.hpp"
+#include "settings.hpp"
 
 char FILENAME[20] = "position.cpp";
 LogClass logs;
@@ -15,18 +16,18 @@ int startMoveToPosition(ros::ServiceClient client, armbot_move::SetPosition srv,
     srv.request.position = position;
     srv.request.x = std::stof(params[1].c_str());
     srv.request.y = std::stof(params[2].c_str());
+    srv.request.z = params.size() == 5 ? std::stof(params[3].c_str()) : zPositionNone;
 
-    char log[100];
-
+    char log[255];
     if (client.call(srv)) {
         ROS_INFO("Result: %s", srv.response.result.c_str());
         strcpy (log, "Result: ");
-        strcpy (log, srv.response.result.c_str());
+        strcat (log, srv.response.result.c_str());
         logs.writeLog(log, FILENAME);
     } else {
         ROS_ERROR("Failed to call service set_position: %s", position.c_str());
         strcpy (log, "Failed to call service set_position: ");
-        strcpy (log, position.c_str());
+        strcat (log, position.c_str());
         logs.writeLog(log, FILENAME);
         return 1;
     }
@@ -48,9 +49,9 @@ int main(int argc, char**argv) {
     n.getParam("param", param);
     ROS_INFO("Got parameter: %s", param.c_str());
 
-    char log[100];
+    char log[255];
     strcpy(log, "Got parameter: ");
-    strcpy(log, param.c_str());
+    strcat(log, param.c_str());
     logs.writeLog(log, FILENAME);
 
     ros::NodeHandle nh;
@@ -64,7 +65,7 @@ int main(int argc, char**argv) {
         params.push_back(line); 
     }
 
-    double delay = atof(params[3].c_str());
+    double delay = atof(params[params.size()-1].c_str());
 
     sleep(1);
 

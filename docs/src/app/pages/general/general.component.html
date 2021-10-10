@@ -19,13 +19,9 @@
 <p>1.3.5. Загрузить docker-образ робота: <code>docker load < armbot-img.tar</code></p>
 <p><br /></p>
 
-<h2>Установить переменные среды</h2>
+<h2>2. Установить переменные среды <sup>*</sup></h2>
+<p><i><sup>*</sup> Пропустить пункт при запуске с докером.</i></p>
 <p>Нужно прописать путь до проекта.</p>
-<p><strong>1 вариант</strong></p>
-<p>Открыть редактор: <code>vi /etc/bash.profile</code> (важно! файл должен существовать и путь к файлу с переменными среды может отличаться от '/etc/bash.profile', добавьте свой путь)</p>
-<p>Добавить переменную: <code>export ARMBOT_PATH='/home/e/ROS/Armbot'</code> (вместо '/home/e/ROS/Armbot' напишите свой путь к корневой папке проекта)</p>
-<p>Обновите файл: <code>source /etc/bash.bashrc</code> (путь '/etc/bash.bashrc' может отличаться)</p>
-<p><strong>2 вариант</strong></p>
 <p>Добавьте переменные среды в файл <code>.bashrc</code></p>
 <p>Примените изменения <code>source ~/.bashrc</code></p>
 <p><br /></p>

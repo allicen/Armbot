@@ -6,6 +6,7 @@
 
 float zPositionDefault = 0.036107;
 float zPositionDefaultDown = 0.0198367;
+float zPositionNone = -1000;
 
 typedef struct GripperOrientationDefault {
     float x = 0.00724986;

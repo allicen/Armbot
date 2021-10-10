@@ -95,14 +95,15 @@ void savePosition(const std_msgs::String::ConstPtr& msg){
     try{
          listener.waitForTransform("/link_grip","/base_link", ros::Time(), ros::Duration(5.0));
          listener.lookupTransform("/link_grip", "/base_link", ros::Time(), transform);
-         auto x = std::to_string(transform.getOrigin().x());
-         auto y = std::to_string(transform.getOrigin().y());
-         auto z = std::to_string(transform.getOrigin().z());
+         auto x = boost::lexical_cast<std::string>(transform.getOrigin().x());
+         auto y = boost::lexical_cast<std::string>(-transform.getOrigin().y()); // Почему-то записывает с другим знаком
+         auto z = boost::lexical_cast<std::string>(transform.getOrigin().z());
 
          ROS_INFO("Input command name:");
          std::string commandName;
          std::cin >> commandName;
          logSimple("User input command name: ", commandName.c_str());
+         std::cout << "Command saved!" << std::endl;
 
          std::ifstream file(commandDescriptionFile);
          if (file.bad() == true) {
@@ -146,7 +147,15 @@ bool setPosition(armbot_move::SetPosition::Request &req,
     geometry_msgs::Pose pose;
     pose.position.x = req.x;
     pose.position.y = req.y;
-    pose.position.z = req.position == "button-pressed" ? zPositionDefaultDown : zPositionDefault;
+
+    if (req.position == "button-pressed") { // кнопка нажата
+        pose.position.z = zPositionDefaultDown;
+    } else if (req.z != zPositionNone) { // передана координата Z
+        pose.position.z = req.z;
+    } else { // используется Z по умолчанию
+        pose.position.z = zPositionDefault;
+    }
+
     pose.orientation.x = orientation.x;
     pose.orientation.y = orientation.y;
     pose.orientation.z = orientation.z;
