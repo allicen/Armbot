@@ -30,7 +30,7 @@ case "$1" in
                                                    sed -i -e 's/\r$//' /workspace/scripts/extended/stop.sh &&
                                                    /workspace/scripts/extended/stop.sh"
        else
-           "$ARMBOT_PATH/scripts/stop.sh"
+           "$ARMBOT_PATH/scripts/extended/stop.sh"
        fi
    ;;
 

@@ -52,8 +52,12 @@ ros::NodeHandle nodeHandle;
 // Кнопка для записи координат
 #define BUTTON_PUBLISHER_PIN 18
 
+// Кнопка для остановки робота
+#define BUTTON_OFF_PIN 15
+
 Button buttonOn(BUTTON_ON_PIN);
 Button buttonPublisher(BUTTON_PUBLISHER_PIN);
+Button buttonOff(BUTTON_OFF_PIN);
 boolean buttonOnPressed = false;
 
 AccelStepper stepper_z(1, Z_STEP_PIN, Z_DIR_PIN);
@@ -88,7 +92,6 @@ long positions[3] = {0, 0, 0};
 
 std_msgs::String str_msg;
 ros::Publisher chatter("save_position", &str_msg);
-char message[13] = "save";
 
 // Блокирующая функция, которая работает только с ускорением (!!!!!)
 // Эта функция, скорее всего, не подойдет (тк блокирующая)
@@ -203,9 +206,18 @@ void motorControlSubscriberCallbackJointState(const sensor_msgs::JointState& msg
   if (buttonOnPressed) {
     if (buttonPublisher.wasPressed()) {
        nodeHandle.logwarn("Button pressed save process .......");
-
+       
+       char message[13] = "save";
        str_msg.data = message;
-       chatter.publish( &str_msg );
+       chatter.publish(&str_msg);
+    }
+
+    if (buttonOff.wasPressed()) {
+       nodeHandle.logwarn("Button pressed STOP process .......");
+
+       char message[13] = "stop";
+       str_msg.data = message;
+       chatter.publish(&str_msg);
     }
     
     writeMotors();
@@ -213,6 +225,7 @@ void motorControlSubscriberCallbackJointState(const sensor_msgs::JointState& msg
 
   digitalWrite(LED_ON_PIN, buttonOnPressed);
 }
+
 
 ros::Subscriber<sensor_msgs::JointState> motorControlSubscriberJointState("joint_states", &motorControlSubscriberCallbackJointState);
 

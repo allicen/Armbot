@@ -86,9 +86,7 @@ void logPrintJoints(const std::vector<double> joints) {
 /// Logs End ///
 
 
-void savePosition(const std_msgs::String::ConstPtr& msg){
-    logSimple("Get command: ", msg->data.c_str());
-
+void saveCommand() {
     tf::TransformListener listener;
 
     tf::StampedTransform transform;
@@ -129,8 +127,30 @@ void savePosition(const std_msgs::String::ConstPtr& msg){
         ROS_ERROR("%s",ex.what());
         ros::Duration(1.0).sleep();
     }
+}
 
-    return;
+
+void stopCommand() {
+    system ("$ARMBOT_PATH/scripts/armbot.sh stop false");
+}
+
+
+void executeCommand(const std_msgs::String::ConstPtr& msg){
+
+    char command[50];
+    strcpy (command, msg->data.c_str());
+
+    logSimple("Get command: ", command);
+
+    if (strcmp("save", command) == 0) {
+        saveCommand();
+        return;
+    }
+
+    if (strcmp("stop", command) == 0) {
+        stopCommand();
+        return;
+    }
 }
 
 
@@ -228,7 +248,7 @@ int main(int argc, char *argv[]) {
     ros::ServiceServer setPositionService = n.advertiseService<armbot_move::SetPosition::Request, armbot_move::SetPosition::Response>
                                 ("set_position", boost::bind(setPosition, _1, _2, move_group, start_state, joint_model_group));
 
-    ros::Subscriber savePositionSubscriber = n.subscribe("save_position", 1000, savePosition);
+    ros::Subscriber savePositionSubscriber = n.subscribe("save_position", 1000, executeCommand);
 
     ros::Duration(1).sleep();
     ros::waitForShutdown();

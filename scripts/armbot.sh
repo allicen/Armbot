@@ -1,10 +1,13 @@
 #!/bin/bash
 
-docker=true
+if [[ -z "$2" ]]; then
+  docker=true
+fi
+
 [[ $docker = true ]] && dockerArg=docker || dockerArg=""
 
 if [[ -z "$1" ]]; then
     echo "No argument supplied"
 else
-    ./scripts/extended/run.sh "$1" "$dockerArg"
+    "$ARMBOT_PATH/scripts/extended/run.sh" "$1" "$dockerArg"
 fi
