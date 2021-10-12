@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Основной скрипт запуска
+
 if [[ -z "$2" ]]; then
   docker=true
 fi
@@ -9,5 +11,5 @@ fi
 if [[ -z "$1" ]]; then
     echo "No argument supplied"
 else
-    "$ARMBOT_PATH/scripts/extended/run.sh" "$1" "$dockerArg"
+    "$ARMBOT_PATH/scripts/extended/actions/run.sh" "$1" "$dockerArg"
 fi

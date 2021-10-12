@@ -1,7 +1,7 @@
 #!/bin/bash
 
-sed -i -e 's/\r$//' "$ARMBOT_PATH/scripts/extended/functions.sh"
-source "$ARMBOT_PATH/scripts/extended/functions.sh"
+sed -i -e 's/\r$//' "$ARMBOT_PATH/scripts/extended/functions/functions.sh"
+source "$ARMBOT_PATH/scripts/extended/functions/functions.sh"
 
 pidFile="$(getPidFile)"
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-sed -i -e 's/\r$//' "$ARMBOT_PATH/scripts/extended/functions.sh"
-source "$ARMBOT_PATH/scripts/extended/functions.sh"
+sed -i -e 's/\r$//' "$ARMBOT_PATH/scripts/extended/functions/functions.sh"
+source "$ARMBOT_PATH/scripts/extended/functions/functions.sh"
 
 pidFile="$(getPidFile)"
 
@@ -13,11 +13,11 @@ case "$1" in
        if [[ "$2" = "docker" ]]; then
            printLog "Запускаю docker..."
            sudo docker exec --tty -i armbot bash -c "cd workspace && sudo chmod +x scripts/*sh &&
-                                                     /workspace/scripts/extended/run_in_docker.sh $pidFile $3 $4"
+                                                     /workspace/scripts/docker/run_in_docker.sh $pidFile $3 $4"
        else
            echo $$ > "$pidFile"
            sudo chmod +x ./scripts/*sh
-           "$ARMBOT_PATH/scripts/extended/get_data.sh" "$2" "$3"
+           "$ARMBOT_PATH/scripts/extended/actions/get_data.sh" "$2" "$3"
        fi
    ;;
 
@@ -27,16 +27,16 @@ case "$1" in
        if [[ "$2" = 'docker' ]]; then
            printLog "Запускаю docker..."
            sudo docker exec --tty -i armbot bash -c "cd workspace && sudo chmod +x scripts/*sh &&
-                                                   sed -i -e 's/\r$//' /workspace/scripts/extended/stop.sh &&
-                                                   /workspace/scripts/extended/stop.sh"
+                                                   sed -i -e 's/\r$//' /workspace/scripts/extended/actions/stop.sh &&
+                                                   /workspace/scripts/extended/actions/stop.sh"
        else
-           "$ARMBOT_PATH/scripts/extended/stop.sh"
+           "$ARMBOT_PATH/scripts/extended/actions/stop.sh"
        fi
    ;;
 
    help)
        echo "
- Запустите скрипт ./run.sh с аргументами.
+ Запустите скрипт ./armbot.sh с аргументами.
 
  1 аргумент — название команды (обязателено). Значения:
    · help — вызов справки;
@@ -58,7 +58,7 @@ case "$1" in
      ;;
 	   *)
        echo "Command $1 not supported
-Help command: ./scripts/run.sh help"
+Help command: ./scripts/arnbot.sh help"
        ;;
 esac
 

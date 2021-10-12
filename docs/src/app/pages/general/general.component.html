@@ -15,26 +15,20 @@
 <p>1.3.1. Скачать архивы docs-img.tar.gz и armbot-img.tar.gz на флешку. Скопировать на целевую машину</p>
 <p>1.3.2. Разархивировать docs-img.tar.gz: <code>tar -xvf docs-img.tar.gz</code></p>
 <p>1.3.3. Разархивировать armbot-img.tar.gz: <code>tar -xvf armbot-img.tar.gz</code></p>
-<p>1.3.4. Загрузить docker-образ документации: <code>docker load < docs-img.tar</code></p>
-<p>1.3.5. Загрузить docker-образ робота: <code>docker load < armbot-img.tar</code></p>
+<p>1.3.4. Загрузить docker-образ документации: <code>sudo docker load < docs-img.tar</code></p>
+<p>1.3.5. Загрузить docker-образ робота: <code>sudo docker load < armbot-img.tar</code></p>
 <p><br /></p>
 
-<h2>2. Установить переменные среды <sup>*</sup></h2>
-<p><i><sup>*</sup> Пропустить пункт при запуске с докером.</i></p>
+<h2>2. Установить переменные среды</h2>
 <p>Нужно прописать путь до проекта.</p>
-<p>Добавьте переменные среды в файл <code>.bashrc</code></p>
+<p>Добавьте переменную среды в файл <code>.bashrc</code>: <code>export ARMBOT_PATH='/home/e/ROS/Armbot'</code> (вместо '/home/e/ROS/Armbot' напишите свой путь к корневой папке проекта)</p>
 <p>Примените изменения <code>source ~/.bashrc</code></p>
 <p><br /></p>
 
 <h2>3. Запустить документацию, настроить скрипты</h2>
 <p>3.1. Дать права на запуск скриптов: <code>sudo chmod +x scripts/*sh</code></p>
-<p>3.1*. Исправить ошибку перед запуском скриптов (преобразование окончаний строк из формата DOS в формат UNIX):</p>
-  <pre><code>sed -i -e 's/\r$//' scripts/run_docs_docker.sh</code>
-<code>sed -i -e 's/\r$//' scripts/run_armbot_docker.sh</code>
-<code>sed -i -e 's/\r$//' scripts/run.sh</code>
-<code>sed -i -e 's/\r$//' scripts/get_data.sh</code>
-</pre>
-<p>3.2. Запустить docker-контейнер с документацией: <code>./scripts/run_docs_docker.sh</code>. Перейти на <code>localhost</code></p>
+<p>3.1*. Исправить ошибку перед запуском скриптов (преобразование окончаний строк из формата DOS в формат UNIX): <code>./scripts/fix.sh</code></p>
+<p>3.2. Запустить docker-контейнер с документацией: <code>./scripts/docker/run_docs_docker.sh</code>. Перейти на <code>localhost</code></p>
 <p>* - опционально</p>
 <p><br /></p>
 
@@ -44,7 +38,7 @@
 <p>Перейти в корень проекта. Открыть 4 окна терминала.</p>
 <p>1 терминал:</p>
 <ul>
-  <li>Запустить docker-контейнер с окружением для робота: <code>./scripts/run_armbot_docker.sh</code></li>
+  <li>Запустить docker-контейнер с окружением для робота: <code>./scripts/docker/run_armbot_docker.sh</code></li>
   <li>Перейти в рабочую директорию <code>cd workspace</code></li>
   <li>Собрать проект <code>catkin_make</code> (если будут ошибки сборки, можно попробовать собрать пакеты изолированно <code>catkin_make_isolated</code>)</li>
   <li>Прописать пути <code>source devel/setup.bash</code></li>
@@ -71,14 +65,24 @@
 <p><br /></p>
 
 <h2>Описание команд</h2>
-<p>Файл command_description.txt. Пример описания команды:</p>
+<p><strong>Файл command_description.txt</strong>. Пример описания команды:</p>
 <pre><code>direct:0.2872 4.83407e-10
 right:-0.180411 -0.223463
 left:-0.180411 0.223463
+topLeft:0.237525 0.133799 0.0463589
 </code>
 </pre>
-<p>Файл commands.txt. Пример описания перечня выполняемых команд:</p>
+<p>На примере последней команды:</p>
+<ul>
+  <li>topLeft - название команды</li>
+  <li>0.237525 - значение координаты X</li>
+  <li>0.133799 - значение координаты Y</li>
+  <li>0.0463589 - значение координаты Z</li>
+</ul>
+<p>Название команды пишется слева от двоеточия. После двоеточия через пробел указываются координаты. Координата Z необязательная.</p>
+<p><strong>Файл commands.txt</strong>. Пример описания перечня выполняемых команд:</p>
 <pre><code>right 6
 left 4
 </code>
 </pre>
+<p>Указывается название команды и через пробел значение задержки (в секундах) после выполнения команды.</p>
