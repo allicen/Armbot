@@ -11,8 +11,8 @@
 <p>9. Перейти в папку проекта Armbot.</p>
 <p>10. Дать права на запуск скриптов: <code>sudo chmod +x scripts/*sh</code>.</p>
 <p>11. Исправить ошибку переда запуском скриптов (преобразование окончаний строк из формата DOS в формат UNIX): 
-<code>sed -i -e 's/\r$//' scripts/run_docs_docker.sh</code>.</p>
-<p>12. Запустить docker-контейнер с документацией: <code>./scripts/run_docs_docker.sh</code></p>
+<code>sed -i -e 's/\r$//' scripts/docker/run_docs_docker.sh</code>.</p>
+<p>12. Запустить docker-контейнер с документацией: <code>./scripts/docker/run_docs_docker.sh</code></p>
 <p>13. Открыть документацию в браузере по адресу <code>localhost</code>.</p>
 <p><br /></p>
 <h3>Запустить робота</h3>

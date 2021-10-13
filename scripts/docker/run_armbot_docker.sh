@@ -8,7 +8,7 @@ docker run  -it --rm \
         -e XAUTHORITY \
         -e ARMBOT_PATH='/workspace' \
         -v /dev:/dev \
-        -v "$ARMBOT_PATH":/workspace \
+        -v "$(pwd)":/workspace \
        --net=host \
        --privileged \
        --name armbot armbot-img

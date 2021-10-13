@@ -21,13 +21,15 @@
 
 <h2>2. Установить переменные среды</h2>
 <p>Нужно прописать путь до проекта.</p>
-<p>Добавьте переменную среды в файл <code>.bashrc</code>: <code>export ARMBOT_PATH='/home/e/ROS/Armbot'</code> (вместо '/home/e/ROS/Armbot' напишите свой путь к корневой папке проекта)</p>
+<p>Добавьте переменную среды в файл <code>.bashrc</code> (каталог /home): <code>export ARMBOT_PATH='/home/e/ROS/Armbot'</code> (вместо '/home/e/ROS/Armbot' напишите свой путь к корневой папке проекта)</p>
 <p>Примените изменения <code>source ~/.bashrc</code></p>
 <p><br /></p>
 
 <h2>3. Запустить документацию, настроить скрипты</h2>
 <p>3.1. Дать права на запуск скриптов: <code>sudo chmod +x scripts/*sh</code></p>
-<p>3.1*. Исправить ошибку перед запуском скриптов (преобразование окончаний строк из формата DOS в формат UNIX): <code>./scripts/fix.sh</code></p>
+<p>3.1*. Исправить ошибку перед запуском скриптов (преобразование окончаний строк из формата DOS в формат UNIX):</p>
+<p><code>sed -i -e 's/\r$//' "$ARMBOT_PATH/scripts/fix.sh"</code></p>
+<p><code>./scripts/fix.sh</code></p>
 <p>3.2. Запустить docker-контейнер с документацией: <code>./scripts/docker/run_docs_docker.sh</code>. Перейти на <code>localhost</code></p>
 <p>* - опционально</p>
 <p><br /></p>
