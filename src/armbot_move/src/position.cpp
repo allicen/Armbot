@@ -65,11 +65,23 @@ int main(int argc, char**argv) {
         params.push_back(line); 
     }
 
+    int result = 0;
+
+    if (params.size() == 1) {
+        DefaultPosition defaultPosition;
+
+        params.push_back(boost::lexical_cast<std::string>(defaultPosition.x));
+        params.push_back(boost::lexical_cast<std::string>(defaultPosition.y));
+        params.push_back(boost::lexical_cast<std::string>(defaultPosition.z));
+
+        result = startMoveToPosition(client, srv, params[0].c_str(), params);
+        sleep(1);
+        return result;
+    }
+
     double delay = atof(params[params.size()-1].c_str());
 
     sleep(1);
-
-    int result = 0;
 
     // Goal position
     result = startMoveToPosition(client, srv, params[0].c_str(), params);

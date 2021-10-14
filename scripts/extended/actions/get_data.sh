@@ -66,6 +66,9 @@ do
 	rosrun armbot_move position _param:="$key ${commandsMap[$key]} $delay"
 
 done < "$commandsFile"
+  
+  # Возврат в исходную точку
+  rosrun armbot_move position _param:="return_default_position"
 
 printLog "Заканчиваю работу..."
 

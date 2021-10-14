@@ -15,4 +15,10 @@ typedef struct GripperOrientationDefault {
     float w = 0.00455517;
 } Orientation;
 
+typedef struct DefaultPosition {
+	float x = 0.10732;
+	float y = 2.25797e-11;
+	float z = 0.04744;
+} DefaultPosition;
+
 #endif
