@@ -5,9 +5,10 @@ import { AppComponent } from './app.component';
 import {AppRoutingModule} from "./app-router.module";
 import {FormsModule} from "@angular/forms";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {HttpClientModule} from "@angular/common/http";
 
 @NgModule({
-  imports: [BrowserModule, FormsModule, AppRoutingModule, BrowserAnimationsModule],
+  imports: [BrowserModule, FormsModule, AppRoutingModule, BrowserAnimationsModule, HttpClientModule],
   declarations: [AppComponent],
   bootstrap: [AppComponent]
 })

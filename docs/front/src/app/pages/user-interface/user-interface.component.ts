@@ -1,6 +1,8 @@
 import {Component, ElementRef, ViewChild} from '@angular/core';
 import { FileHandle } from './dragDrop.directive';
 import {DomSanitizer} from "@angular/platform-browser";
+import {HttpService} from "../../serviсes/http.service";
+import {HttpClient} from "@angular/common/http";
 
 @Component({
   selector: 'app-root',
@@ -14,7 +16,7 @@ export class UserInterfaceComponent {
 
   @ViewChild("inputFile") inputFile: ElementRef | undefined;
 
-  constructor(private sanitizer: DomSanitizer) { }
+  constructor(private sanitizer: DomSanitizer, private httpService: HttpService) { }
 
   filesDropped(files: FileHandle[]): void {
     if (files.length > 0) {
@@ -27,6 +29,12 @@ export class UserInterfaceComponent {
 
   uploadFile(): void {
     // загрузка файла;
+
+    if (this.files.length === 0) {
+      return;
+    }
+
+    this.httpService.uploadImage(this.files[0]);
   }
 
   removeFile() {

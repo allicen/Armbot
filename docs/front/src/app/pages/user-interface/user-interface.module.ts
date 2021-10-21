@@ -4,6 +4,7 @@ import {RouterModule, Routes} from "@angular/router";
 import {CommonModule} from "@angular/common";
 import {DragDirective} from "./dragDrop.directive";
 import {MatButtonModule} from "@angular/material/button";
+import {HttpClient} from "@angular/common/http";
 
 const routes: Routes = [
       { path: '', component: UserInterfaceComponent },
@@ -20,7 +21,7 @@ const routes: Routes = [
     CommonModule,
     MatButtonModule
   ],
-  providers: [Document],
+  providers: [HttpClient],
   bootstrap: [UserInterfaceComponent]
 })
 export class UserInterfaceModule { }

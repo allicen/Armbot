@@ -1,0 +1,32 @@
+micronaut:
+  application:
+    name: back
+  server:
+    cors:
+      enabled: true
+    multipart:
+      enabled: true
+  session:
+    http:
+      cookie: true
+      header: true
+---
+datasources:
+  default:
+    url: jdbc:h2:mem:devDb
+    driverClassName: org.h2.Driver
+    username: sa
+    password: ''
+    schema-generate: CREATE_DROP
+    dialect: H2
+#    url: jdbc:h2:mem:test;DATABASE_TO_UPPER=false;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+---
+jpa:
+  default:
+    packages-to-scan:
+      - 'ru.armbot'
+    properties:
+      hibernate:
+        use-new-id-generator-mappings: false
+        bytecode:
+          provider: none
