@@ -5,20 +5,24 @@ import { Router } from "@angular/router";
 @Injectable({ providedIn: 'root' })
 export class StorageService {
 
-    public booleanSubject = new BehaviorSubject<boolean>(false);
-    userInterfaceOn$: Observable<boolean> = this.booleanSubject.asObservable();
-
+    private userInterfaceOn$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     urlArr = this.router.url.split('/');
 
+    isUserInterface(): boolean {
+      return this.urlArr.length > 0 && this.urlArr[1] === 'user-interface';
+    }
+
     constructor(private router: Router) {
-        this.setDataFromUrl();
+        router.events.subscribe(() => {
+            this.setUserInterface(this.isUserInterface());
+        });
     }
 
-    setData(userInterfaceOn: boolean) {
-        this.booleanSubject.next(userInterfaceOn);
+    setUserInterface(showHide: boolean): void {
+        this.userInterfaceOn$.next(showHide);
     }
 
-    setDataFromUrl() {
-      this.setData(this.urlArr.length > 0 && this.urlArr[1] === 'user-interface');
+    getUserInterface(): Observable<boolean> {
+        return this.userInterfaceOn$.asObservable();
     }
 }

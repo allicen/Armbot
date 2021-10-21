@@ -1,0 +1,16 @@
+<section>
+  <mat-button-toggle-group>
+    <mat-button-toggle routerLink="/" class="main-button">
+      Инструкция
+    </mat-button-toggle>
+    <mat-button-toggle *ngFor="let i of objectKeys(selectors)" routerLink="/{{i}}">
+      {{selectors[i]}}
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+  <mat-form-field appearance="outline">
+    <mat-label>Поиск по документации</mat-label>
+    <input matInput placeholder="Введите текст для поиска">
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+</section>
+<router-outlet></router-outlet>

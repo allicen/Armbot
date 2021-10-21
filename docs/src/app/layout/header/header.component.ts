@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, Output} from '@angular/core';
 import {StorageService} from "../../serviсes/storage.service";
 import {Subscription} from "rxjs";
 import {Router} from "@angular/router";
@@ -12,23 +12,21 @@ export class HeaderComponent {
     title = 'user-interface';
 
     userInterfaceOn: boolean = false;
-    userInterfaceSub: Subscription;
 
     constructor(public storage: StorageService, private router: Router) {
-        this.userInterfaceSub = this.storage.userInterfaceOn$.subscribe(data => this.userInterfaceOn = data);
+        this.storage.getUserInterface().subscribe(data => this.userInterfaceOn = data);
     }
 
     userInterfaceChange() {
-        this.storage.setData(this.userInterfaceOn);
+
+
+        console.log('userInterfaceOn in header: ', this.userInterfaceOn);
 
         if (this.userInterfaceOn) {
             this.router.navigate(['user-interface']);
         } else {
             this.router.navigate(['']);
         }
-    }
-
-    ngOnDestroy(): void {
-        this.userInterfaceSub.unsubscribe();
+      this.storage.setUserInterface(this.userInterfaceOn);
     }
 }

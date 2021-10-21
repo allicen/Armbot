@@ -1,6 +1,5 @@
 import {Component, Output} from '@angular/core';
 import {MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltipDefaultOptions} from "@angular/material/tooltip";
-import {Router} from "@angular/router";
 
 export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
     showDelay: 500,
@@ -18,21 +17,4 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
 })
 
 export class MainComponent {
-    selectors:  {[id: string]: string} = {
-        'errors': 'Решение проблем',
-        'ros': 'ROS',
-        'docker': 'Docker',
-        'shell': 'Shell',
-        'launch':'Launch',
-        'gazebo':'Gazebo',
-        'moveit': 'MoveIt!',
-        'arduino': 'Arduino',
-        'tf': 'TF',
-        'linux': 'Linux',
-        'more': 'Прочее'
-    };
-
-    objectKeys(selectors: {}) {
-        return Object.keys(selectors);
-    }
 }
