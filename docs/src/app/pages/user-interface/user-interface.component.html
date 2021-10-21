@@ -1,1 +1,22 @@
 <h1>Пользовательский интерфейс</h1>
+
+<div *ngIf="!fileUpload" class="col-12 rmpm dropzone" appDrag (files)="filesDropped($event)">
+  <div class="text-wrapper">
+    <div class="centered">
+      <div class="text">Для загрузки перетащите файл в эту область или выберите на своем компьютере</div>
+      <button mat-raised-button color="primary" (click)="openDialogChangeFile($event)">Выбрать файл
+        <input type="file" style="display: none;" #inputFile (change)="changeFile($event)" />
+      </button>
+    </div>
+  </div>
+</div>
+
+<div *ngFor="let file of files">
+  <img *ngIf="file" [src]="file.url" class="preview">
+</div>
+
+<div class="buttons" *ngIf="fileUpload">
+  <button mat-raised-button color="warn" (click)="removeFile()">Удалить</button>
+  <button mat-raised-button color="primary" (click)="uploadFile()">Загрузить</button>
+</div>
+

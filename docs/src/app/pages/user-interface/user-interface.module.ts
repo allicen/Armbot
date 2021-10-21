@@ -1,6 +1,9 @@
 import { NgModule } from '@angular/core';
 import {UserInterfaceComponent} from "./user-interface.component";
 import {RouterModule, Routes} from "@angular/router";
+import {CommonModule} from "@angular/common";
+import {DragDirective} from "./dragDrop.directive";
+import {MatButtonModule} from "@angular/material/button";
 
 const routes: Routes = [
       { path: '', component: UserInterfaceComponent },
@@ -9,12 +12,15 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [
-    UserInterfaceComponent
+    UserInterfaceComponent,
+    DragDirective
   ],
   imports: [
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    CommonModule,
+    MatButtonModule
   ],
-  providers: [],
+  providers: [Document],
   bootstrap: [UserInterfaceComponent]
 })
 export class UserInterfaceModule { }
