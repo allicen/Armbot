@@ -9,4 +9,5 @@ import ru.armbot.domain.Image
 interface ImageRepository extends CrudRepository<Image, Long> {
     @Executable
     Image find(String name)
+    List<Image> list()
 }

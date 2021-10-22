@@ -3,4 +3,4 @@ defaultPackage: ru.armbot
 testFramework: junit
 sourceLanguage: groovy
 buildTool: gradle
-features: [annotation-api, app-name, gradle, groovy, groovy-application, http-client, http-session, junit, log4j2, readme, shade, spring, spring-boot, tomcat-server, yaml]
+features: [annotation-api, app-name, gradle, groovy, groovy-application, http-client, http-session, junit, logback, readme, shade, spring, spring-boot, tomcat-server, yaml]

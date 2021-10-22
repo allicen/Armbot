@@ -1,5 +1,7 @@
 <h1>Пользовательский интерфейс</h1>
 
+<div class="error" *ngIf="message">{{message}}</div>
+
 <div *ngIf="!fileUpload" class="col-12 rmpm dropzone" appDrag (files)="filesDropped($event)">
   <div class="text-wrapper">
     <div class="centered">
@@ -11,12 +13,19 @@
   </div>
 </div>
 
-<div *ngFor="let file of files">
-  <img *ngIf="file" [src]="file.url" class="preview">
-</div>
+<article *ngIf="!image">
+  <div *ngFor="let file of files">
+    <img *ngIf="file" [src]="file.url" alt="">
+  </div>
+</article>
 
-<div class="buttons" *ngIf="fileUpload">
+
+<div class="buttons" *ngIf="fileUpload && !image">
   <button mat-raised-button color="warn" (click)="removeFile()">Удалить</button>
   <button mat-raised-button color="primary" (click)="uploadFile()">Загрузить</button>
+</div>
+
+<div *ngIf="image">
+  <img [src]="image" alt="">
 </div>
 

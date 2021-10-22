@@ -30,12 +30,12 @@ class Image {
 
     @NonNull
     @NotBlank
-    final byte[] image
+    final byte[] imageByte
 
     @Creator
-    Image(@NonNull @NotBlank byte[] image, @NonNull @NotBlank String contentType, String name) {
+    Image(@NonNull @NotBlank byte[] imageByte, @NonNull @NotBlank String contentType, String name) {
         this.name = name
-        this.image = image
+        this.imageByte = imageByte
         this.contentType = contentType
     }
 

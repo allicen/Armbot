@@ -12,7 +12,7 @@ repositories {
 }
 
 micronaut {
-    runtime("tomcat")
+    runtime("netty")
     testRuntime("junit5")
     processing {
         incremental(true)
@@ -21,22 +21,20 @@ micronaut {
 }
 
 dependencies {
-    implementation("io.micronaut:micronaut-http-client")
-    implementation("io.micronaut:micronaut-session")
-    implementation("io.micronaut.groovy:micronaut-runtime-groovy")
-    implementation("javax.annotation:javax.annotation-api")
-//    implementation("org.apache.logging.log4j:log4j-core:2.14.1")
-    implementation("org.springframework.boot:spring-boot-starter")
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    compileOnly("io.micronaut:micronaut-http-validation")
-    compileOnly("io.micronaut.spring:micronaut-spring-annotation")
-    compileOnly("io.micronaut.spring:micronaut-spring-boot")
-    runtimeOnly("io.micronaut.spring:micronaut-spring-boot")
-//    runtimeOnly("org.apache.logging.log4j:log4j-api:2.14.1")
-//    runtimeOnly("org.apache.logging.log4j:log4j-slf4j-impl:2.14.1")
-    testCompileOnly("io.micronaut.spring:micronaut-spring-annotation")
-    testCompileOnly("io.micronaut.spring:micronaut-spring-boot")
-    implementation("io.micronaut:micronaut-validation")
+    implementation('io.micronaut:micronaut-http-client:3.1.0')
+    implementation('io.micronaut:micronaut-session:3.1.0')
+    implementation('io.micronaut.groovy:micronaut-runtime-groovy:3.0.0')
+    implementation('javax.annotation:javax.annotation-api:1.3.2')
+    implementation('org.springframework.boot:spring-boot-starter:2.5.5')
+    implementation('org.springframework.boot:spring-boot-starter-web:2.5.5')
+    compileOnly('io.micronaut:micronaut-http-validation:3.1.0')
+    compileOnly('io.micronaut.spring:micronaut-spring-annotation:4.0.0')
+    compileOnly('io.micronaut.spring:micronaut-spring-boot:4.0.0')
+    runtimeOnly('io.micronaut.spring:micronaut-spring-boot:4.0.0')
+    runtimeOnly('ch.qos.logback:logback-classic:1.2.6')
+    testCompileOnly('io.micronaut.spring:micronaut-spring-annotation:4.0.0')
+    testCompileOnly('io.micronaut.spring:micronaut-spring-boot:4.0.0')
+    implementation('io.micronaut:micronaut-validation:3.1.0')
 
     annotationProcessor("io.micronaut.data:micronaut-data-processor:3.1.1")
     implementation("io.micronaut.data:micronaut-data-hibernate-jpa:3.1.1")
@@ -44,6 +42,10 @@ dependencies {
 
     runtimeOnly('com.h2database:h2:1.4.200')
     runtimeOnly('io.micronaut.sql:micronaut-jdbc-tomcat:4.0.2')
+
+//    implementation("org.apache.logging.log4j:log4j-core:2.14.1")
+//    runtimeOnly("org.apache.logging.log4j:log4j-api:2.14.1")
+//    runtimeOnly("org.apache.logging.log4j:log4j-slf4j-impl:2.14.1")
 }
 
 

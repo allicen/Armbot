@@ -13,10 +13,12 @@ export class UserInterfaceComponent {
   title = 'docs';
   files: FileHandle[] = [];
   fileUpload: boolean = false;
+  image: any = null;
+  message: string | undefined;
 
   @ViewChild("inputFile") inputFile: ElementRef | undefined;
 
-  constructor(private sanitizer: DomSanitizer, private httpService: HttpService) { }
+  constructor(private sanitizer: DomSanitizer, private httpService: HttpService, private http: HttpClient) { }
 
   filesDropped(files: FileHandle[]): void {
     if (files.length > 0) {
@@ -35,6 +37,19 @@ export class UserInterfaceComponent {
     }
 
     this.httpService.uploadImage(this.files[0]);
+
+    this.http.get(`http://0.0.0.0:9080/image/getImage`).subscribe((data: any) => {
+      console.log(data);
+      console.log(data.image);
+      if (data.status === 'OK') {
+        console.log('======', data.image.imageByte);
+
+        this.image = this.sanitizer.bypassSecurityTrustResourceUrl(`data:${data.image.contentType};base64,${data.image.imageByte}`);
+
+      } else if (data.status === 'ERROR') {
+        this.message = data.message;
+      }
+    });
   }
 
   removeFile() {
