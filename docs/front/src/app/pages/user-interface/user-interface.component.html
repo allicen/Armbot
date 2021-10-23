@@ -2,7 +2,7 @@
 
 <div class="error" *ngIf="message">{{message}}</div>
 
-<div *ngIf="!fileUpload" class="col-12 rmpm dropzone" appDrag (files)="filesDropped($event)">
+<div *ngIf="!fileUpload && !image" class="col-12 rmpm dropzone" appDrag (files)="filesDropped($event)">
   <div class="text-wrapper">
     <div class="centered">
       <div class="text">Для загрузки перетащите файл в эту область или выберите на своем компьютере</div>
@@ -13,7 +13,7 @@
   </div>
 </div>
 
-<article *ngIf="!image">
+<article *ngIf="!image && fileUpload">
   <div *ngFor="let file of files">
     <img *ngIf="file" [src]="file.url" alt="">
   </div>
@@ -25,7 +25,10 @@
   <button mat-raised-button color="primary" (click)="uploadFile()">Загрузить</button>
 </div>
 
-<div *ngIf="image">
-  <img [src]="image" alt="">
+<div *ngIf="image" class="image-block">
+  <button mat-stroked-button color="warn" (click)="removeImage()">Закончить сеанс</button>
+  <div class="image">
+    <img [src]="image" alt="">
+  </div>
 </div>
 

@@ -6,6 +6,7 @@ import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Part
+import io.micronaut.http.annotation.PathVariable
 import io.micronaut.http.annotation.Post
 import jakarta.inject.Inject
 import ru.armbot.domain.Image
@@ -38,6 +39,7 @@ class ImageController {
 
         def image = images.pop()
 
+        // Если в базе больше 1 картинки, оставляем последнюю загруженную
         if (images.size() > 1) {
             for (i in 0..< images.size()-1) {
                 imageRepository.deleteById(images[i].id)
@@ -58,14 +60,39 @@ class ImageController {
                     message: message]
         }
 
+        // Может быть загружена только 1 картинка
+        if (!imageRepository.list().isEmpty()) {
+            imageRepository.deleteAll()
+        }
+
         Image image = new Image(file, contentType, name)
 
         try {
             imageRepository.save(image)
-        } catch (e) {
-            println("При сохранении изображения произошла ошибка: " + e)
-        }
+            return [status: 'OK', message: 'Изображение успешно загружено']
 
-        return [status: 'OK', body: image]
+        } catch (e) {
+            String message = 'При сохранении изображения произошла ошибка'
+            println("${message}: " + e)
+            return [status : 'ERROR',
+                    code: 'ERROR_SAVE_IMAGE',
+                    message: 'При сохранении изображения произошла ошибка']
+        }
+    }
+
+    @Get(value = "/removeImage/")
+    def removeImage() {
+
+        try {
+            imageRepository.deleteAll()
+            [status: 'OK', message: 'Изображение успешно удалено']
+
+        } catch (e) {
+            String message = "При удалении изображения произошла ошибка. "
+            println(message + e)
+            return [status : 'ERROR',
+                    code: 'ERROR_REMOVE_IMAGE',
+                    message: message]
+        }
     }
 }

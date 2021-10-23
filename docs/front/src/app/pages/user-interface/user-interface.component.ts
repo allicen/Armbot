@@ -1,4 +1,4 @@
-import {Component, ElementRef, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import { FileHandle } from './dragDrop.directive';
 import {DomSanitizer} from "@angular/platform-browser";
 import {HttpService} from "../../serviсes/http.service";
@@ -9,7 +9,7 @@ import {HttpClient} from "@angular/common/http";
   templateUrl: './user-interface.component.html',
   styleUrls: ['./user-interface.component.less']
 })
-export class UserInterfaceComponent {
+export class UserInterfaceComponent implements OnInit {
   title = 'docs';
   files: FileHandle[] = [];
   fileUpload: boolean = false;
@@ -18,7 +18,11 @@ export class UserInterfaceComponent {
 
   @ViewChild("inputFile") inputFile: ElementRef | undefined;
 
-  constructor(private sanitizer: DomSanitizer, private httpService: HttpService, private http: HttpClient) { }
+  constructor(private httpService: HttpService, private sanitizer: DomSanitizer) { }
+
+  ngOnInit(): void {
+    this.getImage();
+  }
 
   filesDropped(files: FileHandle[]): void {
     if (files.length > 0) {
@@ -29,27 +33,17 @@ export class UserInterfaceComponent {
     }
   }
 
-  uploadFile(): void {
-    // загрузка файла;
-
+  uploadFile(): any {
     if (this.files.length === 0) {
       return;
     }
 
-    this.httpService.uploadImage(this.files[0]);
-
-    this.http.get(`http://0.0.0.0:9080/image/getImage`).subscribe((data: any) => {
-      console.log(data);
-      console.log(data.image);
+    this.httpService.uploadImage(this.files[0]).pipe().subscribe((data => {
       if (data.status === 'OK') {
-        console.log('======', data.image.imageByte);
-
-        this.image = this.sanitizer.bypassSecurityTrustResourceUrl(`data:${data.image.contentType};base64,${data.image.imageByte}`);
-
-      } else if (data.status === 'ERROR') {
-        this.message = data.message;
+        this.getImage()
       }
-    });
+      this.message = data.message;
+    }));
   }
 
   removeFile() {
@@ -76,5 +70,27 @@ export class UserInterfaceComponent {
     if (this.files.length > 0) {
       this.fileUpload = true;
     }
+  }
+
+  getImage() {
+    return this.httpService.getImage().subscribe((data: any) => {
+      if (data.status === 'OK') {
+        console.log(123);
+        this.image = this.sanitizer.bypassSecurityTrustResourceUrl(`data:${data.image.contentType};base64,${data.image.imageByte}`);
+      } else if (data.status === 'ERROR') {
+        this.message = data.message;
+      }
+    });
+  }
+
+  removeImage() {
+    this.httpService.removeImage().subscribe((data: any) => {
+      console.log(data);
+      if (data.status === 'OK') {
+        this.image = null;
+        this.fileUpload = false;
+      }
+      this.message = data.message;
+    });
   }
 }
