@@ -14,6 +14,8 @@
 <code>sed -i -e 's/\r$//' scripts/docker/run_docs_docker.sh</code>.</p>
 <p>12. Запустить docker-контейнер с документацией: <code>./scripts/docker/run_docs_docker.sh</code></p>
 <p>13. Открыть документацию в браузере по адресу <code>localhost</code>.</p>
+<p>14. Собрать back <code>./gradlew assemble</code></p>
+<p>15. Запустить back <code>java -jar /back/libs/back-0.1-all.jar</code></p>
 <p><br /></p>
 <h3>Запустить робота</h3>
 <p>Как запустить робота, описано в документации во вкладке "Инструкция".</p>

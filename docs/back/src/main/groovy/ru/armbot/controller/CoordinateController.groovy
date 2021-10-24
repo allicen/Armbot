@@ -17,10 +17,10 @@ import ru.armbot.service.CoordinateExcelService
 class CoordinateController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass())
 
-    @Inject CoordinateRepository coordinateRepository
-    @Inject CoordinateExcelService coordinateExcelService;
+    CoordinateController() { }
 
-    CoordinateController() {}
+    @Inject CoordinateRepository coordinateRepository
+    @Inject CoordinateExcelService coordinateExcelService
 
     @Post(value = "/save")
     def saveCoordinates(@Body List<Coordinate> coordinateList) {
