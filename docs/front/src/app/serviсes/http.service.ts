@@ -1,9 +1,10 @@
 import {Injectable} from "@angular/core";
-import {Observable, Subscription} from "rxjs";
-import {HttpClient} from "@angular/common/http";
+import {Observable, of, Subscription, throwError} from "rxjs";
+import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 import {FileHandle} from "../pages/user-interface/dragDrop.directive";
 import {Config} from "../config/config";
-import {map} from "rxjs/operators";
+import {catchError, map} from "rxjs/operators";
+import {Coordinate} from "../model/models";
 
 
 @Injectable({ providedIn: 'root' })
@@ -38,4 +39,20 @@ export class HttpService {
         })
       );
     }
+
+  saveCoordinateToFile(coordinateList: Coordinate[]): Observable<any> {
+    return this.http.post(`${this.config.httpUrl}/coordinate/save`, coordinateList).pipe(
+      catchError((error: HttpErrorResponse) => {
+        return throwError(error);
+      }),
+      map(res => {
+        return res;
+      }),
+    );
+  }
+
+  getUrlExport(): string {
+      return `${this.config.httpUrl}/coordinate/excel`
+  }
+
 }

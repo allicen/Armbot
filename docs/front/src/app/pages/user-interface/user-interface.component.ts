@@ -8,6 +8,7 @@ import {MatTable} from "@angular/material/table";
 import {MatDialog} from "@angular/material/dialog";
 import {OpenDialogComponent} from "./open-dialog/open-dialog.component";
 import {StorageService} from "../../serviсes/storage.service";
+import {config} from "rxjs";
 
 @Component({
   selector: 'app-root',
@@ -25,6 +26,8 @@ export class UserInterfaceComponent implements OnInit {
   dragImagePosition = {x: 0, y: 0};
   editingAllowed: boolean = true;
   pointNameDefault: string = 'coordinate'
+  coordinateSaved: boolean = false;
+  exportCoordinateUrl: string = '';
 
   displayedColumns: string[] = ['name', 'x', 'y', 'z', 'action'];
   dataSource: Coordinate[] = [];
@@ -33,6 +36,7 @@ export class UserInterfaceComponent implements OnInit {
   @ViewChild("inputFile") inputFile: ElementRef | undefined;
   @ViewChild("uploadImage") uploadImage: ElementRef | undefined;
   @ViewChild("robotArea") robotArea: ElementRef | undefined;
+  @ViewChild("exportExcel") exportExcel: ElementRef | undefined;
 
   constructor(private httpService: HttpService,
               private sanitizer: DomSanitizer,
@@ -49,6 +53,8 @@ export class UserInterfaceComponent implements OnInit {
         this.table.renderRows();
       }
     });
+
+    this.exportCoordinateUrl = this.httpService.getUrlExport();
   }
 
   ngAfterViewInit() {
@@ -202,6 +208,12 @@ export class UserInterfaceComponent implements OnInit {
   }
 
   exportFile() {
+    this.exportExcel?.nativeElement.click();
+  }
 
+  coordinateSaveServer() {
+    this.httpService.saveCoordinateToFile(this.dataSource).pipe().subscribe(() => {
+      this.coordinateSaved = true;
+    });
   }
 }

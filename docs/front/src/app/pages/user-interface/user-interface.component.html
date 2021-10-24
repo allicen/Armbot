@@ -112,9 +112,11 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns; let i = index"></tr>
     </table>
-
     <div class="export">
-      <button mat-raised-button color="warn" (click)="exportFile()">Export file</button>
+      <button mat-raised-button color="primary" (click)="coordinateSaveServer()" [disabled]="coordinateSaved">Сохранить</button>
+      <button mat-raised-button color="warn" (click)="exportFile()" [disabled]="!coordinateSaved">Экспортировать в Excel
+        <a [href]="exportCoordinateUrl" style="display: none" #exportExcel></a>
+      </button>
     </div>
   </div>
 </div>
