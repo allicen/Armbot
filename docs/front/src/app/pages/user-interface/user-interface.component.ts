@@ -60,7 +60,7 @@ export class UserInterfaceComponent implements OnInit {
   ngAfterViewInit() {
     setTimeout(() => {
       this.getImageWidth();
-    }, 100);
+    }, 500);
   }
 
   filesDropped(files: FileHandle[]): void {
@@ -130,6 +130,8 @@ export class UserInterfaceComponent implements OnInit {
         this.editingAllowed = true;
       }
       this.message = data.message;
+      this.dataSource = [];
+      this.dragImagePosition = {x: 0, y: 0};
     });
   }
 
