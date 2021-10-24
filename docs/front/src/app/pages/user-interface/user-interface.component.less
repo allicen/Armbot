@@ -1,4 +1,4 @@
-@import "src/app/styles/styles.less";
+@import "../../styles/styles.less";
 
 .dropzone {
   min-height: 400px;
@@ -13,6 +13,28 @@
 .text-wrapper {
   display: table-cell;
   vertical-align: middle;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .buttons {
+    margin: 0;
+  }
+}
+
+.control {
+  display: flex;
+  justify-content: space-between;
+}
+
+.important {
+  padding: 10px 20px;
+  background: blanchedalmond;
+  font-weight: 600;
+  text-align: center;
 }
 
 .centered {
@@ -51,4 +73,48 @@
   button {
     margin-bottom: 10px;
   }
+}
+
+.image {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  cursor: move;
+}
+
+.after-edit {
+  cursor: default;
+}
+
+.form {
+  display: flex;
+
+  mat-form-field {
+    margin-right: 15px;
+    margin-left: 15px;
+    margin-bottom: 15px;
+    max-width: 150px;
+  }
+
+  .label {
+    margin-top: 10px;
+    text-align: right;
+  }
+
+  span {
+    margin-top: 22px;
+  }
+
+  button {
+    margin-left: 20px;
+  }
+
+}
+
+.robot-area {
+  width: 100%;
+  height: 600px;
+  background: @drag-drop-back;
+  overflow: auto;
+
 }

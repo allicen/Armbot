@@ -1,8 +1,9 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, Injectable, OnInit, ViewChild} from '@angular/core';
 import { FileHandle } from './dragDrop.directive';
 import {DomSanitizer} from "@angular/platform-browser";
 import {HttpService} from "../../serviсes/http.service";
 import {HttpClient} from "@angular/common/http";
+import { CdkDragEnd } from "@angular/cdk/drag-drop";
 
 @Component({
   selector: 'app-root',
@@ -15,13 +16,26 @@ export class UserInterfaceComponent implements OnInit {
   fileUpload: boolean = false;
   image: any = null;
   message: string | undefined;
+  imageWidth: number = 0;
+  maxWidthLen: number = 4; // Макс количество символов для задания ширины
+  dragImagePosition = {x: 0, y: 0};
+  editingAllowed: boolean = true;
+
 
   @ViewChild("inputFile") inputFile: ElementRef | undefined;
+  @ViewChild("uploadImage") uploadImage: ElementRef | undefined;
 
-  constructor(private httpService: HttpService, private sanitizer: DomSanitizer) { }
+  constructor(private httpService: HttpService,
+              private sanitizer: DomSanitizer) { }
 
   ngOnInit(): void {
     this.getImage();
+  }
+
+  ngAfterViewInit() {
+    setTimeout(() => {
+      this.getImageWidth();
+    }, 100);
   }
 
   filesDropped(files: FileHandle[]): void {
@@ -75,7 +89,6 @@ export class UserInterfaceComponent implements OnInit {
   getImage() {
     return this.httpService.getImage().subscribe((data: any) => {
       if (data.status === 'OK') {
-        console.log(123);
         this.image = this.sanitizer.bypassSecurityTrustResourceUrl(`data:${data.image.contentType};base64,${data.image.imageByte}`);
       } else if (data.status === 'ERROR') {
         this.message = data.message;
@@ -89,8 +102,42 @@ export class UserInterfaceComponent implements OnInit {
       if (data.status === 'OK') {
         this.image = null;
         this.fileUpload = false;
+        this.editingAllowed = true;
       }
       this.message = data.message;
     });
+  }
+
+  getImageWidth(): void {
+      if (this.uploadImage) {
+        this.imageWidth = this.uploadImage.nativeElement.width;
+      }
+  }
+
+  renderImage(width: string) {
+    if (width.length > this.maxWidthLen) {
+      width = width.slice(0, this.maxWidthLen);
+    }
+
+    this.imageWidth = Number(width);
+  }
+
+
+  getDragImagePosition($event: CdkDragEnd) {
+    const position = $event.source.getFreeDragPosition();
+    this.dragImagePosition.x = position.x;
+    this.dragImagePosition.y = position.y;
+  }
+
+  setEditingCompleted() {
+    this.editingAllowed = false;
+  }
+
+  setEditAllowed() {
+    this.editingAllowed = true;
+  }
+
+  saveCoordinate() {
+
   }
 }

@@ -5,6 +5,8 @@ import {CommonModule} from "@angular/common";
 import {DragDirective} from "./dragDrop.directive";
 import {MatButtonModule} from "@angular/material/button";
 import {HttpClient} from "@angular/common/http";
+import {MatInputModule} from "@angular/material/input";
+import {DragDropModule} from "@angular/cdk/drag-drop";
 
 const routes: Routes = [
       { path: '', component: UserInterfaceComponent },
@@ -19,7 +21,9 @@ const routes: Routes = [
   imports: [
     RouterModule.forChild(routes),
     CommonModule,
-    MatButtonModule
+    MatButtonModule,
+    MatInputModule,
+    DragDropModule
   ],
   providers: [HttpClient],
   bootstrap: [UserInterfaceComponent]

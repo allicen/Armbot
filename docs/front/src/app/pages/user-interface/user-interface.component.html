@@ -1,4 +1,10 @@
-<h1>Пользовательский интерфейс</h1>
+<div class="title">
+  <h1>Пользовательский интерфейс</h1>
+  <div class="buttons">
+    <button mat-stroked-button color="primary" (click)="setEditAllowed()" *ngIf="image && !editingAllowed">Вернуться к редактированию</button>
+    <button mat-stroked-button color="warn" (click)="removeImage()" *ngIf="image">Завершить сеанс</button>
+  </div>
+</div>
 
 <div class="error" *ngIf="message">{{message}}</div>
 
@@ -19,16 +25,48 @@
   </div>
 </article>
 
-
 <div class="buttons" *ngIf="fileUpload && !image">
   <button mat-raised-button color="warn" (click)="removeFile()">Удалить</button>
   <button mat-raised-button color="primary" (click)="uploadFile()">Загрузить</button>
 </div>
 
 <div *ngIf="image" class="image-block">
-  <button mat-stroked-button color="warn" (click)="removeImage()">Закончить сеанс</button>
-  <div class="image">
-    <img [src]="image" alt="">
+  <p class="important" *ngIf="editingAllowed">Шаг 1. Задайте ширину изображения клавиатуры и перетащите его мышью в нужное место.</p>
+  <p class="important" *ngIf="!editingAllowed">Шаг 2. Кликайте на область клавиатуры, чтобы сохранить координаты.</p>
+  <section class="control" *ngIf="editingAllowed">
+    <div class="form">
+      <div class="label">Введите ширину изображения<br />и нажмите Enter:</div>
+      <mat-form-field class="example-full-width" appearance="fill">
+        <mat-label>Ширина изображения</mat-label>
+        <input matInput #width
+               oninput = "if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+               [valueAsNumber] = "this.imageWidth"
+               (change) = "renderImage(width.value)"
+               type = "number"
+               min="1"
+               [maxLength]="maxWidthLen">
+        <mat-hint align="end">{{width.value.length}} / {{maxWidthLen}}</mat-hint>
+      </mat-form-field>
+      <span>px.</span>
+    </div>
+    <div>
+      <button mat-raised-button color="warn" (click)="setEditingCompleted()">Применить все изменения</button>
+    </div>
+  </section>
+
+  <div class="robot-area">
+    <div class="image" cdkDragBoundary=".robot-area" cdkDrag
+         [cdkDragFreeDragPosition]="dragImagePosition"
+         (cdkDragEnded)="getDragImagePosition($event)"
+         *ngIf="editingAllowed">
+      <img [src]="image" alt="" #uploadImage [width]="imageWidth === 0 ? uploadImage.width : imageWidth">
+    </div>
+    <div class="image after-edit" *ngIf="!editingAllowed">
+      <img [src]="image" alt=""
+           [width]="imageWidth"
+           [style]="'margin-left: '+ dragImagePosition.x+'px; margin-top: '+ dragImagePosition.y+'px;'"
+           (click)="saveCoordinate()">
+    </div>
   </div>
 </div>
 
