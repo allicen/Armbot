@@ -7,6 +7,11 @@ import {MatButtonModule} from "@angular/material/button";
 import {HttpClient} from "@angular/common/http";
 import {MatInputModule} from "@angular/material/input";
 import {DragDropModule} from "@angular/cdk/drag-drop";
+import {MatTableModule} from "@angular/material/table";
+import {MatIconModule} from "@angular/material/icon";
+import {MatDialog} from "@angular/material/dialog";
+import {MatDialogModule} from '@angular/material/dialog';
+import {OpenDialogComponent} from "./open-dialog/open-dialog.component";
 
 const routes: Routes = [
       { path: '', component: UserInterfaceComponent },
@@ -16,16 +21,20 @@ const routes: Routes = [
 @NgModule({
   declarations: [
     UserInterfaceComponent,
-    DragDirective
+    DragDirective,
+    OpenDialogComponent
   ],
   imports: [
     RouterModule.forChild(routes),
     CommonModule,
     MatButtonModule,
     MatInputModule,
-    DragDropModule
+    DragDropModule,
+    MatTableModule,
+    MatIconModule,
+    MatDialogModule
   ],
-  providers: [HttpClient],
+  providers: [HttpClient, MatDialog],
   bootstrap: [UserInterfaceComponent]
 })
 export class UserInterfaceModule { }

@@ -54,7 +54,7 @@
     </div>
   </section>
 
-  <div class="robot-area">
+  <div class="robot-area" #robotArea>
     <div class="image" cdkDragBoundary=".robot-area" cdkDrag
          [cdkDragFreeDragPosition]="dragImagePosition"
          (cdkDragEnded)="getDragImagePosition($event)"
@@ -62,10 +62,59 @@
       <img [src]="image" alt="" #uploadImage [width]="imageWidth === 0 ? uploadImage.width : imageWidth">
     </div>
     <div class="image after-edit" *ngIf="!editingAllowed">
-      <img [src]="image" alt=""
+      <img [src]="image" alt="" #uploadImage
            [width]="imageWidth"
            [style]="'margin-left: '+ dragImagePosition.x+'px; margin-top: '+ dragImagePosition.y+'px;'"
-           (click)="saveCoordinate()">
+           (click)="saveCoordinate($event)">
+    </div>
+  </div>
+  <div class="points" *ngIf="image && !editingAllowed && dataSource.length > 0">
+    <h2>Отмеченные точки:</h2>
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 demo-table">
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Название</th>
+        <td mat-cell *matCellDef="let element; let i = index;">
+          <div class="input">
+            <input #coordinateName type="text" matInput [value]="element.name"
+                   (change)="changeCoordinateRow(coordinateName.value,'name', i)">
+          </div>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="x">
+        <th mat-header-cell *matHeaderCellDef>Координата X</th>
+        <td mat-cell *matCellDef="let element; let i = index;">
+          <input #coordinateX type="number" matInput [value]="element.x" min="0"
+                 (change)="changeCoordinateRow(coordinateX.value,'x', i)">
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="y">
+        <th mat-header-cell *matHeaderCellDef>Координата Y</th>
+        <td mat-cell *matCellDef="let element; let i = index;">
+          <input #coordinateY type="number" matInput [value]="element.y" min="0"
+                 (change)="changeCoordinateRow(coordinateY.value,'y', i)">
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="z">
+        <th mat-header-cell *matHeaderCellDef>Координата Z</th>
+        <td mat-cell *matCellDef="let element; let i = index;">
+          <input #coordinateZ type="number" matInput [value]="element.z" min="0"
+                 (change)="changeCoordinateRow(coordinateZ.value,'z', i)">
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="action" class="action">
+        <th mat-header-cell *matHeaderCellDef>Действия</th>
+        <td mat-cell *matCellDef="let element; let i = index;">
+          <button mat-icon-button color="warn" aria-label="Example icon button with a plus one icon" (click)="removeCoordinate(i)">
+            <mat-icon>close icon</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns; let i = index"></tr>
+    </table>
+
+    <div class="export">
+      <button mat-raised-button color="warn" (click)="exportFile()">Export file</button>
     </div>
   </div>
 </div>

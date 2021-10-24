@@ -2,8 +2,12 @@ import {Component, ElementRef, Injectable, OnInit, ViewChild} from '@angular/cor
 import { FileHandle } from './dragDrop.directive';
 import {DomSanitizer} from "@angular/platform-browser";
 import {HttpService} from "../../serviсes/http.service";
-import {HttpClient} from "@angular/common/http";
 import { CdkDragEnd } from "@angular/cdk/drag-drop";
+import {Coordinate} from "../../model/models";
+import {MatTable} from "@angular/material/table";
+import {MatDialog} from "@angular/material/dialog";
+import {OpenDialogComponent} from "./open-dialog/open-dialog.component";
+import {StorageService} from "../../serviсes/storage.service";
 
 @Component({
   selector: 'app-root',
@@ -20,16 +24,31 @@ export class UserInterfaceComponent implements OnInit {
   maxWidthLen: number = 4; // Макс количество символов для задания ширины
   dragImagePosition = {x: 0, y: 0};
   editingAllowed: boolean = true;
+  pointNameDefault: string = 'coordinate'
 
+  displayedColumns: string[] = ['name', 'x', 'y', 'z', 'action'];
+  dataSource: Coordinate[] = [];
 
+  @ViewChild(MatTable) table: MatTable<Coordinate> | undefined;
   @ViewChild("inputFile") inputFile: ElementRef | undefined;
   @ViewChild("uploadImage") uploadImage: ElementRef | undefined;
+  @ViewChild("robotArea") robotArea: ElementRef | undefined;
 
   constructor(private httpService: HttpService,
-              private sanitizer: DomSanitizer) { }
+              private sanitizer: DomSanitizer,
+              private dialog: MatDialog,
+              private storage: StorageService) { }
 
   ngOnInit(): void {
     this.getImage();
+
+    this.storage.getCoordinateDelete().subscribe(id => {
+      console.log('data = ' , id);
+      this.dataSource.splice(id, 1);
+      if (this.table) {
+        this.table.renderRows();
+      }
+    });
   }
 
   ngAfterViewInit() {
@@ -137,7 +156,52 @@ export class UserInterfaceComponent implements OnInit {
     this.editingAllowed = true;
   }
 
-  saveCoordinate() {
+  saveCoordinate($event: MouseEvent) {
+    const image = this.uploadImage?.nativeElement;
+    let xPosition = 0;
+    let yPosition = 0;
+
+    let xScrollPos = image.scrollLeft || document.documentElement.scrollLeft;
+    let yScrollPos = image.scrollTop || document.documentElement.scrollTop;
+
+    xPosition += Math.round($event.x - (image.offsetLeft - xScrollPos + image.clientLeft));
+    yPosition += Math.round($event.y - (image.offsetTop - yScrollPos + image.clientTop));
+
+    this.dataSource.push({name: `${this.pointNameDefault}-${this.dataSource.length+1}`, x: xPosition, y: yPosition, z: 0});
+
+    if (this.table) {
+      this.table.renderRows();
+    }
+  }
+
+  removeCoordinate(id: number) {
+    this.dialog.open(OpenDialogComponent, {
+      data: { id: id }
+    });
+  }
+
+  changeCoordinateRow(value: any, type: string, id: number) {
+    switch (type) {
+      case 'x':
+        this.dataSource[id].x = value;
+        break;
+      case 'y':
+        this.dataSource[id].y = value;
+        break;
+      case 'z':
+        this.dataSource[id].z = value;
+        break;
+      case 'name':
+        this.dataSource[id].name = value;
+        break;
+    }
+
+    if (this.table) {
+      this.table.renderRows();
+    }
+  }
+
+  exportFile() {
 
   }
 }

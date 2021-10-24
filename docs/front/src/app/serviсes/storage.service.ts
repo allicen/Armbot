@@ -6,6 +6,7 @@ import { Router } from "@angular/router";
 export class StorageService {
 
     private userInterfaceOn$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    private coordinateDelete$: BehaviorSubject<number> = new BehaviorSubject<number>(-1);
     urlArr = this.router.url.split('/');
 
     isUserInterface(): boolean {
@@ -24,5 +25,13 @@ export class StorageService {
 
     getUserInterface(): Observable<boolean> {
         return this.userInterfaceOn$.asObservable();
+    }
+
+    setCoordinateDelete(id: number): void {
+      this.coordinateDelete$.next(id);
+    }
+
+    getCoordinateDelete(): Observable<number> {
+      return this.coordinateDelete$.asObservable();
     }
 }

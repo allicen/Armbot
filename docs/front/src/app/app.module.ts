@@ -6,9 +6,10 @@ import {AppRoutingModule} from "./app-router.module";
 import {FormsModule} from "@angular/forms";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {HttpClientModule} from "@angular/common/http";
+import { OverlayModule } from "@angular/cdk/overlay";
 
 @NgModule({
-  imports: [BrowserModule, FormsModule, AppRoutingModule, BrowserAnimationsModule, HttpClientModule],
+  imports: [BrowserModule, FormsModule, AppRoutingModule, BrowserAnimationsModule, HttpClientModule, OverlayModule],
   declarations: [AppComponent],
   bootstrap: [AppComponent]
 })
