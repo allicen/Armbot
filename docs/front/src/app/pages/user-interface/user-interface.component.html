@@ -20,7 +20,7 @@
 </div>
 
 <article *ngIf="!image && fileUpload">
-  <div *ngFor="let file of files">
+  <div *ngFor="let file of files" class="upload-file">
     <img *ngIf="file" [src]="file.url" alt="">
   </div>
 </article>

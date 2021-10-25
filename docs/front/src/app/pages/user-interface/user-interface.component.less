@@ -58,12 +58,21 @@ table {
 
 .dropzone {
   min-height: 400px;
+  height: 100%;
   min-width: 400px;
   display: table;
   width: 100%;
   background-color: @drag-drop-back;
   border: dotted 1px @drag-drop-border;
   margin-bottom: 20px;
+}
+
+.upload-file {
+  max-width: 500px;
+
+  img {
+    max-width: 100%;
+  }
 }
 
 .text-wrapper {
