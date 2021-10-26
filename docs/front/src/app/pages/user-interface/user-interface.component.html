@@ -55,6 +55,9 @@
   </section>
 
   <div class="robot-area" #robotArea>
+<!--    <div class="mills"></div>-->
+    <hr style="position: absolute; width: 100%; z-index: 5;" *ngFor="let item of [].constructor(12);let i = index;" [style.top]="i*50+'px'"/>
+    <hr style="position: absolute; width: 0; height: 100%; z-index: 5;" *ngFor="let item of [].constructor(20);let i = index;" [style.left]="i*50+'px'"/>
     <div class="image" cdkDragBoundary=".robot-area" cdkDrag
          [cdkDragFreeDragPosition]="dragImagePosition"
          (cdkDragEnded)="getDragImagePosition($event)"
@@ -64,6 +67,7 @@
       <img [src]="image" alt="" #uploadImage *ngIf="!imageWidth">
 
     </div>
+
     <div class="image after-edit" *ngIf="!editingAllowed">
       <img [src]="image" alt="" #uploadImage
            [width]="imageWidth"
