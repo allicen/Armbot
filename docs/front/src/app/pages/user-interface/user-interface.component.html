@@ -36,8 +36,8 @@
   <section class="control" *ngIf="editingAllowed">
     <div class="form">
       <div class="label">Введите ширину изображения<br />и нажмите Enter:</div>
-      <mat-form-field class="example-full-width" appearance="fill">
-        <mat-label>Ширина изображения</mat-label>
+      <mat-form-field appearance="fill">
+        <mat-label>Ширина картинки (px):</mat-label>
         <input matInput #width
                oninput = "if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
                [valueAsNumber] = "this.imageWidth"
@@ -47,7 +47,28 @@
                [maxLength]="maxWidthLen">
         <mat-hint align="end">{{width.value.length}} / {{maxWidthLen}}</mat-hint>
       </mat-form-field>
-      <span>px.</span>
+
+      <div class="grid-on">
+        <mat-checkbox [checked]="gridOn" (change)="setVisibleGrid($event.checked)" color="warn">Включить сетку</mat-checkbox>
+        <mat-form-field appearance="fill" *ngIf="gridOn">
+          <mat-label>Шаг (px):</mat-label>
+          <input matInput #gridChangeStep
+                 oninput = "if (this.value > 500) this.value = 500;"
+                 [valueAsNumber] = "gridStep"
+                 (change) = "changeGreedStep(gridChangeStep.value)"
+                 type = "number"
+                 min="1"
+                 max="500">
+        </mat-form-field>
+      </div>
+
+      <div class="grid-color" *ngIf="gridOn">
+        <label>Цвет сетки:</label>
+        <mat-radio-group [(ngModel)]="gridColorValue">
+          <mat-radio-button [class]="color" *ngFor="let color of gridColors" [value]="color"></mat-radio-button>
+        </mat-radio-group>
+      </div>
+
     </div>
     <div>
       <button mat-raised-button color="warn" (click)="setEditingCompleted()" [disabled]="imageWidth === 0">Применить все изменения</button>
@@ -55,9 +76,22 @@
   </section>
 
   <div class="robot-area" #robotArea>
-<!--    <div class="mills"></div>-->
-    <hr style="position: absolute; width: 100%; z-index: 5;" *ngFor="let item of [].constructor(12);let i = index;" [style.top]="i*50+'px'"/>
-    <hr style="position: absolute; width: 0; height: 100%; z-index: 5;" *ngFor="let item of [].constructor(20);let i = index;" [style.left]="i*50+'px'"/>
+    <div class="point" *ngFor="let item of dataSource;" [style.left]="item.x+'px'" [style.top]="item.y+'px'"></div>
+    <ng-container *ngIf="gridOn && editingAllowed">
+      <div class="grid grid-vertical" *ngFor="let item of [].constructor(gridVerticalCount);let i = index;"
+           [style.left]="(i * gridStep + robotArea.clientWidth / 2)+'px'" [style.background]="gridColorValue === 'default' ? gridColorDefault : gridColorValue">
+      </div>
+      <div class="grid grid-vertical" *ngFor="let item of [].constructor(gridVerticalCount);let i = index;"
+           [style.right]="(i * gridStep + robotArea.clientWidth / 2)+'px'" [style.background]="gridColorValue === 'default' ? gridColorDefault : gridColorValue">
+      </div>
+      <div class="grid grid-horizontal" *ngFor="let item of [].constructor(gridHorizontalCount);let i = index;"
+           [style.top]="(i * gridStep + robotArea.clientHeight / 2)+'px'" [style.background]="gridColorValue === 'default' ? gridColorDefault : gridColorValue">
+      </div>
+      <div class="grid grid-horizontal" *ngFor="let item of [].constructor(gridHorizontalCount);let i = index;"
+           [style.bottom]="(i * gridStep + robotArea.clientHeight / 2)+'px'" [style.background]="gridColorValue === 'default' ? gridColorDefault : gridColorValue">
+      </div>
+    </ng-container>
+
     <div class="image" cdkDragBoundary=".robot-area" cdkDrag
          [cdkDragFreeDragPosition]="dragImagePosition"
          (cdkDragEnded)="getDragImagePosition($event)"
@@ -76,7 +110,12 @@
     </div>
   </div>
   <div class="points" *ngIf="image && !editingAllowed && dataSource.length > 0">
-    <h2>Отмеченные точки:</h2>
+    <div class="row">
+      <h2>Отмеченные точки:</h2>
+      <section>
+        <button mat-raised-button color="warn" (click)="removeAllPoint()">Удалить все</button>
+      </section>
+    </div>
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 demo-table">
       <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef>Название</th>

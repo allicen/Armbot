@@ -181,43 +181,24 @@ table {
   width: 100%;
   height: 600px;
   background-color: @drag-drop-back;
-  overflow: auto;
-
-  .mills {
-    display: inline-block;
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    z-index: 2;
-
-    background-image:
-    linear-gradient(#cecece 1px, transparent 1px),
-    linear-gradient(90deg, #cecece 1px, transparent 1px);
-    //linear-gradient(#D5EEEC 1px, transparent 1px),
-    //linear-gradient(90deg, #D5EEEC 1px, transparent 1px);
-    //linear-gradient(#cecece 1px, transparent 1px),
-    //linear-gradient(90deg, #cecece 1px, transparent 1px);
-    background-size:
-      100px 100px,
-      100px 100px,
-      5px 5px,
-      5px 5px,
-      20px 20px,
-      20px 20px;
-    background-position:
-        -1px -1px,
-        -1px -1px,
-      0 0,
-      0 0,
-        -1px -1px,
-        -1px -1px;
-  }
+  overflow: hidden;
 
   .image {
     position: absolute;
     top: 0;
     left: 0;
     z-index: 1;
+  }
+
+  .point {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background-color: @contrast-color;
+    border-radius: 6px;
+    margin-left: -3px;
+    margin-top: -3px;
+    z-index: 2;
   }
 }
 
@@ -231,4 +212,125 @@ table {
       margin-right: 20px;
     }
   }
+
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+}
+
+.grid {
+  background: @grid-color-default;
+  position: absolute;
+  z-index: 5;
+}
+
+.grid-on {
+  margin-left: 50px;
+
+  mat-checkbox {
+    margin-top: 22px;
+  }
+
+  mat-form-field {
+    width: 100px;
+  }
+}
+
+.grid-color {
+  display: flex;
+  flex-direction: column;
+  margin-left: 15px;
+
+  label {
+    margin-bottom: 7px;
+  }
+
+  mat-radio-group {
+    mat-radio-button {
+      margin-right: 10px;
+    }
+
+    // Цвет радио-кнопки по умолчанию
+    ::ng-deep .default .mat-radio-outer-circle {
+      border-color: @grid-color-default;
+    }
+    ::ng-deep .default .mat-radio-button.mat-accent .mat-radio-inner-circle {
+      background-color: @grid-color-default;
+    }
+    ::ng-deep.default.mat-radio-button.mat-accent.mat-radio-checked .mat-radio-outer-circle {
+      border-color: @grid-color-default;
+    }
+    ::ng-deep .default.mat-radio-button.mat-accent .mat-radio-inner-circle {
+      background-color: @grid-color-default;
+    }
+
+    // Красный цвет радио-кнопки
+    ::ng-deep .red .mat-radio-outer-circle {
+      border-color: @red-color;
+    }
+    ::ng-deep .red .mat-radio-button.mat-accent .mat-radio-inner-circle {
+      background-color: @red-color;
+    }
+    ::ng-deep.red.mat-radio-button.mat-accent.mat-radio-checked .mat-radio-outer-circle {
+      border-color: @red-color;
+    }
+    ::ng-deep .red.mat-radio-button.mat-accent .mat-radio-inner-circle {
+      background-color: @red-color;
+    }
+
+    // Желтый цвет радио-кнопки
+    ::ng-deep .yellow .mat-radio-outer-circle {
+      border-color: @yellow-color;
+    }
+    ::ng-deep .yellow .mat-radio-button.mat-accent .mat-radio-inner-circle {
+      background-color: @yellow-color;
+    }
+    ::ng-deep.yellow.mat-radio-button.mat-accent.mat-radio-checked .mat-radio-outer-circle {
+      border-color: @yellow-color;
+    }
+    ::ng-deep .yellow.mat-radio-button.mat-accent .mat-radio-inner-circle {
+      background-color: @yellow-color;
+    }
+
+    // Зеленый цвет радио-кнопки
+    ::ng-deep .green .mat-radio-outer-circle {
+      border-color: @green-color;
+    }
+    ::ng-deep .green .mat-radio-button.mat-accent .mat-radio-inner-circle {
+      background-color: @green-color;
+    }
+    ::ng-deep.green.mat-radio-button.mat-accent.mat-radio-checked .mat-radio-outer-circle {
+      border-color: @green-color;
+    }
+    ::ng-deep .green.mat-radio-button.mat-accent .mat-radio-inner-circle {
+      background-color: @green-color;
+    }
+
+    // Черный цвет радио-кнопки
+    ::ng-deep .black .mat-radio-outer-circle {
+      border-color: @black-color;
+    }
+    ::ng-deep .black .mat-radio-button.mat-accent .mat-radio-inner-circle {
+      background-color: @black-color;
+    }
+    ::ng-deep.black.mat-radio-button.mat-accent.mat-radio-checked .mat-radio-outer-circle {
+      border-color: @black-color;
+    }
+    ::ng-deep .black.mat-radio-button.mat-accent .mat-radio-inner-circle {
+      background-color: @black-color;
+    }
+
+  }
+}
+
+.grid-vertical {
+  width: 1px;
+  height: 100%;
+}
+
+.grid-horizontal {
+  width: 100%;
+  height: 1px;
 }

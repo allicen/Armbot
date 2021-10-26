@@ -7,8 +7,7 @@ import {ViewService} from "../../serviсes/view.service";
   styleUrls: ['./docs.component.less'],
   encapsulation: ViewEncapsulation.None
 })
-export class DocsComponent implements OnInit {
-  constructor(private viewService: ViewService) {}
+export class DocsComponent {
 
   userInterfaceOn: boolean = false;
 
@@ -28,9 +27,5 @@ export class DocsComponent implements OnInit {
 
   objectKeys(selectors: {}) {
     return Object.keys(selectors);
-  }
-
-  ngOnInit(): void {
-    this.viewService.viewToolTip();
   }
 }

@@ -12,6 +12,10 @@ import {MatIconModule} from "@angular/material/icon";
 import {MatDialog} from "@angular/material/dialog";
 import {MatDialogModule} from '@angular/material/dialog';
 import {OpenDialogComponent} from "./open-dialog/open-dialog.component";
+import {MatCheckboxModule} from "@angular/material/checkbox";
+import {MatRadioModule} from "@angular/material/radio";
+import {FormsModule} from "@angular/forms";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 const routes: Routes = [
       { path: '', component: UserInterfaceComponent },
@@ -32,9 +36,12 @@ const routes: Routes = [
     DragDropModule,
     MatTableModule,
     MatIconModule,
-    MatDialogModule
+    MatDialogModule,
+    MatCheckboxModule,
+    MatRadioModule,
+    FormsModule
   ],
-  providers: [HttpClient, MatDialog],
+  providers: [HttpClient, MatDialog, MatSnackBar],
   bootstrap: [UserInterfaceComponent]
 })
 export class UserInterfaceModule { }

@@ -9,6 +9,7 @@ import {MatDialog} from "@angular/material/dialog";
 import {OpenDialogComponent} from "./open-dialog/open-dialog.component";
 import {StorageService} from "../../serviсes/storage.service";
 import {config} from "rxjs";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-root',
@@ -32,6 +33,16 @@ export class UserInterfaceComponent implements OnInit {
   displayedColumns: string[] = ['name', 'x', 'y', 'z', 'action'];
   dataSource: Coordinate[] = [];
 
+  gridStep: number = 100;
+  gridLineThin: number = 1;
+  gridVerticalCount: number = 0;
+  gridHorizontalCount: number = 0;
+  gridOn: boolean = false;
+  gridColorDefault: string = '#cecece';
+  gridColorValue: string = 'default';
+  gridColors: string[] = ['default', 'black', 'yellow', 'red', 'green'];
+
+
   @ViewChild(MatTable) table: MatTable<Coordinate> | undefined;
   @ViewChild("inputFile") inputFile: ElementRef | undefined;
   @ViewChild("uploadImage") uploadImage: ElementRef | undefined;
@@ -41,7 +52,8 @@ export class UserInterfaceComponent implements OnInit {
   constructor(private httpService: HttpService,
               private sanitizer: DomSanitizer,
               private dialog: MatDialog,
-              private storage: StorageService) { }
+              private storage: StorageService,
+              private _snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
     this.getImage();
@@ -60,6 +72,7 @@ export class UserInterfaceComponent implements OnInit {
   ngAfterViewInit() {
     setTimeout(() => {
       this.getImageWidth();
+      this.getGridCount();
     }, 500);
   }
 
@@ -168,20 +181,26 @@ export class UserInterfaceComponent implements OnInit {
 
   saveCoordinate($event: MouseEvent) {
     const image = this.uploadImage?.nativeElement;
+    const robotAreaElem = this.robotArea?.nativeElement;
+
     let xPosition = 0;
     let yPosition = 0;
 
     let xScrollPos = image.scrollLeft || document.documentElement.scrollLeft;
     let yScrollPos = image.scrollTop || document.documentElement.scrollTop;
 
-    xPosition += Math.round($event.x - (image.offsetLeft - xScrollPos + image.clientLeft));
-    yPosition += Math.round($event.y - (image.offsetTop - yScrollPos + image.clientTop));
+    xPosition += Math.round($event.x - (robotAreaElem.offsetLeft - xScrollPos + image.clientLeft));
+    yPosition += Math.round($event.y - (robotAreaElem.offsetTop - yScrollPos + image.clientTop));
 
     this.dataSource.push({name: `${this.pointNameDefault}-${this.dataSource.length+1}`, x: xPosition, y: yPosition, z: 0});
 
     if (this.table) {
       this.table.renderRows();
     }
+
+    this._snackBar.open(`Точка сохранена с координатами x=${xPosition}, y=${yPosition}`, 'X', {
+      duration: 2000
+    });
   }
 
   removeCoordinate(id: number) {
@@ -219,5 +238,26 @@ export class UserInterfaceComponent implements OnInit {
     this.httpService.saveCoordinateToFile(this.dataSource).pipe().subscribe(() => {
       this.coordinateSaved = true;
     });
+  }
+
+  setVisibleGrid(completed: boolean) {
+    this.gridOn = completed;
+  }
+
+  changeGreedStep(value: string) {
+    this.gridStep = Number(value);
+    this.getGridCount();
+  }
+
+  getGridCount() {
+    if (this.robotArea) {
+      // сетку строим от центра к краям поля
+      this.gridVerticalCount = Math.round((this.robotArea.nativeElement.clientWidth / 2) / (this.gridStep - this.gridLineThin / this.gridStep));
+      this.gridHorizontalCount = Math.round((this.robotArea.nativeElement.clientHeight / 2) / (this.gridStep - this.gridLineThin / this.gridStep));
+    }
+  }
+
+  removeAllPoint() {
+    this.dataSource = [];
   }
 }
