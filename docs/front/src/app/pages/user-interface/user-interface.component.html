@@ -50,7 +50,7 @@
       <span>px.</span>
     </div>
     <div>
-      <button mat-raised-button color="warn" (click)="setEditingCompleted()">Применить все изменения</button>
+      <button mat-raised-button color="warn" (click)="setEditingCompleted()" [disabled]="imageWidth === 0">Применить все изменения</button>
     </div>
   </section>
 
@@ -59,7 +59,10 @@
          [cdkDragFreeDragPosition]="dragImagePosition"
          (cdkDragEnded)="getDragImagePosition($event)"
          *ngIf="editingAllowed">
-      <img [src]="image" alt="" #uploadImage [width]="imageWidth === 0 ? uploadImage.width : imageWidth">
+
+      <img [src]="image" alt="" #uploadImage *ngIf="imageWidth" [width]="imageWidth">
+      <img [src]="image" alt="" #uploadImage *ngIf="!imageWidth">
+
     </div>
     <div class="image after-edit" *ngIf="!editingAllowed">
       <img [src]="image" alt="" #uploadImage

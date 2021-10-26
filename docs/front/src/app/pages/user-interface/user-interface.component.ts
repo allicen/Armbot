@@ -133,6 +133,8 @@ export class UserInterfaceComponent implements OnInit {
       this.dataSource = [];
       this.dragImagePosition = {x: 0, y: 0};
     });
+
+    this.files = [];
   }
 
   getImageWidth(): void {
