@@ -76,19 +76,21 @@
   </section>
 
   <div class="robot-area" #robotArea>
-    <div class="point" *ngFor="let item of dataSource;" [style.left]="item.x+'px'" [style.top]="item.y+'px'"></div>
+    <div class="point" *ngFor="let item of dataSource;" [style.left]="item.x+'px'" [style.top]="item.y+'px'"
+         [style.background]="(clickCoordinate && clickCoordinate.x === item.x && clickCoordinate.y === item.y ? 'yellow' : 'red')"></div>
+
     <ng-container *ngIf="gridOn && editingAllowed">
       <div class="grid grid-vertical" *ngFor="let item of [].constructor(gridVerticalCount);let i = index;"
            [style.left]="(i * gridStep + robotArea.clientWidth / 2)+'px'" [style.background]="gridColorValue === 'default' ? gridColorDefault : gridColorValue">
       </div>
       <div class="grid grid-vertical" *ngFor="let item of [].constructor(gridVerticalCount);let i = index;"
-           [style.right]="(i * gridStep + robotArea.clientWidth / 2)+'px'" [style.background]="gridColorValue === 'default' ? gridColorDefault : gridColorValue">
+           [style.right]="(i * gridStep + robotArea.clientWidth / 2)-1+'px'" [style.background]="gridColorValue === 'default' ? gridColorDefault : gridColorValue">
       </div>
       <div class="grid grid-horizontal" *ngFor="let item of [].constructor(gridHorizontalCount);let i = index;"
            [style.top]="(i * gridStep + robotArea.clientHeight / 2)+'px'" [style.background]="gridColorValue === 'default' ? gridColorDefault : gridColorValue">
       </div>
       <div class="grid grid-horizontal" *ngFor="let item of [].constructor(gridHorizontalCount);let i = index;"
-           [style.bottom]="(i * gridStep + robotArea.clientHeight / 2)+'px'" [style.background]="gridColorValue === 'default' ? gridColorDefault : gridColorValue">
+           [style.bottom]="(i * gridStep + robotArea.clientHeight / 2)-1+'px'" [style.background]="gridColorValue === 'default' ? gridColorDefault : gridColorValue">
       </div>
     </ng-container>
 
@@ -156,10 +158,11 @@
         </td>
       </ng-container>
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns; let i = index"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns; let i = index" (click)="showClickPoint(row, i)" [ngClass]="{'selected': selectedPointIndex === i}"></tr>
     </table>
     <div class="export">
       <button mat-raised-button color="primary" (click)="coordinateSaveServer()" [disabled]="coordinateSaved">Сохранить</button>
+      <button mat-raised-button color="primary" (click)="exportTxt()" [disabled]="!coordinateSaved">Экспорт в .txt</button>
       <button mat-raised-button color="warn" (click)="exportFile()" [disabled]="!coordinateSaved">Экспортировать в Excel
         <a [href]="exportCoordinateUrl" style="display: none" #exportExcel></a>
       </button>

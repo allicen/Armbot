@@ -28,6 +28,8 @@ export class UserInterfaceComponent implements OnInit {
   editingAllowed: boolean = true;
   pointNameDefault: string = 'coordinate'
   coordinateSaved: boolean = false;
+  clickCoordinate: Coordinate | undefined;
+  selectedPointIndex: number | undefined;
   exportCoordinateUrl: string = '';
 
   displayedColumns: string[] = ['name', 'x', 'y', 'z', 'action'];
@@ -259,5 +261,16 @@ export class UserInterfaceComponent implements OnInit {
 
   removeAllPoint() {
     this.dataSource = [];
+    this.clickCoordinate = undefined;
+    this.selectedPointIndex = undefined;
+  }
+
+  showClickPoint(point: Coordinate, index: number) {
+    this.clickCoordinate = point;
+    this.selectedPointIndex = index;
+  }
+
+  exportTxt() {
+
   }
 }
