@@ -24,7 +24,7 @@ class CoordinateExcelServiceImpl implements CoordinateExcelService {
     @NonNull
     public SystemFile excelFileFromCoordinates(@NonNull @NotNull List<@Valid Coordinate> coordinateList) {
         try {
-            File file = File.createTempFile(HEADER_EXCEL_FILE_PREFIX, HEADER_EXCEL_FILE_SUFIX);
+            File file = File.createTempFile(HEADER_EXCEL_FILE_PREFIX, HEADER_EXCEL_FILE_SUFIX)
             PoiSpreadsheetBuilder.create(file).build(w -> {
                 w.apply(CoordinateExcelStylesheet.class)
                 w.sheet(SHEET_NAME, s -> {
@@ -48,6 +48,6 @@ class CoordinateExcelServiceImpl implements CoordinateExcelService {
             println("EXCEL ERROR: " + e)
             //LOG.error("File not found exception raised when generating excel file");
         }
-        throw new HttpStatusException(HttpStatus.SERVICE_UNAVAILABLE, "error generating excel file");
+        throw new HttpStatusException(HttpStatus.SERVICE_UNAVAILABLE, "error generating excel file")
     }
 }

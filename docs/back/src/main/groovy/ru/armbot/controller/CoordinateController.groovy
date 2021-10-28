@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory
 import ru.armbot.domain.Coordinate
 import ru.armbot.repository.CoordinateRepository
 import ru.armbot.service.CoordinateExcelService
+import ru.armbot.service.CoordinateTxtService
 
 @Controller("/coordinate")
 class CoordinateController {
@@ -21,6 +22,7 @@ class CoordinateController {
 
     @Inject CoordinateRepository coordinateRepository
     @Inject CoordinateExcelService coordinateExcelService
+    @Inject CoordinateTxtService coordinateTxtService
 
     @Post(value = "/save")
     def saveCoordinates(@Body List<Coordinate> coordinateList) {
@@ -43,5 +45,12 @@ class CoordinateController {
     def saveCoordinates() {
         def list = coordinateRepository.list()
         return coordinateExcelService.excelFileFromCoordinates(list);
+    }
+
+    @Get(value = "/txt")
+    def exportCoordinatesTxt() {
+        def list = coordinateRepository.list()
+        println("list ******************** ${list}")
+        return coordinateTxtService.txtFile(list)
     }
 }
