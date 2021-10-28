@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory
 import ru.armbot.domain.Coordinate
 import ru.armbot.repository.CoordinateRepository
 import ru.armbot.service.CoordinateExcelService
+import ru.armbot.service.CoordinateExcelServiceImpl
 import ru.armbot.service.CoordinateTxtService
 
 @Controller("/coordinate")
@@ -21,7 +22,7 @@ class CoordinateController {
     CoordinateController() { }
 
     @Inject CoordinateRepository coordinateRepository
-    @Inject CoordinateExcelService coordinateExcelService
+    @Inject CoordinateExcelServiceImpl coordinateExcelService
     @Inject CoordinateTxtService coordinateTxtService
 
     @Post(value = "/save")
