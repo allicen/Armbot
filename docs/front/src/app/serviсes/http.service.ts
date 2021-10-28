@@ -55,4 +55,8 @@ export class HttpService {
       return `${this.config.httpUrl}/coordinate/excel`
   }
 
+  getUrlExportTxt(): string {
+    return `${this.config.httpUrl}/coordinate/txt`
+  }
+
 }

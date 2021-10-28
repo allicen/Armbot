@@ -10,13 +10,13 @@ class CoordinateTxtService {
     SystemFile txtFile (List coordinateList) {
 
         try {
-            File file = File.createTempFile('test', '.txt')
+            File file = File.createTempFile('points', '.txt')
 
             coordinateList.each {
-                file << "${it.name}:${it.x} ${it.y} ${it.z}"
+                file << "${it.name}:${it.x} ${it.y} ${it.z}\n"
             }
 
-            return new SystemFile(file).attach("test.txt")
+            return new SystemFile(file).attach("points.txt")
         } catch (e) {
             println("EXCEL ERROR: " + e)
         }

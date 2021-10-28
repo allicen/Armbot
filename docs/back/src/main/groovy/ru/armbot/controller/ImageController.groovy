@@ -10,6 +10,7 @@ import io.micronaut.http.annotation.PathVariable
 import io.micronaut.http.annotation.Post
 import jakarta.inject.Inject
 import ru.armbot.domain.Image
+import ru.armbot.repository.CoordinateRepository
 import ru.armbot.repository.ImageRepository
 
 import org.slf4j.Logger
@@ -24,6 +25,7 @@ class ImageController {
     private List<String> accessMimeType = ['image/jpeg', 'image/gif', 'image/png', 'image/svg+xml', 'image/tiff']
 
     @Inject ImageRepository imageRepository
+    @Inject CoordinateRepository coordinateRepository
 
     ImageController() {}
 
@@ -84,7 +86,10 @@ class ImageController {
     def removeImage() {
 
         try {
+            // Завершение сеанса
             imageRepository.deleteAll()
+            coordinateRepository.deleteAll()
+
             [status: 'OK', message: 'Изображение успешно удалено']
 
         } catch (e) {

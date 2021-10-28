@@ -162,7 +162,9 @@
     </table>
     <div class="export">
       <button mat-raised-button color="primary" (click)="coordinateSaveServer()" [disabled]="coordinateSaved">Сохранить</button>
-      <button mat-raised-button color="primary" (click)="exportTxt()" [disabled]="!coordinateSaved">Экспорт в .txt</button>
+      <button mat-raised-button color="primary" (click)="exportFileTxt()" [disabled]="!coordinateSaved">Экспорт в .txt
+        <a [href]="exportTxtCoordinateUrl" style="display: none" #exportTxt></a>
+      </button>
       <button mat-raised-button color="warn" (click)="exportFile()" [disabled]="!coordinateSaved">Экспортировать в Excel
         <a [href]="exportCoordinateUrl" style="display: none" #exportExcel></a>
       </button>

@@ -50,7 +50,6 @@ class CoordinateController {
     @Get(value = "/txt")
     def exportCoordinatesTxt() {
         def list = coordinateRepository.list()
-        println("list ******************** ${list}")
         return coordinateTxtService.txtFile(list)
     }
 }

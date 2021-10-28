@@ -31,6 +31,7 @@ export class UserInterfaceComponent implements OnInit {
   clickCoordinate: Coordinate | undefined;
   selectedPointIndex: number | undefined;
   exportCoordinateUrl: string = '';
+  exportTxtCoordinateUrl: string = '';
 
   displayedColumns: string[] = ['name', 'x', 'y', 'z', 'action'];
   dataSource: Coordinate[] = [];
@@ -50,6 +51,7 @@ export class UserInterfaceComponent implements OnInit {
   @ViewChild("uploadImage") uploadImage: ElementRef | undefined;
   @ViewChild("robotArea") robotArea: ElementRef | undefined;
   @ViewChild("exportExcel") exportExcel: ElementRef | undefined;
+  @ViewChild("exportTxt") exportTxt: ElementRef | undefined;
 
   constructor(private httpService: HttpService,
               private sanitizer: DomSanitizer,
@@ -69,6 +71,7 @@ export class UserInterfaceComponent implements OnInit {
     });
 
     this.exportCoordinateUrl = this.httpService.getUrlExport();
+    this.exportTxtCoordinateUrl = this.httpService.getUrlExportTxt();
   }
 
   ngAfterViewInit() {
@@ -270,7 +273,7 @@ export class UserInterfaceComponent implements OnInit {
     this.selectedPointIndex = index;
   }
 
-  exportTxt() {
-
+  exportFileTxt() {
+    this.exportTxt?.nativeElement.click();
   }
 }
