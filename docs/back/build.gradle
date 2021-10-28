@@ -36,7 +36,7 @@ dependencies {
     testCompileOnly('io.micronaut.spring:micronaut-spring-boot:4.0.0')
     implementation('io.micronaut:micronaut-validation:3.1.0')
 
-    compileOnly('builders.dsl:spreadsheet-builder-poi:2.2.1')
+    implementation('builders.dsl:spreadsheet-builder-poi:2.2.1')
     implementation('io.micronaut:micronaut-http-server-netty:3.1.0')
     implementation('io.micronaut.views:micronaut-views-thymeleaf:3.0.1')
 

@@ -18,8 +18,8 @@ class CoordinateTxtService {
 
             return new SystemFile(file).attach("points.txt")
         } catch (e) {
-            println("EXCEL ERROR: " + e)
+            println("TXT ERROR: " + e)
         }
-        throw new HttpStatusException(HttpStatus.SERVICE_UNAVAILABLE, "error generating excel file")
+        throw new HttpStatusException(HttpStatus.SERVICE_UNAVAILABLE, "error generating txt file")
     }
 }

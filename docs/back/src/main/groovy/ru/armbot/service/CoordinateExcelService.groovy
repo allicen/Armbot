@@ -1,25 +1,55 @@
 package ru.armbot.service
 
-import io.micronaut.context.annotation.DefaultImplementation
+import builders.dsl.spreadsheet.builder.poi.PoiSpreadsheetBuilder
+import builders.dsl.spreadsheet.impl.WidthModifier
+import io.micronaut.core.annotation.NonNull
+import io.micronaut.http.HttpStatus
+import io.micronaut.http.exceptions.HttpStatusException
 import io.micronaut.http.server.types.files.SystemFile
 
-import io.micronaut.core.annotation.NonNull
+import jakarta.inject.Singleton
 import ru.armbot.domain.Coordinate
+
 import javax.validation.Valid
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotNull
+
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 
-@DefaultImplementation(CoordinateExcelServiceImpl.class)
-public interface CoordinateExcelService {
-    String SHEET_NAME = "Coordinates"
-    String HEADER_NAME = "Название координаты"
-    String HEADER_X = "Координата X"
-    String HEADER_Y = "Координата Y"
-    String HEADER_Z = "Координата Z"
-    String HEADER_EXCEL_FILE_SUFIX = ".xlsx"
-    String HEADER_EXCEL_FILE_PREFIX = "Coordinate"
-    String HEADER_EXCEL_FILENAME = HEADER_EXCEL_FILE_PREFIX + HEADER_EXCEL_FILE_SUFIX
+@Singleton
+class CoordinateExcelService implements CoordinateExcelServiceImpl {
+
+    private static final Logger LOG = LoggerFactory.getLogger(this.getClass())
 
     @NonNull
-    SystemFile excelFileFromCoordinates(@NonNull @NotNull List<@Valid Coordinate> coordinateList);
+    SystemFile excelFileFromCoordinates(@NonNull @NotNull List<@Valid Coordinate> coordinateList) {
+        try {
+            File file = File.createTempFile(HEADER_EXCEL_FILE_PREFIX, HEADER_EXCEL_FILE_SUFIX)
+            PoiSpreadsheetBuilder.create(file).build(w -> {
+                w.apply(CoordinateExcelStylesheet.class)
+                w.sheet(SHEET_NAME, s -> {
+                    s.row(r -> {
+                        [HEADER_NAME, HEADER_X, HEADER_Y, HEADER_Z].forEach {
+                            r.style(CoordinateExcelStylesheet.STYLE_HEADER)
+                            r.cell(it)
+                        }
+                    })
+                    coordinateList.stream()
+                        .forEach( coordinate -> s.row(r -> {
+                            r.cell(coordinate.getName())
+                            r.cell(coordinate.getX())
+                            r.cell(coordinate.getY())
+                            r.cell(coordinate.getZ())
+                        }))
+                })
+            })
+
+            return new SystemFile(file).attach(HEADER_EXCEL_FILENAME);
+        } catch (IOException e) {
+            println("EXCEL ERROR: " + e)
+            //LOG.error("File not found exception raised when generating excel file")
+        }
+        throw new HttpStatusException(HttpStatus.SERVICE_UNAVAILABLE, "error generating excel file")
+    }
 }
