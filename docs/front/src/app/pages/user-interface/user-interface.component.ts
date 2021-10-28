@@ -8,7 +8,6 @@ import {MatTable} from "@angular/material/table";
 import {MatDialog} from "@angular/material/dialog";
 import {OpenDialogComponent} from "./open-dialog/open-dialog.component";
 import {StorageService} from "../../serviсes/storage.service";
-import {config} from "rxjs";
 import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
@@ -22,7 +21,7 @@ export class UserInterfaceComponent implements OnInit {
   fileUpload: boolean = false;
   image: any = null;
   message: string | undefined;
-  imageWidth: number = 0;
+  imageWidth: number | undefined;
   maxWidthLen: number = 4; // Макс количество символов для задания ширины
   dragImagePosition = {x: 0, y: 0};
   editingAllowed: boolean = true;
@@ -75,10 +74,20 @@ export class UserInterfaceComponent implements OnInit {
   }
 
   ngAfterViewInit() {
-    setTimeout(() => {
-      this.getImageWidth();
-      this.getGridCount();
-    }, 500);
+    // setTimeout(() => {
+    //   this.getImageWidth();
+    //   this.getGridCount();
+    // }, 500);
+
+
+    // while (!this.imageWidth) {
+    //   setTimeout(() => {
+    //     this.getImageWidth();
+    //     this.getGridCount();
+    //
+    //     console.log(123);
+    //   }, 1000);
+    // }
   }
 
   filesDropped(files: FileHandle[]): void {
@@ -133,6 +142,10 @@ export class UserInterfaceComponent implements OnInit {
     return this.httpService.getImage().subscribe((data: any) => {
       if (data.status === 'OK') {
         this.image = this.sanitizer.bypassSecurityTrustResourceUrl(`data:${data.image.contentType};base64,${data.image.imageByte}`);
+        setTimeout(() => {
+          this.getImageWidth();
+          this.getGridCount();
+        }, 1000);
       } else if (data.status === 'ERROR') {
         this.message = data.message;
       }

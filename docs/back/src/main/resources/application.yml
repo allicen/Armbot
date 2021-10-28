@@ -2,10 +2,12 @@ micronaut:
   application:
     name: back
   server:
+    max-request-size: '100MB'
     cors:
       enabled: true
     multipart:
       enabled: true
+      max-file-size: '100MB'
     port: 9080
   session:
     http:
