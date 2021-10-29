@@ -152,7 +152,7 @@
       <ng-container matColumnDef="action" class="action">
         <th mat-header-cell *matHeaderCellDef>Действия</th>
         <td mat-cell *matCellDef="let element; let i = index;">
-          <button mat-icon-button color="warn" aria-label="Example icon button with a plus one icon" (click)="removeCoordinate(i)">
+          <button mat-icon-button color="warn" (click)="removeCoordinate(i)">
             <mat-icon>close icon</mat-icon>
           </button>
         </td>
@@ -161,7 +161,6 @@
       <tr mat-row *matRowDef="let row; columns: displayedColumns; let i = index" (click)="showClickPoint(row, i)" [ngClass]="{'selected': selectedPointIndex === i}"></tr>
     </table>
     <div class="export">
-      <button mat-raised-button color="primary" (click)="coordinateSaveServer()" [disabled]="coordinateSaved">Сохранить</button>
       <button mat-raised-button color="primary" (click)="exportFileTxt()" [disabled]="!coordinateSaved">Экспорт в .txt
         <a [href]="exportTxtCoordinateUrl" style="display: none" #exportTxt></a>
       </button>

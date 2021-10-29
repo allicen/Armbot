@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from "rxjs";
 import { Router } from "@angular/router";
+import {HttpService} from "./http.service";
+import {Response} from "../model/models";
 
 @Injectable({ providedIn: 'root' })
 export class StorageService {
@@ -13,7 +15,7 @@ export class StorageService {
       return this.urlArr.length > 0 && this.urlArr[1] === 'user-interface';
     }
 
-    constructor(private router: Router) {
+    constructor(private router: Router, private httpService: HttpService) {
         router.events.subscribe(() => {
             this.setUserInterface(this.isUserInterface());
         });
@@ -28,7 +30,12 @@ export class StorageService {
     }
 
     setCoordinateDelete(id: number): void {
-      this.coordinateDelete$.next(id);
+      this.httpService.removeCoordinate(id).pipe().subscribe((res) => {
+        if (!res) {
+          return;
+        }
+        this.coordinateDelete$.next(id);
+      })
     }
 
     getCoordinateDelete(): Observable<number> {

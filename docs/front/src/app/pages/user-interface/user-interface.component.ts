@@ -62,7 +62,6 @@ export class UserInterfaceComponent implements OnInit {
     this.getImage();
 
     this.storage.getCoordinateDelete().subscribe(id => {
-      console.log('data = ' , id);
       this.dataSource.splice(id, 1);
       if (this.table) {
         this.table.renderRows();
@@ -71,23 +70,6 @@ export class UserInterfaceComponent implements OnInit {
 
     this.exportCoordinateUrl = this.httpService.getUrlExport();
     this.exportTxtCoordinateUrl = this.httpService.getUrlExportTxt();
-  }
-
-  ngAfterViewInit() {
-    // setTimeout(() => {
-    //   this.getImageWidth();
-    //   this.getGridCount();
-    // }, 500);
-
-
-    // while (!this.imageWidth) {
-    //   setTimeout(() => {
-    //     this.getImageWidth();
-    //     this.getGridCount();
-    //
-    //     console.log(123);
-    //   }, 1000);
-    // }
   }
 
   filesDropped(files: FileHandle[]): void {
@@ -154,7 +136,6 @@ export class UserInterfaceComponent implements OnInit {
 
   removeImage() {
     this.httpService.removeImage().subscribe((data: any) => {
-      console.log(data);
       if (data.status === 'OK') {
         this.image = null;
         this.fileUpload = false;
@@ -210,15 +191,9 @@ export class UserInterfaceComponent implements OnInit {
     xPosition += Math.round($event.x - (robotAreaElem.offsetLeft - xScrollPos + image.clientLeft));
     yPosition += Math.round($event.y - (robotAreaElem.offsetTop - yScrollPos + image.clientTop));
 
-    this.dataSource.push({name: `${this.pointNameDefault}-${this.dataSource.length+1}`, x: xPosition, y: yPosition, z: 0});
+    const coordinate: Coordinate = {id: 0, name: '', x: xPosition, y: yPosition, z: 0};
 
-    if (this.table) {
-      this.table.renderRows();
-    }
-
-    this._snackBar.open(`Точка сохранена с координатами x=${xPosition}, y=${yPosition}`, 'X', {
-      duration: 2000
-    });
+    this.coordinateSaveServer(coordinate);
   }
 
   removeCoordinate(id: number) {
@@ -228,32 +203,66 @@ export class UserInterfaceComponent implements OnInit {
   }
 
   changeCoordinateRow(value: any, type: string, id: number) {
+
+    const coordinate = this.dataSource.filter(c => c.id === id).shift();
+
+    if (!coordinate) {
+      return;
+    }
+
     switch (type) {
       case 'x':
-        this.dataSource[id].x = value;
+        coordinate.x = value;
         break;
       case 'y':
-        this.dataSource[id].y = value;
+        coordinate.y = value;
         break;
       case 'z':
-        this.dataSource[id].z = value;
+        coordinate.z = value;
         break;
       case 'name':
-        this.dataSource[id].name = value;
+        coordinate.name = value;
         break;
     }
 
-    if (this.table) {
-      this.table.renderRows();
-    }
+    coordinate.id += 1;
+
+    this.httpService.updateCoordinate(coordinate).pipe().subscribe((res) => {
+      if (!res) {
+        return;
+      }
+      coordinate.id -= 1;
+      this.dataSource[id] = coordinate;
+
+      if (this.table) {
+        this.table.renderRows();
+      }
+    });
   }
 
   exportFile() {
     this.exportExcel?.nativeElement.click();
   }
 
-  coordinateSaveServer() {
-    this.httpService.saveCoordinateToFile(this.dataSource).pipe().subscribe(() => {
+  coordinateSaveServer(coordinate: Coordinate) {
+    this.httpService.saveCoordinate(coordinate).pipe().subscribe((res) => {
+
+      if (!res) {
+        return;
+      }
+
+      coordinate.name = res.coordinateName;
+
+      this.dataSource.push(coordinate);
+
+      if (this.table) {
+        this.table.renderRows();
+      }
+
+      this._snackBar.open(`Точка сохранена с координатами x=${coordinate.x}, y=${coordinate.y}`, 'X', {
+        duration: 2000
+      });
+
       this.coordinateSaved = true;
     });
   }
@@ -276,9 +285,13 @@ export class UserInterfaceComponent implements OnInit {
   }
 
   removeAllPoint() {
-    this.dataSource = [];
-    this.clickCoordinate = undefined;
-    this.selectedPointIndex = undefined;
+    this.httpService.removeAllCoordinates().pipe().subscribe((res) => {
+      if (res.status === 'SUCCESS') {
+        this.dataSource = [];
+        this.clickCoordinate = undefined;
+        this.selectedPointIndex = undefined;
+      }
+    });
   }
 
   showClickPoint(point: Coordinate, index: number) {

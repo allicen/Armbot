@@ -23,19 +23,19 @@ class Coordinate {
 
     @NonNull
     @NotBlank
-    final String name
+    String name
 
     @NonNull
     @NotBlank
-    final int x
+    int x
 
     @NonNull
     @NotBlank
-    final int y
+    int y
 
     @NonNull
     @NotBlank
-    final int z
+    int z
 
     @Creator
     Coordinate(@NonNull @NotBlank String name, @NonNull @NotBlank int x, @NonNull @NotBlank int y, @NonNull @NotBlank int z) {

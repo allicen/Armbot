@@ -40,8 +40,38 @@ export class HttpService {
       );
     }
 
-  saveCoordinateToFile(coordinateList: Coordinate[]): Observable<any> {
-    return this.http.post(`${this.config.httpUrl}/coordinate/save`, coordinateList).pipe(
+  saveCoordinate(coordinate: Coordinate): Observable<any> {
+    return this.http.post(`${this.config.httpUrl}/coordinate/save`, coordinate).pipe(
+      catchError((error: HttpErrorResponse) => {
+        return throwError(error);
+      }),
+      map(res => {
+        return res;
+      }),
+    );
+  }
+
+  updateCoordinate(coordinate: Coordinate): Observable<any> {
+    return this.http.post(`${this.config.httpUrl}/coordinate/update`, coordinate).pipe(
+      catchError((error: HttpErrorResponse) => {
+        return throwError(error);
+      }),
+      map(res => {
+        return res;
+      }),
+    );
+  }
+
+  removeAllCoordinates(): Observable<any> {
+    return this.http.get(`${this.config.httpUrl}/coordinate/removeAll`).pipe(
+      map(res => {
+        return res;
+      })
+    );
+  }
+
+  removeCoordinate(id: number) {
+    return this.http.get(`${this.config.httpUrl}/coordinate/remove/${id+1}`).pipe(
       catchError((error: HttpErrorResponse) => {
         return throwError(error);
       }),

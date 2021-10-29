@@ -1,4 +1,5 @@
 export interface Coordinate {
+  id: number;
   name: string;
   x: number;
   y: number;
@@ -7,4 +8,8 @@ export interface Coordinate {
 
 export interface IdData {
   id: 0;
+}
+
+export interface Response {
+  status: string
 }

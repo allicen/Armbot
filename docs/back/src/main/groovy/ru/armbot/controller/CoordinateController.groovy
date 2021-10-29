@@ -1,5 +1,7 @@
 package ru.armbot.controller
 
+import dto.ResponseDto
+import dto.ResponseStatus
 import io.micronaut.http.HttpStatus
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Controller
@@ -17,6 +19,7 @@ import ru.armbot.service.CoordinateTxtService
 @Controller("/coordinate")
 class CoordinateController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass())
+    private final String PREFIX = 'coordinate'
 
     CoordinateController() { }
 
@@ -25,20 +28,72 @@ class CoordinateController {
     @Inject CoordinateTxtService coordinateTxtService
 
     @Post(value = "/save")
-    def saveCoordinates(@Body List<Coordinate> coordinateList) {
+    def save(@Body Coordinate coordinate) {
+        int nameTail = coordinateRepository.list().size()
+        String name = "${PREFIX}-${nameTail}"
 
-        coordinateList.each {
-            try {
-                coordinateRepository.save(it)
-            } catch (e) {
-                def message = "Ошибка сохранения координаты ${it.name}. ".toString()
-                println(message + e)
-            }
+        while (nameExist(name)) {
+            nameTail++
+            name = "${PREFIX}-${nameTail}"
         }
 
-        return HttpStatus.OK
+        coordinate.id = null
+        coordinate.name = name
+
+        try {
+            coordinateRepository.save(coordinate)
+            return [status: 'SUCCESS', coordinateName: name]
+
+        } catch (e) {
+            def message = "Ошибка сохранения координаты ${coordinate.name}. ".toString()
+            println(message + e)
+        }
+
+        return HttpStatus.INTERNAL_SERVER_ERROR
     }
 
+    @Post(value = "/update")
+    def update(@Body Coordinate coordinate) {
+        if (!coordinateRepository.list().find { it.id == coordinate.id} ) {
+            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'NOT_FOUND', message: 'Координата не найдена')
+        }
+
+        try {
+            coordinateRepository.update(coordinate)
+            return new ResponseDto(status: ResponseStatus.SUCCESS)
+        } catch (e) {
+            println("Ошибка обновления координаты, ${e}")
+            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'UPDATE_ERROR', message: 'Ошибка обновления координаты')
+        }
+    }
+
+    @Get(value = "/removeAll")
+    def removeAll() {
+        try {
+            coordinateRepository.deleteAll()
+            return new ResponseDto(status: ResponseStatus.SUCCESS)
+        } catch (e) {
+            println("Ошибка удаления координат, ${e}")
+            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'DELETE_ERROR', message: 'Ошибка удаления координат')
+        }
+    }
+
+    @Get(value = "/remove/{id}")
+    def remove(long id) {
+
+        Coordinate coordinate = coordinateRepository.list().find { it.id == id }
+        if (!coordinate ) {
+            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'NOT_FOUND', message: 'Координата не найдена')
+        }
+
+        try {
+            coordinateRepository.delete(coordinate)
+            return new ResponseDto(status: ResponseStatus.SUCCESS)
+        } catch (e) {
+            println(e)
+            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'DELETE_ERROR', message: 'Ошибка удаления координаты')
+        }
+    }
 
     @Produces(value = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
     @Get(value = "/excel")
@@ -51,5 +106,10 @@ class CoordinateController {
     def exportCoordinatesTxt() {
         def list = coordinateRepository.list()
         return coordinateTxtService.txtFile(list)
+    }
+
+
+    boolean nameExist(name) {
+        return coordinateRepository.list().find{it.name == name }
     }
 }

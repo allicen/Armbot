@@ -22,15 +22,15 @@ class Image {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id
 
-    final String name
+    String name
 
     @NonNull
     @NotBlank
-    final String contentType
+    String contentType
 
     @NonNull
     @NotBlank
-    final byte[] imageByte
+    byte[] imageByte
 
     @Creator
     Image(@NonNull @NotBlank byte[] imageByte, @NonNull @NotBlank String contentType, String name) {
