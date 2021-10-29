@@ -3,7 +3,7 @@ import { FileHandle } from './dragDrop.directive';
 import {DomSanitizer} from "@angular/platform-browser";
 import {HttpService} from "../../serviсes/http.service";
 import { CdkDragEnd } from "@angular/cdk/drag-drop";
-import {Coordinate} from "../../model/models";
+import {Coordinate, ImagePosition} from "../../model/models";
 import {MatTable} from "@angular/material/table";
 import {MatDialog} from "@angular/material/dialog";
 import {OpenDialogComponent} from "./open-dialog/open-dialog.component";
@@ -20,13 +20,12 @@ export class UserInterfaceComponent implements OnInit {
   files: FileHandle[] = [];
   fileUpload: boolean = false;
   image: any = null;
+  imageId: number | undefined;
   message: string | undefined;
   imageWidth: number | undefined;
   maxWidthLen: number = 4; // Макс количество символов для задания ширины
-  dragImagePosition = {x: 0, y: 0};
+  dragImagePosition: ImagePosition = {x: 0, y: 0};
   editingAllowed: boolean = true;
-  pointNameDefault: string = 'coordinate'
-  coordinateSaved: boolean = false;
   clickCoordinate: Coordinate | undefined;
   selectedPointIndex: number | undefined;
   exportCoordinateUrl: string = '';
@@ -59,6 +58,7 @@ export class UserInterfaceComponent implements OnInit {
               private _snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
+    this.getSession();
     this.getImage();
 
     this.storage.getCoordinateDelete().subscribe(id => {
@@ -123,6 +123,7 @@ export class UserInterfaceComponent implements OnInit {
   getImage() {
     return this.httpService.getImage().subscribe((data: any) => {
       if (data.status === 'OK') {
+        this.imageId = data.image.id;
         this.image = this.sanitizer.bypassSecurityTrustResourceUrl(`data:${data.image.contentType};base64,${data.image.imageByte}`);
         setTimeout(() => {
           this.getImageWidth();
@@ -130,6 +131,18 @@ export class UserInterfaceComponent implements OnInit {
         }, 1000);
       } else if (data.status === 'ERROR') {
         this.message = data.message;
+      }
+    });
+  }
+
+  getSession() {
+    return this.httpService.getSession().subscribe((data: any) => {
+      if (data.status === 'SUCCESS') {
+        const details = data.details.sessionState;
+        this.imageWidth = details.imageSize;
+        this.dragImagePosition = {x: details.imagePositionX, y: details.imagePositionY};
+        this.editingAllowed = false;
+        this.dataSource = data.details.coordinateList;
       }
     });
   }
@@ -172,6 +185,9 @@ export class UserInterfaceComponent implements OnInit {
 
   setEditingCompleted() {
     this.editingAllowed = false;
+    this.httpService.saveSessionState(this.imageId, this.imageWidth, this.dragImagePosition).subscribe(res => {
+
+    });
   }
 
   setEditAllowed() {
@@ -262,8 +278,6 @@ export class UserInterfaceComponent implements OnInit {
       this._snackBar.open(`Точка сохранена с координатами x=${coordinate.x}, y=${coordinate.y}`, 'X', {
         duration: 2000
       });
-
-      this.coordinateSaved = true;
     });
   }
 

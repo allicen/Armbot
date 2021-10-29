@@ -13,3 +13,8 @@ export interface IdData {
 export interface Response {
   status: string
 }
+
+export interface ImagePosition {
+  x: number,
+  y: number
+}

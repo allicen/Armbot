@@ -161,10 +161,10 @@
       <tr mat-row *matRowDef="let row; columns: displayedColumns; let i = index" (click)="showClickPoint(row, i)" [ngClass]="{'selected': selectedPointIndex === i}"></tr>
     </table>
     <div class="export">
-      <button mat-raised-button color="primary" (click)="exportFileTxt()" [disabled]="!coordinateSaved">Экспорт в .txt
+      <button mat-raised-button color="primary" (click)="exportFileTxt()">Экспорт в .txt
         <a [href]="exportTxtCoordinateUrl" style="display: none" #exportTxt></a>
       </button>
-      <button mat-raised-button color="warn" (click)="exportFile()" [disabled]="!coordinateSaved">Экспортировать в Excel
+      <button mat-raised-button color="warn" (click)="exportFile()">Экспортировать в Excel
         <a [href]="exportCoordinateUrl" style="display: none" #exportExcel></a>
       </button>
     </div>

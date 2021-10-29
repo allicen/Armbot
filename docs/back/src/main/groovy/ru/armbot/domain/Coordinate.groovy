@@ -38,7 +38,10 @@ class Coordinate {
     int z
 
     @Creator
-    Coordinate(@NonNull @NotBlank String name, @NonNull @NotBlank int x, @NonNull @NotBlank int y, @NonNull @NotBlank int z) {
+    Coordinate(@NonNull @NotBlank String name,
+               @NonNull @NotBlank int x,
+               @NonNull @NotBlank int y,
+               @NonNull @NotBlank int z) {
         this.name = name
         this.x = x
         this.y = y

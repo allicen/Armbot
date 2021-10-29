@@ -4,7 +4,7 @@ import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 import {FileHandle} from "../pages/user-interface/dragDrop.directive";
 import {Config} from "../config/config";
 import {catchError, map} from "rxjs/operators";
-import {Coordinate} from "../model/models";
+import {Coordinate, ImagePosition} from "../model/models";
 
 
 @Injectable({ providedIn: 'root' })
@@ -89,4 +89,27 @@ export class HttpService {
     return `${this.config.httpUrl}/coordinate/txt`
   }
 
+
+  saveSessionState(imageId: number = 0, imageSize: number = 0, imagePosition: ImagePosition): Observable<any> {
+    return this.http.post(`${this.config.httpUrl}/session/save`,
+      {imageId: imageId, imageSize: imageSize, imagePositionX: imagePosition.x, imagePositionY: imagePosition.y}).pipe(
+      catchError((error: HttpErrorResponse) => {
+        return throwError(error);
+      }),
+      map(res => {
+        return res;
+      }),
+    );
+  }
+
+  getSession() {
+    return this.http.get(`${this.config.httpUrl}/session/get`).pipe(
+      catchError((error: HttpErrorResponse) => {
+        return throwError(error);
+      }),
+      map(res => {
+        return res;
+      }),
+    );
+  }
 }

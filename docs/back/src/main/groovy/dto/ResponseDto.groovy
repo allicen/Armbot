@@ -18,15 +18,15 @@ class ResponseDto {
     String message
 
     // Дополнительные опции
-    def extendedResponse
+    def details
 
 
     @Creator
-    ResponseDto(@NonNull ResponseStatus status, String errorCode, String message, def extendedResponse) {
+    ResponseDto(@NonNull ResponseStatus status, String errorCode, String message, def details) {
         this.status = status
         this.errorCode = errorCode
         this.message = message
-        this.extendedResponse = extendedResponse
+        this.details = details
     }
 
     ResponseDto() {
