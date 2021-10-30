@@ -6,7 +6,6 @@ import io.micronaut.http.HttpStatus
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
-import io.micronaut.http.annotation.Part
 import io.micronaut.http.annotation.Post
 import io.micronaut.http.annotation.Produces
 import jakarta.inject.Inject
@@ -15,31 +14,24 @@ import org.slf4j.LoggerFactory
 import ru.armbot.domain.Coordinate
 import ru.armbot.repository.CoordinateRepository
 import ru.armbot.service.CoordinateExcelService
+import ru.armbot.service.CoordinateService
 import ru.armbot.service.CoordinateTxtService
 
 @Controller("/coordinate")
 class CoordinateController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass())
-    private final String PREFIX = 'coordinate'
 
     CoordinateController() { }
 
+    @Inject CoordinateService coordinateService
     @Inject CoordinateRepository coordinateRepository
     @Inject CoordinateExcelService coordinateExcelService
     @Inject CoordinateTxtService coordinateTxtService
 
     @Post(value = "/save")
     def save(@Body Coordinate coordinate) {
-        int nameTail = coordinateRepository.list().size()
-        String name = "${PREFIX}-${nameTail}"
-
-        while (nameExist(name)) {
-            nameTail++
-            name = "${PREFIX}-${nameTail}"
-        }
-
         coordinate.id = null
-        coordinate.name = name
+        coordinate.name = coordinateService.generateName()
 
         try {
             coordinateRepository.save(coordinate)
@@ -62,7 +54,7 @@ class CoordinateController {
             return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'NOT_FOUND', message: 'Координата не найдена')
         }
 
-        if (coordinate.name != item.name && nameExist(coordinate.name)) {
+        if (coordinate.name != item.name && coordinateService.nameExist(coordinate.name)) {
             return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'INVALID_NAME',
                     message: "Координата с именем '${coordinate.name.toString()}' уже существует. ")
         }
@@ -115,10 +107,5 @@ class CoordinateController {
     def exportCoordinatesTxt() {
         def list = coordinateRepository.list()
         return coordinateTxtService.txtFile(list)
-    }
-
-
-    boolean nameExist(name) {
-        return coordinateRepository.list().find{it.name == name }
     }
 }

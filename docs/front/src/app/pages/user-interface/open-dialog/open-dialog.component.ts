@@ -13,7 +13,7 @@ export class OpenDialogComponent implements OnInit {
               @Inject(MAT_DIALOG_DATA) public data: IdData, private storageService: StorageService) {}
 
   ngOnInit(): void {
-    console.log(this.data);
+
   }
 
   deleteRow() {

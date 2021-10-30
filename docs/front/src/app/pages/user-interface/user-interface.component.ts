@@ -9,6 +9,11 @@ import {MatDialog} from "@angular/material/dialog";
 import {OpenDialogComponent} from "./open-dialog/open-dialog.component";
 import {StorageService} from "../../serviсes/storage.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {WebsocketService} from "../../serviсes/websocket.service";
+import {Subject} from "rxjs";
+import {Message} from "@angular/compiler/src/i18n/i18n_ast";
+import {Config} from "../../config/config";
+import {map} from "rxjs/operators";
 
 @Component({
   selector: 'app-root',
@@ -46,7 +51,6 @@ export class UserInterfaceComponent implements OnInit {
   coordValidateMessage: string = '';
   validateError: boolean = true;
 
-
   @ViewChild(MatTable) table: MatTable<Coordinate> | undefined;
   @ViewChild("inputFile") inputFile: ElementRef | undefined;
   @ViewChild("uploadImage") uploadImage: ElementRef | undefined;
@@ -54,11 +58,31 @@ export class UserInterfaceComponent implements OnInit {
   @ViewChild("exportExcel") exportExcel: ElementRef | undefined;
   @ViewChild("exportTxt") exportTxt: ElementRef | undefined;
 
+  public messages: Subject<any> | undefined;
+
   constructor(private httpService: HttpService,
               private sanitizer: DomSanitizer,
               private dialog: MatDialog,
               private storage: StorageService,
-              private _snackBar: MatSnackBar) { }
+              private _snackBar: MatSnackBar,
+              private wsService: WebsocketService,
+              private config: Config) {
+
+    this.wsService.connect(this.config.webSocketUrl).pipe().subscribe(res => {
+        const response = JSON.parse(res.data);
+        if (response.details) {
+          const coordinate: Coordinate = response.details;
+          this.dataSource.push(coordinate);
+          if (this.table) {
+            this.table.renderRows();
+          }
+
+          this.validateError = response.status === 'ERROR';
+          this.coordValidateMessage = response.message ? response.message : '';
+          this.hideMessage();
+        }
+    });
+  }
 
   ngOnInit(): void {
     this.getSession();

@@ -19,9 +19,6 @@ export class HeaderComponent {
 
     userInterfaceChange() {
 
-
-        console.log('userInterfaceOn in header: ', this.userInterfaceOn);
-
         if (this.userInterfaceOn) {
             this.router.navigate(['user-interface']);
         } else {

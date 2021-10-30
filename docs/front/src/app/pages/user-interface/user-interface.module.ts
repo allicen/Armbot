@@ -16,6 +16,7 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatRadioModule} from "@angular/material/radio";
 import {FormsModule} from "@angular/forms";
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {WebsocketService} from "../../serviсes/websocket.service";
 
 const routes: Routes = [
       { path: '', component: UserInterfaceComponent },
@@ -41,7 +42,7 @@ const routes: Routes = [
     MatRadioModule,
     FormsModule
   ],
-  providers: [HttpClient, MatDialog, MatSnackBar],
+  providers: [HttpClient, MatDialog, MatSnackBar, WebsocketService],
   bootstrap: [UserInterfaceComponent]
 })
 export class UserInterfaceModule { }
