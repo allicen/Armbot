@@ -6,6 +6,7 @@ import io.micronaut.http.HttpStatus
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
+import io.micronaut.http.annotation.Part
 import io.micronaut.http.annotation.Post
 import io.micronaut.http.annotation.Produces
 import jakarta.inject.Inject
@@ -42,7 +43,7 @@ class CoordinateController {
 
         try {
             coordinateRepository.save(coordinate)
-            return [status: 'SUCCESS', coordinateName: name]
+            return new ResponseDto(status: 'SUCCESS', details: [coordinate: coordinate])
 
         } catch (e) {
             def message = "Ошибка сохранения координаты ${coordinate.name}. ".toString()
@@ -54,13 +55,21 @@ class CoordinateController {
 
     @Post(value = "/update")
     def update(@Body Coordinate coordinate) {
-        if (!coordinateRepository.list().find { it.id == coordinate.id} ) {
+
+        Coordinate item = coordinateRepository.list().find { it.id == coordinate.id}
+
+        if (!item ) {
             return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'NOT_FOUND', message: 'Координата не найдена')
+        }
+
+        if (coordinate.name != item.name && nameExist(coordinate.name)) {
+            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'INVALID_NAME',
+                    message: "Координата с именем '${coordinate.name.toString()}' уже существует. ")
         }
 
         try {
             coordinateRepository.update(coordinate)
-            return new ResponseDto(status: ResponseStatus.SUCCESS)
+            return new ResponseDto(status: ResponseStatus.SUCCESS, message: 'Координата обновлена!')
         } catch (e) {
             println("Ошибка обновления координаты, ${e}")
             return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'UPDATE_ERROR', message: 'Ошибка обновления координаты')
@@ -88,7 +97,7 @@ class CoordinateController {
 
         try {
             coordinateRepository.delete(coordinate)
-            return new ResponseDto(status: ResponseStatus.SUCCESS)
+            return new ResponseDto(status: ResponseStatus.SUCCESS, message: 'Координата удалена!')
         } catch (e) {
             println(e)
             return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'DELETE_ERROR', message: 'Ошибка удаления координаты')

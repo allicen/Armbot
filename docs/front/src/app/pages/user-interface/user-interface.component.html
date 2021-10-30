@@ -118,41 +118,42 @@
         <button mat-raised-button color="warn" (click)="removeAllPoint()">Удалить все</button>
       </section>
     </div>
+    <div [ngClass]="validateError ? 'error' : 'message'" *ngIf="coordValidateMessage">{{coordValidateMessage}}</div>
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 demo-table">
       <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef>Название</th>
-        <td mat-cell *matCellDef="let element; let i = index;">
+        <td mat-cell *matCellDef="let element;">
           <div class="input">
             <input #coordinateName type="text" matInput [value]="element.name"
-                   (change)="changeCoordinateRow(coordinateName.value,'name', i)">
+                   (change)="changeCoordinateRow(coordinateName.value,'name', element.id)">
           </div>
         </td>
       </ng-container>
       <ng-container matColumnDef="x">
         <th mat-header-cell *matHeaderCellDef>Координата X</th>
-        <td mat-cell *matCellDef="let element; let i = index;">
+        <td mat-cell *matCellDef="let element;">
           <input #coordinateX type="number" matInput [value]="element.x" min="0"
-                 (change)="changeCoordinateRow(coordinateX.value,'x', i)">
+                 (change)="changeCoordinateRow(coordinateX.value,'x', element.id)">
         </td>
       </ng-container>
       <ng-container matColumnDef="y">
         <th mat-header-cell *matHeaderCellDef>Координата Y</th>
-        <td mat-cell *matCellDef="let element; let i = index;">
+        <td mat-cell *matCellDef="let element;">
           <input #coordinateY type="number" matInput [value]="element.y" min="0"
-                 (change)="changeCoordinateRow(coordinateY.value,'y', i)">
+                 (change)="changeCoordinateRow(coordinateY.value,'y', element.id)">
         </td>
       </ng-container>
       <ng-container matColumnDef="z">
         <th mat-header-cell *matHeaderCellDef>Координата Z</th>
-        <td mat-cell *matCellDef="let element; let i = index;">
+        <td mat-cell *matCellDef="let element;">
           <input #coordinateZ type="number" matInput [value]="element.z" min="0"
-                 (change)="changeCoordinateRow(coordinateZ.value,'z', i)">
+                 (change)="changeCoordinateRow(coordinateZ.value,'z', element.id)">
         </td>
       </ng-container>
       <ng-container matColumnDef="action" class="action">
         <th mat-header-cell *matHeaderCellDef>Действия</th>
-        <td mat-cell *matCellDef="let element; let i = index;">
-          <button mat-icon-button color="warn" (click)="removeCoordinate(i)">
+        <td mat-cell *matCellDef="let element;">
+          <button mat-icon-button color="warn" (click)="removeCoordinate(element.id)">
             <mat-icon>close icon</mat-icon>
           </button>
         </td>

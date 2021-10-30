@@ -9,6 +9,9 @@ export class StorageService {
 
     private userInterfaceOn$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     private coordinateDelete$: BehaviorSubject<number> = new BehaviorSubject<number>(-1);
+    private coordinateDeleteError$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    private coordinateDeleteMessage$: BehaviorSubject<string> = new BehaviorSubject<string>('');
+
     urlArr = this.router.url.split('/');
 
     isUserInterface(): boolean {
@@ -30,15 +33,32 @@ export class StorageService {
     }
 
     setCoordinateDelete(id: number): void {
-      this.httpService.removeCoordinate(id).pipe().subscribe((res) => {
+      this.httpService.removeCoordinate(id).pipe().subscribe((res: any) => {
         if (!res) {
           return;
         }
         this.coordinateDelete$.next(id);
+        this.coordinateDeleteError$.next(res.status === 'ERROR');
+
+        let message = '';
+
+        if (res.message) {
+          message = res.message;
+        }
+
+        this.coordinateDeleteMessage$.next(message);
       })
     }
 
     getCoordinateDelete(): Observable<number> {
       return this.coordinateDelete$.asObservable();
+    }
+
+    getCoordinateDeleteError(): Observable<boolean> {
+      return this.coordinateDeleteError$.asObservable();
+    }
+
+    getCoordinateDeleteMessage(): Observable<string> {
+      return this.coordinateDeleteMessage$.asObservable();
     }
 }

@@ -71,7 +71,7 @@ export class HttpService {
   }
 
   removeCoordinate(id: number) {
-    return this.http.get(`${this.config.httpUrl}/coordinate/remove/${id+1}`).pipe(
+    return this.http.get(`${this.config.httpUrl}/coordinate/remove/${id}`).pipe(
       catchError((error: HttpErrorResponse) => {
         return throwError(error);
       }),

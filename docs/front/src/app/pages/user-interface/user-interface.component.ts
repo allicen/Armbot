@@ -43,6 +43,9 @@ export class UserInterfaceComponent implements OnInit {
   gridColorValue: string = 'default';
   gridColors: string[] = ['default', 'black', 'yellow', 'red', 'green'];
 
+  coordValidateMessage: string = '';
+  validateError: boolean = true;
+
 
   @ViewChild(MatTable) table: MatTable<Coordinate> | undefined;
   @ViewChild("inputFile") inputFile: ElementRef | undefined;
@@ -62,11 +65,18 @@ export class UserInterfaceComponent implements OnInit {
     this.getImage();
 
     this.storage.getCoordinateDelete().subscribe(id => {
-      this.dataSource.splice(id, 1);
+
+      const index = this.dataSource.findIndex(c => c.id == id);
+      this.dataSource.splice(index, 1);
       if (this.table) {
         this.table.renderRows();
       }
+
+      this.hideMessage();
     });
+
+    this.storage.getCoordinateDeleteError().subscribe(err => this.validateError = err);
+    this.storage.getCoordinateDeleteMessage().subscribe(mess => this.coordValidateMessage = mess);
 
     this.exportCoordinateUrl = this.httpService.getUrlExport();
     this.exportTxtCoordinateUrl = this.httpService.getUrlExportTxt();
@@ -137,12 +147,15 @@ export class UserInterfaceComponent implements OnInit {
 
   getSession() {
     return this.httpService.getSession().subscribe((data: any) => {
-      if (data.status === 'SUCCESS') {
+      if (data.status === 'SUCCESS' && data.details) {
         const details = data.details.sessionState;
         this.imageWidth = details.imageSize;
         this.dragImagePosition = {x: details.imagePositionX, y: details.imagePositionY};
         this.editingAllowed = false;
-        this.dataSource = data.details.coordinateList;
+
+        if (data.details.coordinateList) {
+          this.dataSource = data.details.coordinateList;
+        }
       }
     });
   }
@@ -241,14 +254,20 @@ export class UserInterfaceComponent implements OnInit {
         break;
     }
 
-    coordinate.id += 1;
-
     this.httpService.updateCoordinate(coordinate).pipe().subscribe((res) => {
       if (!res) {
         return;
       }
-      coordinate.id -= 1;
-      this.dataSource[id] = coordinate;
+
+      this.validateError = res.status === 'ERROR';
+      this.coordValidateMessage = res.message ? res.message : '';
+
+      if (!this.validateError) {
+        const index = this.dataSource.findIndex(c => c.id === coordinate.id);
+        this.dataSource[index] = coordinate;
+      }
+
+      this.hideMessage();
 
       if (this.table) {
         this.table.renderRows();
@@ -267,9 +286,8 @@ export class UserInterfaceComponent implements OnInit {
         return;
       }
 
-      coordinate.name = res.coordinateName;
+      this.dataSource.push(res.details.coordinate);
 
-      this.dataSource.push(coordinate);
 
       if (this.table) {
         this.table.renderRows();
@@ -315,5 +333,13 @@ export class UserInterfaceComponent implements OnInit {
 
   exportFileTxt() {
     this.exportTxt?.nativeElement.click();
+  }
+
+  hideMessage() {
+    if (!this.validateError) {
+      setTimeout(() => {
+        this.coordValidateMessage = '';
+      }, 3000);
+    }
   }
 }

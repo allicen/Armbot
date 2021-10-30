@@ -26,9 +26,14 @@ class SessionController {
     @Get(value = '/get')
     def get() {
 
+        List<SessionState> sessionList = sessionStateRepository.list()
+
+        if (sessionList.size() == 0) {
+            return new ResponseDto(status: ResponseStatus.SUCCESS)
+        }
 
         SessionStateDto session =
-                new SessionStateDto(sessionState: sessionStateRepository.list()?.get(0) ?: null, coordinateList: coordinateRepository.list())
+                new SessionStateDto(sessionState: sessionList.get(0), coordinateList: coordinateRepository.list())
         return new ResponseDto(status: ResponseStatus.SUCCESS, details: session)
     }
 
