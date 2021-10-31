@@ -156,6 +156,18 @@
            (click)="saveCoordinate($event)">
     </div>
   </div>
+
+  <div class="import">
+    <button mat-raised-button color="primary" (click)="openDialogPointsFile($event)">
+      Импортировать координаты
+      <input type="file" style="display: none;" #inputFilePoints (change)="changeFilePoints($event)" />
+    </button>
+  </div>
+  <div [ngClass]="validateError ? 'error' : 'message'" *ngIf="importMessage">{{importMessage}}</div>
+  <ul *ngIf="importErrors" class="error">
+    <li *ngFor="let error of importErrors">{{error}}</li>
+  </ul>
+
   <div class="points" *ngIf="image && !editingAllowed && dataSource.length > 0">
     <div class="row">
       <h2>Отмеченные точки:</h2>

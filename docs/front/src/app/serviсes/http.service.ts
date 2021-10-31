@@ -26,6 +26,22 @@ export class HttpService {
       );
     }
 
+    importCoordinates(file: File): Observable<any> {
+
+      console.log(file);
+      console.log(file.type);
+
+        const formData: FormData = new FormData();
+        formData.append('file', file);
+        formData.append('contentType', file.type);
+
+        return this.http.post(`${this.config.httpUrl}/coordinate/import`, formData).pipe(
+            map(res => {
+                return res;
+            })
+        );
+    }
+
     getImage(): Observable<any> {
       return this.http.get(`${this.config.httpUrl}/image/getImage`).pipe(
 

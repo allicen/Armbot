@@ -15,6 +15,7 @@ import ru.armbot.repository.ImageRepository
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import ru.armbot.repository.SessionStateRepository
 
 
 @Controller("/image")
@@ -26,6 +27,7 @@ class ImageController {
 
     @Inject ImageRepository imageRepository
     @Inject CoordinateRepository coordinateRepository
+    @Inject SessionStateRepository sessionStateRepository
 
     ImageController() {}
 
@@ -89,6 +91,7 @@ class ImageController {
             // Завершение сеанса
             imageRepository.deleteAll()
             coordinateRepository.deleteAll()
+            sessionStateRepository.deleteAll()
 
             [status: 'OK', message: 'Изображение успешно удалено']
 

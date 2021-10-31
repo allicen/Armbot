@@ -1,6 +1,9 @@
 package ru.armbot.controller
 
 import dto.ResponseDto
+import io.micronaut.http.MediaType
+import io.micronaut.http.annotation.Part
+import ru.armbot.domain.Image
 import ru.armbot.domain.ResponseStatus
 import io.micronaut.http.HttpStatus
 import io.micronaut.http.annotation.Body
@@ -17,9 +20,13 @@ import ru.armbot.service.CoordinateExcelService
 import ru.armbot.service.CoordinateService
 import ru.armbot.service.CoordinateTxtService
 
+import java.nio.charset.StandardCharsets
+
 @Controller("/coordinate")
 class CoordinateController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass())
+
+    private List<String> accessMimeType = ['text/plain']
 
     CoordinateController() { }
 
@@ -108,4 +115,62 @@ class CoordinateController {
         def list = coordinateRepository.list()
         return coordinateTxtService.txtFile(list)
     }
+
+    @Post(value = "/import", consumes = MediaType.MULTIPART_FORM_DATA)
+    def uploadImage(@Part byte[] file, @Part String contentType) {
+
+        if (!accessMimeType.contains(contentType)) {
+            def message = "Тип файла ${contentType} не поддерживается! Разрешены: ${accessMimeType.join(', ')}".toString()
+            return new ResponseDto(status : 'ERROR',
+                    errorCode: 'INVALID_MIME_TYPE',
+                    message: message)
+        }
+
+        String data = new String(file, StandardCharsets.UTF_8)
+
+        if (data.size() == 0) {
+            return new ResponseDto(status: 'ERROR', errorCode: 'EMPTY_FILE', message: 'Выбран пустой файл')
+        }
+
+        def result = [success: 0, savedCoordinates: [], errorDetails: []]
+
+        data.split('\n').eachWithIndex {row, i ->
+            String index = (i + 1).toString()
+            def rowData = row.split(':')
+            if (rowData.size() == 2) {
+                if (coordinateRepository.list().find {it.name == rowData[0]}) {
+                    result.errorDetails += "Строка ${index} - название '${rowData[0].toString()}' уже существует".toString()
+                } else {
+                    def coordinates = rowData[1].split(' ')
+                    if (coordinates.size() == 3) {
+                        try {
+                            Coordinate coordinate = new Coordinate(name: rowData[0].toString(),
+                                    x: Double.parseDouble(coordinates[0]),
+                                    y: Double.parseDouble(coordinates[1]),
+                                    z: Double.parseDouble(coordinates[2]))
+                            coordinateRepository.save(coordinate)
+                            result.savedCoordinates += coordinate
+                        } catch (e) {
+                            result.errorDetails += "Строка ${index} - координата не была сохранена".toString()
+                            println(e)
+                        }
+                    } else {
+                        result.errorDetails += "Строка ${index} - содержит неверное количество координат".toString()
+                    }
+                }
+            } else {
+                result.errorDetails += "Строка ${index} - содержит не 1 двоеточие".toString()
+            }
+        }
+
+        if (result.errorDetails.size() > 0) {
+            return new ResponseDto(status: ResponseStatus.ERROR,
+                    errorCode: 'IMPORT_ERROR',
+                    message: 'Координаты загружены с ошибками',
+                    details: result)
+        }
+
+        return new ResponseDto(status: ResponseStatus.SUCCESS, message: 'Координаты успешно загружены', details: result)
+    }
+
 }
