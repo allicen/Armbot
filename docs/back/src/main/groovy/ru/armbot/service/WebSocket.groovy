@@ -1,7 +1,7 @@
 package ru.armbot.service
 
 import dto.ResponseDto
-import dto.ResponseStatus
+import ru.armbot.domain.ResponseStatus
 import io.micronaut.core.annotation.Creator
 import io.micronaut.websocket.WebSocketBroadcaster
 import io.micronaut.websocket.WebSocketSession
@@ -13,6 +13,7 @@ import jakarta.inject.Inject
 import org.reactivestreams.Publisher
 import ru.armbot.domain.Coordinate
 import ru.armbot.repository.CoordinateRepository
+import utils.SizeUnitUtils
 
 @ServerWebSocket("/ws/coordinate")
 class WebSocket {
@@ -41,9 +42,9 @@ class WebSocket {
 
         try {
             Coordinate coordinate = new Coordinate(name: coordinateService.generateName(),
-                                                   x: Long.parseLong(messArr[0]),
-                                                   y: Long.parseLong(messArr[1]),
-                                                   z: Long.parseLong(messArr[2]))
+                                                   x: SizeUnitUtils.fromM(messArr[0]),
+                                                   y: SizeUnitUtils.fromM(messArr[1]),
+                                                   z: SizeUnitUtils.fromM(messArr[2]))
             coordinateRepository.save(coordinate)
             return broadcaster.broadcast(new ResponseDto(status: ResponseStatus.SUCCESS,
                                                          message: 'Сохранена новая координата по вебсокету', details: coordinate))

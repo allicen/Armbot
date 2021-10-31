@@ -14,6 +14,7 @@ import {Subject} from "rxjs";
 import {Message} from "@angular/compiler/src/i18n/i18n_ast";
 import {Config} from "../../config/config";
 import {map} from "rxjs/operators";
+import {SizeService} from "../../serviсes/size.service";
 
 @Component({
   selector: 'app-root',
@@ -27,7 +28,9 @@ export class UserInterfaceComponent implements OnInit {
   image: any = null;
   imageId: number | undefined;
   message: string | undefined;
-  imageWidth: number | undefined;
+  imageWidthPx: number | undefined;
+  imageWidthMm: number | undefined;
+
   maxWidthLen: number = 4; // Макс количество символов для задания ширины
   dragImagePosition: ImagePosition = {x: 0, y: 0};
   editingAllowed: boolean = true;
@@ -39,7 +42,9 @@ export class UserInterfaceComponent implements OnInit {
   displayedColumns: string[] = ['name', 'x', 'y', 'z', 'action'];
   dataSource: Coordinate[] = [];
 
-  gridStep: number = 100;
+  gridStepPx: number = 100;
+  gridStepMm: number = 10;
+
   gridLineThin: number = 1;
   gridVerticalCount: number = 0;
   gridHorizontalCount: number = 0;
@@ -50,6 +55,9 @@ export class UserInterfaceComponent implements OnInit {
 
   coordValidateMessage: string = '';
   validateError: boolean = true;
+
+  robotAreaWidth: number = 0;
+  gridHorizontalOffset: number = 200;
 
   @ViewChild(MatTable) table: MatTable<Coordinate> | undefined;
   @ViewChild("inputFile") inputFile: ElementRef | undefined;
@@ -66,7 +74,8 @@ export class UserInterfaceComponent implements OnInit {
               private storage: StorageService,
               private _snackBar: MatSnackBar,
               private wsService: WebsocketService,
-              private config: Config) {
+              private config: Config,
+              private sizeService: SizeService) {
 
     this.wsService.connect(this.config.webSocketUrl).pipe().subscribe(res => {
         const response = JSON.parse(res.data);
@@ -104,6 +113,13 @@ export class UserInterfaceComponent implements OnInit {
 
     this.exportCoordinateUrl = this.httpService.getUrlExport();
     this.exportTxtCoordinateUrl = this.httpService.getUrlExportTxt();
+  }
+
+  ngAfterViewChecked() {
+    if (this.robotArea) {
+      this.robotAreaWidth = this.robotArea?.nativeElement.clientWidth;
+      this.gridStepPx = this.sizeService.toPxTranslate(this.gridStepMm, 'mm', this.robotAreaWidth);
+    }
   }
 
   filesDropped(files: FileHandle[]): void {
@@ -173,7 +189,7 @@ export class UserInterfaceComponent implements OnInit {
     return this.httpService.getSession().subscribe((data: any) => {
       if (data.status === 'SUCCESS' && data.details) {
         const details = data.details.sessionState;
-        this.imageWidth = details.imageSize;
+        this.imageWidthPx = details.imageSize;
         this.dragImagePosition = {x: details.imagePositionX, y: details.imagePositionY};
         this.editingAllowed = false;
 
@@ -201,7 +217,11 @@ export class UserInterfaceComponent implements OnInit {
 
   getImageWidth(): void {
       if (this.uploadImage) {
-        this.imageWidth = this.uploadImage.nativeElement.width;
+        this.imageWidthPx = this.uploadImage.nativeElement.width;
+
+          if (this.imageWidthPx) {
+              this.imageWidthMm = this.sizeService.fromPxTranslate(this.imageWidthPx, 'mm', this.robotAreaWidth);
+          }
       }
   }
 
@@ -210,7 +230,7 @@ export class UserInterfaceComponent implements OnInit {
       width = width.slice(0, this.maxWidthLen);
     }
 
-    this.imageWidth = Number(width);
+    this.imageWidthPx = this.sizeService.toPxTranslate(Number(width), 'mm', this.robotAreaWidth);
   }
 
 
@@ -222,7 +242,7 @@ export class UserInterfaceComponent implements OnInit {
 
   setEditingCompleted() {
     this.editingAllowed = false;
-    this.httpService.saveSessionState(this.imageId, this.imageWidth, this.dragImagePosition).subscribe(res => {
+    this.httpService.saveSessionState(this.imageId, this.imageWidthPx, this.dragImagePosition).subscribe(res => {
 
     });
   }
@@ -328,15 +348,16 @@ export class UserInterfaceComponent implements OnInit {
   }
 
   changeGreedStep(value: string) {
-    this.gridStep = Number(value);
+    this.gridStepMm = Number(value);
+    this.gridStepPx = this.sizeService.toPxTranslate(Number(value), 'mm', this.robotAreaWidth);
     this.getGridCount();
   }
 
   getGridCount() {
     if (this.robotArea) {
       // сетку строим от центра к краям поля
-      this.gridVerticalCount = Math.round((this.robotArea.nativeElement.clientWidth / 2) / (this.gridStep - this.gridLineThin / this.gridStep));
-      this.gridHorizontalCount = Math.round((this.robotArea.nativeElement.clientHeight / 2) / (this.gridStep - this.gridLineThin / this.gridStep));
+      this.gridVerticalCount = Math.round((this.robotArea.nativeElement.clientWidth / 2) / (this.gridStepPx - this.gridLineThin / this.gridStepPx));
+      this.gridHorizontalCount = Math.round(((this.robotArea.nativeElement.clientHeight + this.gridHorizontalOffset) / 2) / (this.gridStepPx - this.gridLineThin / this.gridStepPx));
     }
   }
 

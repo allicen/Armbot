@@ -37,10 +37,10 @@
     <div class="form">
       <div class="label">Введите ширину изображения<br />и нажмите Enter:</div>
       <mat-form-field appearance="fill">
-        <mat-label>Ширина картинки (px):</mat-label>
+        <mat-label>Ширина картинки (мм):</mat-label>
         <input matInput #width
                oninput = "if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
-               [valueAsNumber] = "this.imageWidth"
+               [valueAsNumber] = "this.imageWidthMm"
                (change) = "renderImage(width.value)"
                type = "number"
                min="1"
@@ -51,10 +51,10 @@
       <div class="grid-on">
         <mat-checkbox [checked]="gridOn" (change)="setVisibleGrid($event.checked)" color="warn">Включить сетку</mat-checkbox>
         <mat-form-field appearance="fill" *ngIf="gridOn">
-          <mat-label>Шаг (px):</mat-label>
+          <mat-label>Шаг (мм):</mat-label>
           <input matInput #gridChangeStep
-                 oninput = "if (this.value > 500) this.value = 500;"
-                 [valueAsNumber] = "gridStep"
+                 oninput = "if (this.value > 340) this.value = 340;"
+                 [valueAsNumber] = "gridStepMm"
                  (change) = "changeGreedStep(gridChangeStep.value)"
                  type = "number"
                  min="1"
@@ -71,7 +71,7 @@
 
     </div>
     <div>
-      <button mat-raised-button color="warn" (click)="setEditingCompleted()" [disabled]="imageWidth === 0">Применить все изменения</button>
+      <button mat-raised-button color="warn" (click)="setEditingCompleted()" [disabled]="imageWidthPx === 0">Применить все изменения</button>
     </div>
   </section>
 
@@ -80,18 +80,61 @@
          [style.background]="(clickCoordinate && clickCoordinate.x === item.x && clickCoordinate.y === item.y ? 'yellow' : 'red')"></div>
 
     <ng-container *ngIf="gridOn && editingAllowed">
+      <div class="axis">
+        <div class="y" [style.top]="(robotArea.clientHeight + gridHorizontalOffset) / 2 - 24 +'px'"><span>←</span> Y</div>
+        <div class="x" [style.left]="(robotArea.clientWidth) / 2 + 10 +'px'"><span>↑</span> X</div>
+      </div>
+
       <div class="grid grid-vertical" *ngFor="let item of [].constructor(gridVerticalCount);let i = index;"
-           [style.left]="(i * gridStep + robotArea.clientWidth / 2)+'px'" [style.background]="gridColorValue === 'default' ? gridColorDefault : gridColorValue">
+           [style.left]="(i * gridStepPx + robotArea.clientWidth / 2)+'px'"
+           [style.background]="gridColorValue === 'default' ? gridColorDefault : gridColorValue"
+           [style.display]="i === 0 ? 'none' : 'block'">
       </div>
       <div class="grid grid-vertical" *ngFor="let item of [].constructor(gridVerticalCount);let i = index;"
-           [style.right]="(i * gridStep + robotArea.clientWidth / 2)-1+'px'" [style.background]="gridColorValue === 'default' ? gridColorDefault : gridColorValue">
+           [style.right]="(i * gridStepPx + robotArea.clientWidth / 2)-1+'px'"
+           [style.background]="i === 0 ? 'blue' : gridColorValue === 'default' ? gridColorDefault : gridColorValue"
+           [style.zIndex]="i === 0 ? 6 : 5">
       </div>
       <div class="grid grid-horizontal" *ngFor="let item of [].constructor(gridHorizontalCount);let i = index;"
-           [style.top]="(i * gridStep + robotArea.clientHeight / 2)+'px'" [style.background]="gridColorValue === 'default' ? gridColorDefault : gridColorValue">
+           [style.top]="(i * gridStepPx + (robotArea.clientHeight + gridHorizontalOffset) / 2)+'px'"
+           [style.background]="gridColorValue === 'default' ? gridColorDefault : gridColorValue"
+           [style.display]="i === 0 ? 'none' : 'block'">
       </div>
       <div class="grid grid-horizontal" *ngFor="let item of [].constructor(gridHorizontalCount);let i = index;"
-           [style.bottom]="(i * gridStep + robotArea.clientHeight / 2)-1+'px'" [style.background]="gridColorValue === 'default' ? gridColorDefault : gridColorValue">
+           [style.bottom]="(i * gridStepPx + (robotArea.clientHeight - gridHorizontalOffset) / 2)-1+'px'"
+           [style.background]="i === 0 ? 'blue' : gridColorValue === 'default' ? gridColorDefault : gridColorValue"
+           [style.zIndex]="i === 0 ? 6 : 5">
       </div>
+
+      <div class="quarter" #quarter
+           [style.top]="(robotArea.clientHeight + gridHorizontalOffset -  quarter.clientHeight) / 2 +'px'"
+           [style.left]="(robotArea.clientWidth - quarter.offsetWidth ) / 2 +'px'">
+        <div class="row">
+          <div class="first">
+            <span>I четверть</span>
+            <span>+ X</span>
+            <span>+ Y</span>
+          </div>
+          <div class="fours">
+            <span>IV четверть</span>
+            <span>+ X</span>
+            <span>- Y</span>
+          </div>
+        </div>
+        <div class="row">
+          <div class="second">
+            <span>II четверть</span>
+            <span>- X</span>
+            <span>+ Y</span>
+          </div>
+          <div class="third">
+            <span>III четверть</span>
+            <span>- X</span>
+            <span>- Y</span>
+          </div>
+        </div>
+      </div>
+
     </ng-container>
 
     <div class="image" cdkDragBoundary=".robot-area" cdkDrag
@@ -99,14 +142,14 @@
          (cdkDragEnded)="getDragImagePosition($event)"
          *ngIf="editingAllowed">
 
-      <img [src]="image" alt="" #uploadImage *ngIf="imageWidth" [width]="imageWidth">
-      <img [src]="image" alt="" #uploadImage *ngIf="!imageWidth">
+      <img [src]="image" alt="" #uploadImage *ngIf="imageWidthPx" [width]="imageWidthPx">
+      <img [src]="image" alt="" #uploadImage *ngIf="!imageWidthPx">
 
     </div>
 
     <div class="image after-edit" *ngIf="!editingAllowed">
       <img [src]="image" alt="" #uploadImage
-           [width]="imageWidth"
+           [width]="imageWidthPx"
            [style]="'margin-left: '+ dragImagePosition.x+'px; margin-top: '+ dragImagePosition.y+'px;'"
            (click)="saveCoordinate($event)">
     </div>

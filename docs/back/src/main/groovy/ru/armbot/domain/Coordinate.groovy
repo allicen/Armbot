@@ -27,21 +27,23 @@ class Coordinate {
 
     @NonNull
     @NotBlank
-    int x
+    double x
 
     @NonNull
     @NotBlank
-    int y
+    double y
 
     @NonNull
     @NotBlank
-    int z
+    double z = 0
+
+    SizeUnit unit = SizeUnit.MM
 
     @Creator
     Coordinate(@NonNull @NotBlank String name,
-               @NonNull @NotBlank int x,
-               @NonNull @NotBlank int y,
-               @NonNull @NotBlank int z) {
+               @NonNull @NotBlank double x,
+               @NonNull @NotBlank double y,
+               @NonNull @NotBlank double z) {
         this.name = name
         this.x = x
         this.y = y

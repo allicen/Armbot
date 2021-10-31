@@ -1,7 +1,7 @@
 package ru.armbot.controller
 
 import dto.ResponseDto
-import dto.ResponseStatus
+import ru.armbot.domain.ResponseStatus
 import io.micronaut.http.HttpStatus
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Controller
