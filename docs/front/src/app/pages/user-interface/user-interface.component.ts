@@ -210,6 +210,8 @@ export class UserInterfaceComponent implements OnInit {
       this.message = data.message;
       this.dataSource = [];
       this.dragImagePosition = {x: 0, y: 0};
+      this.imageWidthMm = 0;
+      this.imageWidthPx = 0;
     });
 
     this.files = [];
