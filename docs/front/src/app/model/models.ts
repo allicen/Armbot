@@ -14,7 +14,7 @@ export interface Response {
   status: string
 }
 
-export interface ImagePosition {
+export interface Position {
   x: number,
   y: number
 }

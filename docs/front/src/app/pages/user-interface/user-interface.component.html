@@ -76,7 +76,9 @@
   </section>
 
   <div class="robot-area" #robotArea>
-    <div class="point" *ngFor="let item of dataSource;" [style.left]="item.x+'px'" [style.top]="item.y+'px'"
+    <div class="point" *ngFor="let item of dataSource;"
+         [style.left]="getPosition(item).x+'px'"
+         [style.top]="getPosition(item).y+'px'"
          [style.background]="(clickCoordinate && clickCoordinate.x === item.x && clickCoordinate.y === item.y ? 'yellow' : 'red')"></div>
 
     <ng-container *ngIf="gridOn && editingAllowed">

@@ -3,7 +3,7 @@ import { FileHandle } from './dragDrop.directive';
 import {DomSanitizer} from "@angular/platform-browser";
 import {HttpService} from "../../serviсes/http.service";
 import { CdkDragEnd } from "@angular/cdk/drag-drop";
-import {Coordinate, ImagePosition} from "../../model/models";
+import {Coordinate, Position} from "../../model/models";
 import {MatTable} from "@angular/material/table";
 import {MatDialog} from "@angular/material/dialog";
 import {OpenDialogComponent} from "./open-dialog/open-dialog.component";
@@ -32,7 +32,7 @@ export class UserInterfaceComponent implements OnInit {
   imageWidthMm: number | undefined;
 
   maxWidthLen: number = 4; // Макс количество символов для задания ширины
-  dragImagePosition: ImagePosition = {x: 0, y: 0};
+  dragImagePosition: Position = {x: 0, y: 0};
   editingAllowed: boolean = true;
   clickCoordinate: Coordinate | undefined;
   selectedPointIndex: number | undefined;
@@ -264,7 +264,9 @@ export class UserInterfaceComponent implements OnInit {
     xPosition += Math.round($event.x - (robotAreaElem.offsetLeft - xScrollPos + image.clientLeft));
     yPosition += Math.round($event.y - (robotAreaElem.offsetTop - yScrollPos + image.clientTop));
 
-    const coordinate: Coordinate = {id: 0, name: '', x: xPosition, y: yPosition, z: 0};
+    const coordinateMm: Position = this.sizeService.pointCoordinateToMm(xPosition, yPosition);
+
+    const coordinate: Coordinate = {id: 0, name: '', x: coordinateMm.x, y: coordinateMm.y, z: 0};
 
     this.coordinateSaveServer(coordinate);
   }
@@ -387,4 +389,9 @@ export class UserInterfaceComponent implements OnInit {
       }, 3000);
     }
   }
+
+  getPosition(point: Position) {
+    return this.sizeService.pointCoordinateToPx(point.x, point.y);
+  }
+
 }
