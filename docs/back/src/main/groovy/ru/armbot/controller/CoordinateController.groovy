@@ -1,6 +1,6 @@
 package ru.armbot.controller
 
-import dto.ResponseDto
+import ru.armbot.dto.ResponseDto
 import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.Part
 import ru.armbot.domain.Image

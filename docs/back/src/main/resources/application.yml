@@ -13,6 +13,12 @@ micronaut:
     http:
       cookie: true
       header: true
+  router: 
+    static-resources:
+      default:
+        enabled: true
+        mapping: "/**"
+        paths: "classpath:static"    
 ---
 datasources:
   default:

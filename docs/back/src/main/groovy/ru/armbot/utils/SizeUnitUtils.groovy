@@ -1,4 +1,4 @@
-package utils
+package ru.armbot.utils
 
 import ru.armbot.domain.SizeUnit
 import java.math.RoundingMode

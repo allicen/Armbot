@@ -1,9 +1,9 @@
 package ru.armbot.controller
 
 
-import dto.ResponseDto
+import ru.armbot.dto.ResponseDto
 import ru.armbot.domain.ResponseStatus
-import dto.SessionStateDto
+import ru.armbot.dto.SessionStateDto
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Part

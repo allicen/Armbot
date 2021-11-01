@@ -4,7 +4,7 @@ task copyClientResources(dependsOn: ':front:build') {
 }
 copyClientResources.doFirst {
     copy {
-        from "${project(':front').buildDir}/../dist/docs"
+        from "${project(':front').buildDir}/../dist/front"
         into "${project(':back').buildDir}/resources/main/public"
     }
 }

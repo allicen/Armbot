@@ -1,4 +1,4 @@
-package dto
+package ru.armbot.dto
 
 import io.micronaut.core.annotation.Introspected
 import ru.armbot.domain.Coordinate

@@ -1,6 +1,6 @@
 package ru.armbot.service
 
-import dto.ResponseDto
+import ru.armbot.dto.ResponseDto
 import ru.armbot.domain.ResponseStatus
 import io.micronaut.core.annotation.Creator
 import io.micronaut.websocket.WebSocketBroadcaster
@@ -13,7 +13,7 @@ import jakarta.inject.Inject
 import org.reactivestreams.Publisher
 import ru.armbot.domain.Coordinate
 import ru.armbot.repository.CoordinateRepository
-import utils.SizeUnitUtils
+import ru.armbot.utils.SizeUnitUtils
 
 @ServerWebSocket("/ws/coordinate")
 class WebSocket {
