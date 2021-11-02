@@ -14,7 +14,7 @@ import {MatDialogModule} from '@angular/material/dialog';
 import {OpenDialogComponent} from "./open-dialog/open-dialog.component";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatRadioModule} from "@angular/material/radio";
-import {FormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {WebsocketService} from "../../serviсes/websocket.service";
 
@@ -29,19 +29,20 @@ const routes: Routes = [
     DragDirective,
     OpenDialogComponent
   ],
-  imports: [
-    RouterModule.forChild(routes),
-    CommonModule,
-    MatButtonModule,
-    MatInputModule,
-    DragDropModule,
-    MatTableModule,
-    MatIconModule,
-    MatDialogModule,
-    MatCheckboxModule,
-    MatRadioModule,
-    FormsModule
-  ],
+    imports: [
+        RouterModule.forChild(routes),
+        CommonModule,
+        MatButtonModule,
+        MatInputModule,
+        DragDropModule,
+        MatTableModule,
+        MatIconModule,
+        MatDialogModule,
+        MatCheckboxModule,
+        MatRadioModule,
+        FormsModule,
+        ReactiveFormsModule
+    ],
   providers: [HttpClient, MatDialog, MatSnackBar, WebsocketService],
   bootstrap: [UserInterfaceComponent]
 })

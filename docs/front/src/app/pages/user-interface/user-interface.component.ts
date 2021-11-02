@@ -15,6 +15,7 @@ import {Message} from "@angular/compiler/src/i18n/i18n_ast";
 import {Config} from "../../config/config";
 import {map} from "rxjs/operators";
 import {SizeService} from "../../serviсes/size.service";
+import {FormControl, Validators} from "@angular/forms";
 
 @Component({
   selector: 'app-root',
@@ -57,6 +58,7 @@ export class UserInterfaceComponent implements OnInit {
     importMessage: string = '';
     importErrors: [] | undefined;
     validateError: boolean = true;
+    fieldIdError: number | undefined; // поле с ошибкой
 
     robotAreaWidth: number = 0;
     gridHorizontalOffset: number = 200;
@@ -316,9 +318,13 @@ export class UserInterfaceComponent implements OnInit {
         this.validateError = res.status === 'ERROR';
         this.coordValidateMessage = res.message ? res.message : '';
 
+        const index = this.dataSource.findIndex(c => c.id === coordinate.id);
         if (!this.validateError) {
-          const index = this.dataSource.findIndex(c => c.id === coordinate.id);
           this.dataSource[index] = coordinate;
+          this.fieldIdError = undefined;
+
+        } else {
+          this.fieldIdError = coordinate.id;
         }
 
         this.hideMessage();

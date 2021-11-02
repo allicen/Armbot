@@ -31,8 +31,10 @@
 </div>
 
 <div *ngIf="image" class="image-block">
-  <p class="important" *ngIf="editingAllowed">Шаг 1. Задайте ширину изображения клавиатуры и перетащите его мышью в нужное место.</p>
-  <p class="important" *ngIf="!editingAllowed">Шаг 2. Кликайте на область клавиатуры, чтобы сохранить координаты.</p>
+  <section class="important">
+    <p [class.current]="editingAllowed">Шаг 1. Задайте ширину изображения клавиатуры и перетащите его мышью в нужное место.</p>
+    <p [class.current]="!editingAllowed">Шаг 2. Кликайте на область клавиатуры, чтобы сохранить координаты.</p>
+  </section>
   <section class="control" *ngIf="editingAllowed">
     <div class="form">
       <div class="label">Введите ширину изображения<br />и нажмите Enter:</div>
@@ -71,7 +73,7 @@
 
     </div>
     <div>
-      <button mat-raised-button color="warn" (click)="setEditingCompleted()" [disabled]="imageWidthPx === 0">Применить все изменения</button>
+      <button mat-raised-button color="warn" (click)="setEditingCompleted()" [disabled]="imageWidthPx === 0">Отметить точки</button>
     </div>
   </section>
 
@@ -163,8 +165,8 @@
       <input type="file" style="display: none;" #inputFilePoints (change)="changeFilePoints($event)" />
     </button>
   </div>
-  <div [ngClass]="validateError ? 'error' : 'message'" *ngIf="importMessage">{{importMessage}}</div>
-  <ul *ngIf="importErrors" class="error">
+  <div [ngClass]="validateError ? 'error' : 'message'" *ngIf="validateError && !fieldIdError && importMessage">{{importMessage}}</div>
+  <ul *ngIf="importErrors && !fieldIdError && importMessage" class="error">
     <li *ngFor="let error of importErrors">{{error}}</li>
   </ul>
 
@@ -175,44 +177,55 @@
         <button mat-raised-button color="warn" (click)="removeAllPoint()">Удалить все</button>
       </section>
     </div>
-    <div [ngClass]="validateError ? 'error' : 'message'" *ngIf="coordValidateMessage">{{coordValidateMessage}}</div>
+    <div class="message" *ngIf="coordValidateMessage && !validateError">{{coordValidateMessage}}</div>
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 demo-table">
       <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef>Название</th>
-        <td mat-cell *matCellDef="let element;">
-          <div class="input">
-            <input #coordinateName type="text" matInput [value]="element.name"
-                   (change)="changeCoordinateRow(coordinateName.value,'name', element.id)">
-          </div>
+        <td mat-cell *matCellDef="let element;" class="field">
+          <mat-form-field appearance="fill">
+              <input #coordinateName type="text" matInput [value]="element.name"
+                     (change)="changeCoordinateRow(coordinateName.value,'name', element.id)" required>
+          </mat-form-field>
+          <mat-error *ngIf="fieldIdError === element.id">{{coordValidateMessage}}</mat-error>
         </td>
       </ng-container>
       <ng-container matColumnDef="x">
         <th mat-header-cell *matHeaderCellDef>Координата X</th>
-        <td mat-cell *matCellDef="let element;">
-          <input #coordinateX type="number" matInput [value]="element.x" min="0"
-                 (change)="changeCoordinateRow(coordinateX.value,'x', element.id)">
+        <td mat-cell *matCellDef="let element;" class="field">
+          <mat-form-field appearance="fill">
+            <input #coordinateX type="number" matInput [value]="element.x"
+                   (change)="changeCoordinateRow(coordinateX.value,'x', element.id)">
+          </mat-form-field>
+          <mat-error *ngIf="fieldIdError === element.id" class="hide">1</mat-error>
         </td>
       </ng-container>
       <ng-container matColumnDef="y">
         <th mat-header-cell *matHeaderCellDef>Координата Y</th>
-        <td mat-cell *matCellDef="let element;">
-          <input #coordinateY type="number" matInput [value]="element.y" min="0"
-                 (change)="changeCoordinateRow(coordinateY.value,'y', element.id)">
+        <td mat-cell *matCellDef="let element;" class="field">
+          <mat-form-field appearance="fill">
+            <input #coordinateY type="number" matInput [value]="element.y"
+                   (change)="changeCoordinateRow(coordinateY.value,'y', element.id)">
+          </mat-form-field>
+          <mat-error *ngIf="fieldIdError === element.id" class="hide">1</mat-error>
         </td>
       </ng-container>
       <ng-container matColumnDef="z">
         <th mat-header-cell *matHeaderCellDef>Координата Z</th>
-        <td mat-cell *matCellDef="let element;">
-          <input #coordinateZ type="number" matInput [value]="element.z" min="0"
-                 (change)="changeCoordinateRow(coordinateZ.value,'z', element.id)">
+        <td mat-cell *matCellDef="let element;" class="field">
+          <mat-form-field appearance="fill">
+            <input #coordinateZ type="number" matInput [value]="element.z"
+                   (change)="changeCoordinateRow(coordinateZ.value,'z', element.id)">
+          </mat-form-field>
+          <mat-error *ngIf="fieldIdError === element.id" class="hide">1</mat-error>
         </td>
       </ng-container>
       <ng-container matColumnDef="action" class="action">
         <th mat-header-cell *matHeaderCellDef>Действия</th>
-        <td mat-cell *matCellDef="let element;">
+        <td mat-cell *matCellDef="let element;" class="field">
           <button mat-icon-button color="warn" (click)="removeCoordinate(element.id)">
             <mat-icon>close icon</mat-icon>
           </button>
+          <mat-error *ngIf="fieldIdError === element.id" class="hide">1</mat-error>
         </td>
       </ng-container>
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
