@@ -1,6 +1,6 @@
 FROM node:latest as builder
 COPY package.json package-lock.json ./
-RUN npm install && mkdir /front && mv ./node_modules ./front
+RUN npm install && npm install -g wscat && mkdir /front && mv ./node_modules ./front
 WORKDIR /front
 COPY . .
 RUN npm run ng build --
