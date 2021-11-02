@@ -3,6 +3,7 @@ package ru.armbot.controller
 import io.micronaut.core.annotation.Creator
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Controller
+import io.micronaut.http.annotation.PathVariable
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -21,8 +22,8 @@ class MainController {
 
     MainController() {}
 
-    @Get(value = '/{/path:[.]}', consumes = MediaType.TEXT_HTML)
-    HttpResponse gui(Optional<String> path) {
+    @Get(value = "/{path:.*}", consumes = MediaType.TEXT_HTML)
+    HttpResponse gui(@PathVariable Optional path) {
         StreamedFile indexFile = new StreamedFile(new ResourceResolver().getResource("classpath:public/index.html").get())
         return HttpResponse.ok(indexFile)
     }
