@@ -1,0 +1,243 @@
+<div class="title">
+  <h1>Пользовательский интерфейс</h1>
+  <div class="buttons">
+    <button mat-stroked-button color="primary" (click)="setEditAllowed()" *ngIf="image && !editingAllowed">Вернуться к редактированию</button>
+    <button mat-stroked-button color="warn" (click)="removeImage()" *ngIf="image">Завершить сеанс</button>
+  </div>
+</div>
+
+<div class="error" *ngIf="message">{{message}}</div>
+
+<div *ngIf="!fileUpload && !image" class="col-12 rmpm dropzone" appDrag (files)="filesDropped($event)">
+  <div class="text-wrapper">
+    <div class="centered">
+      <div class="text">Для загрузки перетащите файл в эту область или выберите на своем компьютере</div>
+      <button mat-raised-button color="primary" (click)="openDialogChangeFile($event)">Выбрать файл
+        <input type="file" style="display: none;" #inputFile (change)="changeFile($event)" />
+      </button>
+    </div>
+  </div>
+</div>
+
+<article *ngIf="!image && fileUpload">
+  <div *ngFor="let file of files" class="upload-file">
+    <img *ngIf="file" [src]="file.url" alt="">
+  </div>
+</article>
+
+<div class="buttons" *ngIf="fileUpload && !image">
+  <button mat-raised-button color="warn" (click)="removeFile()">Удалить</button>
+  <button mat-raised-button color="primary" (click)="uploadFile()">Загрузить</button>
+</div>
+
+<div *ngIf="image" class="image-block">
+  <section class="important">
+    <p [class.current]="editingAllowed">Шаг 1. Задайте ширину изображения клавиатуры и перетащите его мышью в нужное место.</p>
+    <p [class.current]="!editingAllowed">Шаг 2. Кликайте на область клавиатуры, чтобы сохранить координаты.</p>
+  </section>
+  <section class="control" *ngIf="editingAllowed">
+    <div class="form">
+      <div class="label">Введите ширину изображения<br />и нажмите Enter:</div>
+      <mat-form-field appearance="fill">
+        <mat-label>Ширина картинки (мм):</mat-label>
+        <input matInput #width
+               oninput = "if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+               [valueAsNumber] = "this.imageWidthMm"
+               (change) = "renderImage(width.value)"
+               type = "number"
+               min="1"
+               [maxLength]="maxWidthLen">
+        <mat-hint align="end">{{width.value.length}} / {{maxWidthLen}}</mat-hint>
+      </mat-form-field>
+
+      <div class="grid-on">
+        <mat-checkbox [checked]="gridOn" (change)="setVisibleGrid($event.checked)" color="warn">Включить сетку</mat-checkbox>
+        <mat-form-field appearance="fill" *ngIf="gridOn">
+          <mat-label>Шаг (мм):</mat-label>
+          <input matInput #gridChangeStep
+                 oninput = "if (this.value > 340) this.value = 340;"
+                 [valueAsNumber] = "gridStepMm"
+                 (change) = "changeGreedStep(gridChangeStep.value)"
+                 type = "number"
+                 min="1"
+                 max="500">
+        </mat-form-field>
+      </div>
+
+      <div class="grid-color" *ngIf="gridOn">
+        <label>Цвет сетки:</label>
+        <mat-radio-group [(ngModel)]="gridColorValue">
+          <mat-radio-button [class]="color" *ngFor="let color of gridColors" [value]="color"></mat-radio-button>
+        </mat-radio-group>
+      </div>
+
+    </div>
+    <div>
+      <button mat-raised-button color="warn" (click)="setEditingCompleted()" [disabled]="imageWidthPx === 0">Отметить точки</button>
+    </div>
+  </section>
+
+  <div class="robot-area" #robotArea>
+    <div class="point" *ngFor="let item of dataSource;"
+         [style.left]="getPosition(item).x+'px'"
+         [style.top]="getPosition(item).y+'px'"
+         [style.background]="(clickCoordinate && clickCoordinate.x === item.x && clickCoordinate.y === item.y ? 'yellow' : 'red')"></div>
+
+    <ng-container *ngIf="gridOn && editingAllowed">
+      <div class="axis">
+        <div class="y" [style.top]="(robotArea.clientHeight + gridHorizontalOffset) / 2 - 24 +'px'"><span>←</span> Y</div>
+        <div class="x" [style.left]="(robotArea.clientWidth) / 2 + 10 +'px'"><span>↑</span> X</div>
+      </div>
+
+      <div class="grid grid-vertical" *ngFor="let item of [].constructor(gridVerticalCount);let i = index;"
+           [style.left]="(i * gridStepPx + robotArea.clientWidth / 2)+'px'"
+           [style.background]="gridColorValue === 'default' ? gridColorDefault : gridColorValue"
+           [style.display]="i === 0 ? 'none' : 'block'">
+      </div>
+      <div class="grid grid-vertical" *ngFor="let item of [].constructor(gridVerticalCount);let i = index;"
+           [style.right]="(i * gridStepPx + robotArea.clientWidth / 2)-1+'px'"
+           [style.background]="i === 0 ? 'blue' : gridColorValue === 'default' ? gridColorDefault : gridColorValue"
+           [style.zIndex]="i === 0 ? 6 : 5">
+      </div>
+      <div class="grid grid-horizontal" *ngFor="let item of [].constructor(gridHorizontalCount);let i = index;"
+           [style.top]="(i * gridStepPx + (robotArea.clientHeight + gridHorizontalOffset) / 2)+'px'"
+           [style.background]="gridColorValue === 'default' ? gridColorDefault : gridColorValue"
+           [style.display]="i === 0 ? 'none' : 'block'">
+      </div>
+      <div class="grid grid-horizontal" *ngFor="let item of [].constructor(gridHorizontalCount);let i = index;"
+           [style.bottom]="(i * gridStepPx + (robotArea.clientHeight - gridHorizontalOffset) / 2)-1+'px'"
+           [style.background]="i === 0 ? 'blue' : gridColorValue === 'default' ? gridColorDefault : gridColorValue"
+           [style.zIndex]="i === 0 ? 6 : 5">
+      </div>
+
+      <div class="quarter" #quarter
+           [style.top]="(robotArea.clientHeight + gridHorizontalOffset -  quarter.clientHeight) / 2 +'px'"
+           [style.left]="(robotArea.clientWidth - quarter.offsetWidth ) / 2 +'px'">
+        <div class="row">
+          <div class="first">
+            <span>I четверть</span>
+            <span>+ X</span>
+            <span>+ Y</span>
+          </div>
+          <div class="fours">
+            <span>IV четверть</span>
+            <span>+ X</span>
+            <span>- Y</span>
+          </div>
+        </div>
+        <div class="row">
+          <div class="second">
+            <span>II четверть</span>
+            <span>- X</span>
+            <span>+ Y</span>
+          </div>
+          <div class="third">
+            <span>III четверть</span>
+            <span>- X</span>
+            <span>- Y</span>
+          </div>
+        </div>
+      </div>
+
+    </ng-container>
+
+    <div class="image" cdkDragBoundary=".robot-area" cdkDrag
+         [cdkDragFreeDragPosition]="dragImagePosition"
+         (cdkDragEnded)="getDragImagePosition($event)"
+         *ngIf="editingAllowed">
+
+      <img [src]="image" alt="" #uploadImage *ngIf="imageWidthPx" [width]="imageWidthPx">
+      <img [src]="image" alt="" #uploadImage *ngIf="!imageWidthPx">
+
+    </div>
+
+    <div class="image after-edit" *ngIf="!editingAllowed">
+      <img [src]="image" alt="" #uploadImage
+           [width]="imageWidthPx"
+           [style]="'margin-left: '+ dragImagePosition.x+'px; margin-top: '+ dragImagePosition.y+'px;'"
+           (click)="saveCoordinate($event)">
+    </div>
+  </div>
+
+  <div class="import">
+    <button mat-raised-button color="primary" (click)="openDialogPointsFile($event)">
+      Импортировать координаты
+      <input type="file" style="display: none;" #inputFilePoints (change)="changeFilePoints($event)" />
+    </button>
+  </div>
+  <div [ngClass]="validateError ? 'error' : 'message'" *ngIf="validateError && !fieldIdError && importMessage">{{importMessage}}</div>
+  <ul *ngIf="importErrors && !fieldIdError && importMessage" class="error">
+    <li *ngFor="let error of importErrors">{{error}}</li>
+  </ul>
+
+  <div class="points" *ngIf="image && !editingAllowed && dataSource.length > 0">
+    <div class="row">
+      <h2>Отмеченные точки:</h2>
+      <section>
+        <button mat-raised-button color="warn" (click)="removeAllPoint()">Удалить все</button>
+      </section>
+    </div>
+    <div class="message" *ngIf="coordValidateMessage && !validateError">{{coordValidateMessage}}</div>
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 demo-table">
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Название</th>
+        <td mat-cell *matCellDef="let element;" class="field">
+          <mat-form-field appearance="fill">
+            <input #coordinateName type="text" matInput [value]="element.name"
+                   (change)="changeCoordinateRow(coordinateName.value,'name', element.id)" required>
+          </mat-form-field>
+          <mat-error *ngIf="fieldIdError === element.id">{{coordValidateMessage}}</mat-error>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="x">
+        <th mat-header-cell *matHeaderCellDef>Координата X</th>
+        <td mat-cell *matCellDef="let element;" class="field">
+          <mat-form-field appearance="fill">
+            <input #coordinateX type="number" matInput [value]="element.x"
+                   (change)="changeCoordinateRow(coordinateX.value,'x', element.id)">
+          </mat-form-field>
+          <mat-error *ngIf="fieldIdError === element.id" class="hide">1</mat-error>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="y">
+        <th mat-header-cell *matHeaderCellDef>Координата Y</th>
+        <td mat-cell *matCellDef="let element;" class="field">
+          <mat-form-field appearance="fill">
+            <input #coordinateY type="number" matInput [value]="element.y"
+                   (change)="changeCoordinateRow(coordinateY.value,'y', element.id)">
+          </mat-form-field>
+          <mat-error *ngIf="fieldIdError === element.id" class="hide">1</mat-error>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="z">
+        <th mat-header-cell *matHeaderCellDef>Координата Z</th>
+        <td mat-cell *matCellDef="let element;" class="field">
+          <mat-form-field appearance="fill">
+            <input #coordinateZ type="number" matInput [value]="element.z"
+                   (change)="changeCoordinateRow(coordinateZ.value,'z', element.id)">
+          </mat-form-field>
+          <mat-error *ngIf="fieldIdError === element.id" class="hide">1</mat-error>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="action" class="action">
+        <th mat-header-cell *matHeaderCellDef>Действия</th>
+        <td mat-cell *matCellDef="let element;" class="field">
+          <button mat-icon-button color="warn" (click)="removeCoordinate(element.id)">
+            <mat-icon>close icon</mat-icon>
+          </button>
+          <mat-error *ngIf="fieldIdError === element.id" class="hide">1</mat-error>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns; let i = index" (click)="showClickPoint(row, i)" [ngClass]="{'selected': selectedPointIndex === i}"></tr>
+    </table>
+    <div class="export">
+      <button mat-raised-button color="primary" (click)="exportFileTxt()">Экспорт в .txt
+        <a [href]="exportTxtCoordinateUrl" style="display: none" #exportTxt></a>
+      </button>
+      <button mat-raised-button color="warn" (click)="exportFile()">Экспортировать в Excel
+        <a [href]="exportCoordinateUrl" style="display: none" #exportExcel></a>
+      </button>
+    </div>
+  </div>
+</div>
