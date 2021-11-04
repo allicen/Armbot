@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import {UserInterfaceComponent} from "./user-interface.component";
 import {RouterModule, Routes} from "@angular/router";
+import {MatTabsModule} from "@angular/material/tabs";
+
 
 const routes: Routes = [
   { path: '', component: UserInterfaceComponent,
@@ -11,14 +13,16 @@ const routes: Routes = [
     ]}
 ];
 
+
+
 @NgModule({
   declarations: [
     UserInterfaceComponent,
   ],
-    imports: [
-        RouterModule.forChild(routes),
-    ],
-  exports: [RouterModule],
+  imports: [
+    RouterModule.forChild(routes),
+    MatTabsModule
+  ],
   providers: [],
   bootstrap: [UserInterfaceComponent]
 })

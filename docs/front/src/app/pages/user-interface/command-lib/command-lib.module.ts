@@ -42,6 +42,9 @@ import {WebsocketService} from "../../../serviсes/websocket.service";
     ReactiveFormsModule
   ],
   providers: [HttpClient, MatDialog, MatSnackBar, WebsocketService],
+  exports: [
+    CommandLibComponent
+  ],
   bootstrap: [CommandLibComponent]
 })
 export class CommandLibModule { }
