@@ -1,5 +1,4 @@
-import {Component, OnInit, ViewEncapsulation} from '@angular/core';
-import {ViewService} from "../../serviсes/view.service";
+import {Component, ViewEncapsulation} from '@angular/core';
 
 @Component({
   selector: 'app-tf',
@@ -8,6 +7,10 @@ import {ViewService} from "../../serviсes/view.service";
   encapsulation: ViewEncapsulation.None
 })
 export class DocsComponent {
+
+  constructor() {
+
+  }
 
   userInterfaceOn: boolean = false;
 

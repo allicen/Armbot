@@ -22,7 +22,7 @@ export class HeaderComponent {
         if (this.userInterfaceOn) {
             this.router.navigate(['user-interface']);
         } else {
-            this.router.navigate(['']);
+            this.router.navigate(['docs']);
         }
       this.storage.setUserInterface(this.userInterfaceOn);
     }

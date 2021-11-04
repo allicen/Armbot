@@ -1,7 +1,7 @@
 import {Injectable} from "@angular/core";
 import {Observable, of, Subscription, throwError} from "rxjs";
 import {HttpClient, HttpErrorResponse} from "@angular/common/http";
-import {FileHandle} from "../pages/user-interface/dragDrop.directive";
+import {FileHandle} from "../pages/user-interface/command-lib/dragDrop.directive";
 import {Config} from "../config/config";
 import {catchError, map} from "rxjs/operators";
 import {Coordinate, Position} from "../model/models";

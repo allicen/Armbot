@@ -2,13 +2,8 @@ import { NgModule } from '@angular/core';
 
 import {DocsComponent} from "./docs.component";
 import {RouterModule, Routes} from "@angular/router";
-import {MatButtonToggleModule} from "@angular/material/button-toggle";
-import {MatIconModule} from "@angular/material/icon";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {ViewService} from "../../serviсes/view.service";
 import {CommonModule} from "@angular/common";
-import {MainComponent} from "../../layout/main/main.component";
-import {MatInputModule} from "@angular/material/input";
+import {MatButtonToggleModule} from "@angular/material/button-toggle";;
 
 const routes: Routes = [
     { path: '', component: DocsComponent,
@@ -36,17 +31,10 @@ const routes: Routes = [
   imports: [
     RouterModule.forChild(routes),
     MatButtonToggleModule,
-    MatIconModule,
-    MatFormFieldModule,
-    CommonModule,
-    MatInputModule
+    CommonModule
   ],
-  exports: [
-    DocsComponent
-  ],
-  providers: [
-    ViewService
-  ],
+  exports: [RouterModule],
+  providers: [],
   bootstrap: [DocsComponent]
 })
 export class DocsModule { }
