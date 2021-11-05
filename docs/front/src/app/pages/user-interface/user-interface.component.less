@@ -1,4 +1,16 @@
+@import "../../styles/styles.less";
+
 .tabs {
   margin-top: -20px;
   margin-bottom: 40px;
+
+  a {
+    color: rgba(0,0,0,.87);
+    border-bottom: 1px solid #200772;
+  }
+
+  a.active {
+    background: @grid-color-default;
+    color: @black-color;
+  }
 }
