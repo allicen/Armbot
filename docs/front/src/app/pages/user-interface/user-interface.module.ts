@@ -3,6 +3,8 @@ import {UserInterfaceComponent} from "./user-interface.component";
 import {RouterModule, Routes} from "@angular/router";
 import {MatTabsModule} from "@angular/material/tabs";
 import {OpenDialogComponent} from "./open-dialog/open-dialog.component";
+import {MatDialogModule} from "@angular/material/dialog";
+import {MatButtonModule} from "@angular/material/button";
 
 
 const routes: Routes = [
@@ -23,7 +25,9 @@ const routes: Routes = [
   ],
   imports: [
     RouterModule.forChild(routes),
-    MatTabsModule
+    MatTabsModule,
+    MatDialogModule,
+    MatButtonModule
   ],
   providers: [],
   bootstrap: [UserInterfaceComponent]

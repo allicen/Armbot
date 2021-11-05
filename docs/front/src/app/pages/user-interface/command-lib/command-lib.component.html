@@ -37,6 +37,8 @@
   <app-robot-area></app-robot-area>
 </div>
 
+<app-command-table></app-command-table>
+
 <div class="import" *ngIf="!imageUploadRequired || (image && !editingAllowed)">
   <h2>Импорт координат из файла .txt</h2>
   <section class="import-info">
@@ -67,5 +69,3 @@ third:123 547 0</code></pre>
 <!--</ul>-->
 
 <!--  <div class="message" *ngIf="coordValidateMessage && !validateError">{{coordValidateMessage}}</div>-->
-
-<app-command-table></app-command-table>
