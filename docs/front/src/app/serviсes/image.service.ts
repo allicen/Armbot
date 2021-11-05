@@ -4,7 +4,6 @@ import {HttpService} from "./http.service";
 import {DomSanitizer} from "@angular/platform-browser";
 import {FileHandle} from "../pages/user-interface/command-lib/import-image/dragDrop.directive";
 import {Position} from "../model/models";
-import {repeatGroups} from "@angular/compiler/src/shadow_css";
 
 @Injectable({ providedIn: 'root' })
 export class ImageService {
