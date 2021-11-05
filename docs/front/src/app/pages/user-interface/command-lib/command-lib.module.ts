@@ -2,8 +2,7 @@ import { NgModule } from '@angular/core';
 
 import {CommandLibComponent} from "./command-lib.component";
 import {RouterModule} from "@angular/router";
-import {DragDirective} from "./dragDrop.directive";
-import {OpenDialogComponent} from "../open-dialog/open-dialog.component";
+import {DragDirective} from "./import-image/dragDrop.directive";
 import {CommonModule} from "@angular/common";
 import {MatButtonModule} from "@angular/material/button";
 import {MatInputModule} from "@angular/material/input";
@@ -17,12 +16,17 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {HttpClient} from "@angular/common/http";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {WebsocketService} from "../../../serviсes/websocket.service";
+import {ImportImageComponent} from "./import-image/import-image.component";
+import {RobotAreaComponent} from "./robot-area/robot-area.component";
+import {CreateCommandsComponent} from "./create-commands/create-commands.component";
 
 @NgModule({
   declarations: [
     CommandLibComponent,
     DragDirective,
-    OpenDialogComponent
+    ImportImageComponent,
+    RobotAreaComponent,
+    CreateCommandsComponent
   ],
   imports: [
     RouterModule.forChild([{

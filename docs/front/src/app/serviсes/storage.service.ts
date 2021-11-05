@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from "rxjs";
 import { Router } from "@angular/router";
 import {HttpService} from "./http.service";
-import {Response} from "../model/models";
+import {Coordinate} from "../model/models";
 
 @Injectable({ providedIn: 'root' })
 export class StorageService {
@@ -11,6 +11,7 @@ export class StorageService {
     private coordinateDelete$: BehaviorSubject<number> = new BehaviorSubject<number>(-1);
     private coordinateDeleteError$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     private coordinateDeleteMessage$: BehaviorSubject<string> = new BehaviorSubject<string>('');
+    private clickCoordinate$: BehaviorSubject<Coordinate> = new BehaviorSubject<Coordinate>({x: 0, y: 0, z: 0, name: '', id: -1});
 
     urlArr = this.router.url.split('/');
 
@@ -60,5 +61,13 @@ export class StorageService {
 
     getCoordinateDeleteMessage(): Observable<string> {
       return this.coordinateDeleteMessage$.asObservable();
+    }
+
+    getClickCoordinate(): Observable<Coordinate> {
+      return this.clickCoordinate$.asObservable();
+    }
+
+    setClickCoordinate(coordinate: Coordinate): void {
+      this.clickCoordinate$.next(coordinate);
     }
 }

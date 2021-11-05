@@ -1,7 +1,7 @@
 import {Injectable} from "@angular/core";
 import {Observable, of, Subscription, throwError} from "rxjs";
 import {HttpClient, HttpErrorResponse} from "@angular/common/http";
-import {FileHandle} from "../pages/user-interface/command-lib/dragDrop.directive";
+import {FileHandle} from "../pages/user-interface/command-lib/import-image/dragDrop.directive";
 import {Config} from "../config/config";
 import {catchError, map} from "rxjs/operators";
 import {Coordinate, Position} from "../model/models";
@@ -27,9 +27,6 @@ export class HttpService {
     }
 
     importCoordinates(file: File): Observable<any> {
-
-      console.log(file);
-      console.log(file.type);
 
         const formData: FormData = new FormData();
         formData.append('file', file);

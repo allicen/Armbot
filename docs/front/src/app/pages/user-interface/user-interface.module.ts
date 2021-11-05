@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import {UserInterfaceComponent} from "./user-interface.component";
 import {RouterModule, Routes} from "@angular/router";
 import {MatTabsModule} from "@angular/material/tabs";
+import {OpenDialogComponent} from "./open-dialog/open-dialog.component";
 
 
 const routes: Routes = [
@@ -18,6 +19,7 @@ const routes: Routes = [
 @NgModule({
   declarations: [
     UserInterfaceComponent,
+    OpenDialogComponent
   ],
   imports: [
     RouterModule.forChild(routes),

@@ -1,0 +1,27 @@
+<p>Загрузите файл с изображением клавиатуры, чтобы отметить на нем координаты. Или продолжите без загрузки изображения.</p>
+<div [class]="messageIsError ? 'error' : 'message'" *ngIf="message">{{message}}</div>
+
+<div *ngIf="!fileUpload" class="col-12 rmpm dropzone" appDrag (files)="filesDropped($event)">
+  <div class="text-wrapper">
+    <div class="centered">
+      <div class="text">Для загрузки перетащите файл в эту область или выберите на своем компьютере</div>
+      <div class="buttons">
+        <button *ngIf="!fileUpload" mat-flat-button color="warn">Продолжить без загрузки изображения</button>
+        <button mat-raised-button color="primary" (click)="openDialogChangeFile($event)">Выбрать файл
+          <input type="file" style="display: none;" #inputFile (change)="changeFile($event)" />
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<article *ngIf="fileUpload">
+  <div *ngFor="let file of files" class="upload-file">
+    <img *ngIf="file" [src]="file.url" alt="">
+  </div>
+</article>
+
+<div class="buttons" *ngIf="fileUpload">
+  <button mat-raised-button color="warn" (click)="removeFile()">Удалить</button>
+  <button mat-raised-button color="primary" (click)="uploadFile()">Загрузить</button>
+</div>
