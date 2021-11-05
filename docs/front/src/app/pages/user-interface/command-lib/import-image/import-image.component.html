@@ -1,4 +1,5 @@
-<p>Загрузите файл с изображением клавиатуры, чтобы отметить на нем координаты. Или продолжите без загрузки изображения.</p>
+<p>Загрузите файл с изображением клавиатуры, чтобы отметить на нем координаты.</p>
+<p>Разрешены файлы {{types}}. Максимальный размер - 100Mb.</p>
 <div [class]="messageIsError ? 'error' : 'message'" *ngIf="message">{{message}}</div>
 
 <div *ngIf="!fileUpload" class="col-12 rmpm dropzone" appDrag (files)="filesDropped($event)">
@@ -6,7 +7,6 @@
     <div class="centered">
       <div class="text">Для загрузки перетащите файл в эту область или выберите на своем компьютере</div>
       <div class="buttons">
-        <button *ngIf="!fileUpload" mat-flat-button color="warn">Продолжить без загрузки изображения</button>
         <button mat-raised-button color="primary" (click)="openDialogChangeFile($event)">Выбрать файл
           <input type="file" style="display: none;" #inputFile (change)="changeFile($event)" />
         </button>

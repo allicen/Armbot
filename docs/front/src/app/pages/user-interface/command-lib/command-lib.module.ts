@@ -18,7 +18,7 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 import {WebsocketService} from "../../../serviсes/websocket.service";
 import {ImportImageComponent} from "./import-image/import-image.component";
 import {RobotAreaComponent} from "./robot-area/robot-area.component";
-import {CreateCommandsComponent} from "./create-commands/create-commands.component";
+import {CommandTableComponent} from "./command-table/command-table.component";
 
 @NgModule({
   declarations: [
@@ -26,7 +26,7 @@ import {CreateCommandsComponent} from "./create-commands/create-commands.compone
     DragDirective,
     ImportImageComponent,
     RobotAreaComponent,
-    CreateCommandsComponent
+    CommandTableComponent
   ],
   imports: [
     RouterModule.forChild([{

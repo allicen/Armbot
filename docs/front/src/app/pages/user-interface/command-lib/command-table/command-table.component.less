@@ -1,0 +1,106 @@
+@import "../../../../styles/styles.less";
+
+h2 {
+  margin-top: 30px;
+}
+
+table {
+  width: 100%;
+
+  .mat-column-action {
+    width: 5%;
+  }
+
+  .mat-column-name {
+    width: 50%;
+  }
+
+  .mat-column-x {
+    width: 15%;
+
+    input {
+      max-width: 120px;
+    }
+  }
+
+  .mat-column-y {
+    width: 15%;
+
+    input {
+      max-width: 120px;
+    }
+  }
+
+  .mat-column-z {
+    width: 15%;
+
+    input {
+      max-width: 120px;
+    }
+  }
+
+  .input {
+    max-width: 100%;
+    overflow: auto;
+    padding: 0 20px;
+  }
+
+  span {
+    color: @base-color;
+    border-bottom: 1px dashed @base-color;
+    cursor: pointer;
+
+    input {
+      display: inline-block;
+    }
+  }
+
+  .selected {
+    background-color: @drag-drop-back;
+  }
+}
+
+.points {
+  .export {
+    margin-top: 30px;
+    display: flex;
+    justify-content: flex-end;
+
+    button {
+      margin-left: 20px;
+    }
+  }
+
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+}
+
+.import {
+  margin-top: 20px;
+}
+
+.field {
+
+  mat-form-field {
+    width: 70%;
+    float: left;
+  }
+
+  mat-error {
+    margin-top: -10px;
+    margin-bottom: 15px;
+  }
+
+  .hide {
+    opacity: 0;
+  }
+}
+
+
+::ng-deep .field .mat-form-field-appearance-fill .mat-form-field-flex {
+  margin-top: 10px;
+  padding: 5px 10px;
+}

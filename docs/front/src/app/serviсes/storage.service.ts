@@ -13,6 +13,9 @@ export class StorageService {
     private coordinateDeleteMessage$: BehaviorSubject<string> = new BehaviorSubject<string>('');
     private clickCoordinate$: BehaviorSubject<Coordinate> = new BehaviorSubject<Coordinate>({x: 0, y: 0, z: 0, name: '', id: -1});
     private userInterfaceActiveTab$: BehaviorSubject<string> = new BehaviorSubject<string>('');
+    private coordinateList$: BehaviorSubject<Coordinate[]> = new BehaviorSubject<Coordinate[]>([]);
+    private currentStep$: BehaviorSubject<number> = new BehaviorSubject<number>(1);
+
 
     urlArr = this.router.url.split('/');
 
@@ -78,5 +81,21 @@ export class StorageService {
 
     setUserInterfaceActiveTab(tab: string): void {
       this.userInterfaceActiveTab$.next(tab);
+    }
+
+    setCoordinateList(coordinateList: Coordinate[]): void {
+       this.coordinateList$.next(coordinateList);
+    }
+
+    getCoordinateList(): Observable<Coordinate[]> {
+      return this.coordinateList$.asObservable();
+    }
+
+    getCurrentStep(): Observable<number> {
+      return this.currentStep$.asObservable();
+    }
+
+    setCurrentStep(step: number): void {
+      this.currentStep$.next(step);
     }
 }

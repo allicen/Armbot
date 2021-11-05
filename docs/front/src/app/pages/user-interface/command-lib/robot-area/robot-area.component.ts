@@ -14,7 +14,8 @@ import {StorageService} from "../../../../serviсes/storage.service";
 })
 export class RobotAreaComponent implements OnInit {
 
-  @Input() dataSource: Coordinate[] = [];
+  dataSource: Coordinate[] = [];
+
   robotAreaWidth: number = 0;
   gridHorizontalOffset: number = 200;
   gridStepPx: number = 100;
@@ -65,6 +66,10 @@ export class RobotAreaComponent implements OnInit {
       }
     });
 
+    this.storage.getCoordinateList().subscribe(data => {
+      this.dataSource = data;
+    });
+
     this.storage.getClickCoordinate().subscribe(data => {
       if (data.id !== -1) {
         this.clickCoordinate = data;
@@ -111,6 +116,9 @@ export class RobotAreaComponent implements OnInit {
 
 
   coordinateSaveServer(coordinate: Coordinate) {
+
+    //this.dataSource.push(coordinate);
+
     this.httpService.saveCoordinate(coordinate).pipe().subscribe((res) => {
 
       if (!res) {
@@ -119,10 +127,10 @@ export class RobotAreaComponent implements OnInit {
 
       this.dataSource.push(res.details.coordinate);
 
+      console.log('this.dataSource = ', this.dataSource);
+      console.log('--------------');
 
-      // if (this.table) {
-      //   this.table.renderRows();
-      // }
+      this.storage.setCoordinateList(this.dataSource);
 
       this._snackBar.open(`Точка сохранена с координатами x=${coordinate.x}, y=${coordinate.y}`, 'X', {
         duration: 2000
@@ -165,8 +173,8 @@ export class RobotAreaComponent implements OnInit {
   setEditingCompleted() {
     this.imageService.setImageEditAllowed(false);
     this.httpService.saveSessionState(this.imageId, this.imageWidthPx, this.dragImagePosition).subscribe(res => {
-
     });
+    this.storage.setCurrentStep(3);
   }
 
   getImageWidth(): void {

@@ -16,14 +16,17 @@ export class ImportImageComponent implements OnInit {
               private imageService: ImageService,
               private config: Config) {}
 
-  ngOnInit(): void { }
-
   message: string = '';
   messageIsError = false;
+  types: string = '';
 
   files: FileHandle[] = [];
   fileUpload: boolean = false;
   @ViewChild("inputFile") inputFile: ElementRef | undefined;
+
+  ngOnInit(): void {
+    this.types = this.config.allowImageMimeTypes.join(', ');
+  }
 
   filesDropped(files: FileHandle[]): void {
     if (files.length > 0) {
@@ -59,7 +62,7 @@ export class ImportImageComponent implements OnInit {
         this.message = `Размер изображения (${file.size} байт) больше разрешенного: ${this.config.imageMaxSize} байт`;
         this.messageIsError = true;
       } else {
-        this.message = `Тип файла '${file.type}' не поддерживается! Поддерживаемые типы: ${this.config.allowImageMimeTypes.join(', ')}`;
+        this.message = `Тип файла '${file.type}' не поддерживается! Поддерживаемые типы: ${this.types}`;
         this.messageIsError = true;
       }
     }
