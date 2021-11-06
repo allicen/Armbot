@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {StorageService} from "../../serviсes/storage.service";
 import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
+import {Router} from "@angular/router";
 
 @UntilDestroy()
 @Component({
@@ -12,8 +13,7 @@ export class UserInterfaceComponent implements OnInit {
 
   tab: string = 'user-interface';
 
-  constructor(private storageService: StorageService) {
-
+  constructor(private storageService: StorageService, private router: Router) {
   }
 
   ngOnInit(): void {
@@ -23,7 +23,7 @@ export class UserInterfaceComponent implements OnInit {
       }
     });
 
-    this.tab = this.storageService.getUserInterfaceTab();
+    this.tab = this.storageService.getUserInterfaceTab(this.router.url);
   }
 
   changeTab(tab: string) {
