@@ -29,7 +29,7 @@ class SessionController {
         List<SessionState> sessionList = sessionStateRepository.list()
 
         if (sessionList.size() == 0) {
-            return new ResponseDto(status: ResponseStatus.SUCCESS)
+            return new ResponseDto(status: ResponseStatus.NO_SESSION)
         }
 
         SessionStateDto session =
@@ -38,21 +38,30 @@ class SessionController {
     }
 
     @Post(value = "/save")
-    def save(@Part int imageSize, @Part int imagePositionX, @Part int imagePositionY) {
+    def save(@Part int imageSize, @Part int imagePositionX, @Part int imagePositionY, @Part boolean imageRequired = true) {
 
         List<SessionState> sessionList = sessionStateRepository.list()
 
-        if (imageRepository.list().size() == 0) {
+        if (imageSize > 0 && imageRepository.list().size() == 0) {
             return new ResponseDto(status: ResponseStatus.ERROR, errorCode: "IMAGE_NOT_FOUND", message: 'Картинка не найдена')
         }
 
-        Image image = imageRepository.list()[0]
+        def imageId = null
+
+        if (imageRepository.list().size() > 0) {
+            Image image = imageRepository.list()[0]
+            imageId = image.id
+        }
 
         try {
             SessionState session
 
             if (sessionList.size() == 0) {
-                session = new SessionState(imageId: image.id, imageSize: imageSize, imagePositionX: imagePositionX, imagePositionY: imagePositionY)
+                session = new SessionState(imageId: imageId,
+                        imageSize: imageSize,
+                        imagePositionX: imagePositionX,
+                        imagePositionY: imagePositionY,
+                        imageRequired: imageRequired)
                 sessionStateRepository.save(session)
             } else {
                 session = sessionList.get(0)

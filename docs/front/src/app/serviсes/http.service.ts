@@ -107,9 +107,9 @@ export class HttpService {
   }
 
 
-  saveSessionState(imageSize: number = 0, imagePosition: Position): Observable<any> {
+  saveSessionState(imageSize: number = 0, imagePosition: Position, imageRequired: boolean = true): Observable<any> {
     return this.http.post(`${this.config.httpUrl}/session/save`,
-      {imageSize: imageSize, imagePositionX: imagePosition.x, imagePositionY: imagePosition.y}).pipe(
+      {imageSize: imageSize, imagePositionX: imagePosition.x, imagePositionY: imagePosition.y, imageRequired}).pipe(
       catchError((error: HttpErrorResponse) => {
         return throwError(error);
       }),

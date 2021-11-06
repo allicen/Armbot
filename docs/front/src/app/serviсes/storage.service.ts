@@ -15,7 +15,8 @@ export class StorageService {
     private userInterfaceActiveTab$: BehaviorSubject<string> = new BehaviorSubject<string>('');
     private coordinateList$: BehaviorSubject<Coordinate[]> = new BehaviorSubject<Coordinate[]>([]);
     private currentStep$: BehaviorSubject<number> = new BehaviorSubject<number>(1);
-    private removeSession$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    private sessionStart$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    private sessionRemove$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
     private coordinateList: Coordinate[] = [];
 
@@ -108,11 +109,19 @@ export class StorageService {
       this.currentStep$.next(step);
     }
 
-    getRemoveSession(): Observable<boolean> {
-      return this.removeSession$.asObservable();
+    getSessionStart(): Observable<boolean> {
+      return this.sessionStart$.asObservable();
     }
 
-    setRemoveSession(remove: boolean) {
-      this.removeSession$.next(remove);
+    setSessionStart(start: boolean): void {
+      this.sessionStart$.next(start);
+    }
+
+    getSessionRemove(): Observable<boolean> {
+      return this.sessionRemove$.asObservable();
+    }
+
+    setSessionRemove(start: boolean): void {
+      this.sessionRemove$.next(start);
     }
 }

@@ -2,11 +2,11 @@
   <h1>Формирование команд</h1>
   <div class="buttons">
     <button mat-stroked-button color="primary" (click)="setEditAllowed()" *ngIf="image && !editingAllowed">Вернуться к редактированию</button>
-    <button mat-stroked-button color="warn" (click)="removeSession()" *ngIf="image">Завершить сеанс</button>
+    <button mat-stroked-button color="warn" (click)="removeSession()" *ngIf="image || sessionStart">Завершить сеанс</button>
   </div>
 </div>
 
-<div class="choice" *ngIf="!image">
+<div class="choice" *ngIf="imageUploadRequired && !image || !sessionStart">
   <label>Выберите вариант работы с системой:</label>
   <mat-radio-group>
     <mat-radio-button value="1" color="warn" [checked]="imageUploadRequired" (change)="changeWorkOption()">Я хочу загрузить изображение клавиатуры</mat-radio-button>
@@ -14,7 +14,7 @@
   </mat-radio-group>
 </div>
 
-<div [class]="messageIsError ? 'error' : 'message'" *ngIf="message">{{message}}</div>
+<div [class]="messageIsError ? 'error' : 'message'" *ngIf="message && !sessionNotFound">{{message}}</div>
 
 <section class="important">
   <section *ngIf="imageUploadRequired">

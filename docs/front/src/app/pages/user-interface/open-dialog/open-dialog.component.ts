@@ -33,7 +33,8 @@ export class OpenDialogComponent implements OnInit {
   }
 
   removeSession() {
-    this.storageService.setRemoveSession(true);
+    this.storageService.setSessionRemove(true);
+    this.storageService.setSessionStart(false);
     this.dialogRef.close();
   }
 

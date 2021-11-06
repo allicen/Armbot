@@ -38,6 +38,9 @@ export class CommandLibComponent implements OnInit {
 
   aboutImportOpen: boolean = false;
 
+  sessionStart: boolean = false;
+  sessionNotFound: boolean = true;
+
   @ViewChild("inputFilePoints") inputFilePoints: ElementRef | undefined;
 
   public messages: Subject<any> | undefined;
@@ -60,10 +63,11 @@ export class CommandLibComponent implements OnInit {
     });
 
     this.imageService.getImage().subscribe(data => {
-      this.storageService.setRemoveSession(false);
       this.image = data;
       if (this.image && this.editingAllowed) {
         this.storageService.setCurrentStep(2);
+        this.storageService.setSessionStart(true);
+        this.sessionNotFound = false;
       }
     });
 
@@ -75,7 +79,11 @@ export class CommandLibComponent implements OnInit {
       this.currentStep = data;
     });
 
-    this.storageService.getRemoveSession().subscribe(remove => {
+    this.storageService.getSessionStart().subscribe(start => {
+      this.sessionStart = start;
+    });
+
+    this.storageService.getSessionRemove().subscribe(remove => {
       if (remove) {
         this.removeSessionAccept();
       }
@@ -95,15 +103,25 @@ export class CommandLibComponent implements OnInit {
   getSession() {
     return this.httpService.getSession().subscribe((data: any) => {
 
+      if (data.status === 'NO_SESSION') {
+        this.storageService.setSessionStart(false);
+      }
+
       if (data.status === 'SUCCESS' && data.details) {
         const details = data.details.sessionState;
         this.imageService.setImagePosition(details.imagePositionX, details.imagePositionY);
         this.imageService.setImageWidth(details.imageSize);
         this.imageService.setImageEditAllowed(false);
         this.storageService.setCurrentStep(3);
+        this.sessionStart = true;
+
         if (data.details.coordinateList) {
           this.storageService.setCoordinateList(data.details.coordinateList);
         }
+
+        this.imageService.setImageUploadRequired(data.details.sessionState.imageRequired);
+
+        this.sessionNotFound = false;
       }
     });
   }
@@ -180,6 +198,14 @@ export class CommandLibComponent implements OnInit {
       if (res.details?.savedCoordinates) {
         for (let item of res.details?.savedCoordinates) {
           this.storageService.addCoordinateInList(item);
+        }
+
+        this.storageService.setSessionStart(true);
+
+        if (!this.imageUploadRequired) {
+          this.httpService.saveSessionState(-1, {x: 0, y: 0}, this.imageUploadRequired).subscribe(res => {
+
+          });
         }
       }
     })
