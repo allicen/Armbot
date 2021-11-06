@@ -14,6 +14,7 @@ export class ImageService {
   private imagePosition$: BehaviorSubject<Position> = new BehaviorSubject<Position>({x: 0, y: 0});
   private imageEditAllowed$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   private imageUploadRequired$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+  private imageWidth$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
 
   getImage(): Observable<any> {
     this.getImageFromServer();
@@ -26,6 +27,10 @@ export class ImageService {
         this.getImageFromServer();
       }
     });
+  }
+
+  deleteImage(): void {
+    this.image$.next(null);
   }
 
   getImageFromServer() {
@@ -58,6 +63,14 @@ export class ImageService {
 
   setImageUploadRequired(required: boolean): void {
     this.imageUploadRequired$.next(required);
+  }
+
+  getImageWidth(): Observable<number> {
+    return this.imageWidth$.asObservable();
+  }
+
+  setImageWidth(width: number): void {
+    this.imageWidth$.next(width);
   }
 
 

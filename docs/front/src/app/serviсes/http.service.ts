@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {Observable, of, Subscription, throwError} from "rxjs";
+import {EMPTY, Observable, of, Subscription, throwError} from "rxjs";
 import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 import {FileHandle} from "../pages/user-interface/command-lib/import-image/dragDrop.directive";
 import {Config} from "../config/config";
@@ -28,6 +28,10 @@ export class HttpService {
 
     importCoordinates(file: File): Observable<any> {
 
+        if (!file) {
+          return EMPTY;
+        }
+
         const formData: FormData = new FormData();
         formData.append('file', file);
         formData.append('contentType', file.type);
@@ -45,8 +49,8 @@ export class HttpService {
       );
     }
 
-    removeImage(): Observable<any> {
-      return this.http.get(`${this.config.httpUrl}/image/removeImage/`).pipe(
+    removeSession(): Observable<any> {
+      return this.http.get(`${this.config.httpUrl}/session/remove/`).pipe(
         map(res => {
           return res;
         })
@@ -103,9 +107,9 @@ export class HttpService {
   }
 
 
-  saveSessionState(imageId: number = 0, imageSize: number = 0, imagePosition: Position): Observable<any> {
+  saveSessionState(imageSize: number = 0, imagePosition: Position): Observable<any> {
     return this.http.post(`${this.config.httpUrl}/session/save`,
-      {imageId: imageId, imageSize: imageSize, imagePositionX: imagePosition.x, imagePositionY: imagePosition.y}).pipe(
+      {imageSize: imageSize, imagePositionX: imagePosition.x, imagePositionY: imagePosition.y}).pipe(
       catchError((error: HttpErrorResponse) => {
         return throwError(error);
       }),

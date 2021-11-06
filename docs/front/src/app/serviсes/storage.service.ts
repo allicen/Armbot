@@ -15,6 +15,9 @@ export class StorageService {
     private userInterfaceActiveTab$: BehaviorSubject<string> = new BehaviorSubject<string>('');
     private coordinateList$: BehaviorSubject<Coordinate[]> = new BehaviorSubject<Coordinate[]>([]);
     private currentStep$: BehaviorSubject<number> = new BehaviorSubject<number>(1);
+    private removeSession$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
+    private coordinateList: Coordinate[] = [];
 
 
     urlArr = this.router.url.split('/');
@@ -84,7 +87,13 @@ export class StorageService {
     }
 
     setCoordinateList(coordinateList: Coordinate[]): void {
-       this.coordinateList$.next(coordinateList);
+       this.coordinateList = coordinateList;
+       this.coordinateList$.next(this.coordinateList);
+    }
+
+    addCoordinateInList(coordinate: Coordinate): void {
+       this.coordinateList.push(coordinate);
+       this.setCoordinateList(this.coordinateList);
     }
 
     getCoordinateList(): Observable<Coordinate[]> {
@@ -97,5 +106,13 @@ export class StorageService {
 
     setCurrentStep(step: number): void {
       this.currentStep$.next(step);
+    }
+
+    getRemoveSession(): Observable<boolean> {
+      return this.removeSession$.asObservable();
+    }
+
+    setRemoveSession(remove: boolean) {
+      this.removeSession$.next(remove);
     }
 }

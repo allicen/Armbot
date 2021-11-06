@@ -83,24 +83,4 @@ class ImageController {
                     message: 'При сохранении изображения произошла ошибка']
         }
     }
-
-    @Get(value = "/removeImage/")
-    def removeImage() {
-
-        try {
-            // Завершение сеанса
-            imageRepository.deleteAll()
-            coordinateRepository.deleteAll()
-            sessionStateRepository.deleteAll()
-
-            [status: 'OK', message: 'Изображение успешно удалено']
-
-        } catch (e) {
-            String message = "При удалении изображения произошла ошибка. "
-            println(message + e)
-            return [status : 'ERROR',
-                    code: 'ERROR_REMOVE_IMAGE',
-                    message: message]
-        }
-    }
 }

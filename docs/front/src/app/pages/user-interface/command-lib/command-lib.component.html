@@ -2,7 +2,7 @@
   <h1>Формирование команд</h1>
   <div class="buttons">
     <button mat-stroked-button color="primary" (click)="setEditAllowed()" *ngIf="image && !editingAllowed">Вернуться к редактированию</button>
-    <button mat-stroked-button color="warn" (click)="removeImage()" *ngIf="image">Завершить сеанс</button>
+    <button mat-stroked-button color="warn" (click)="removeSession()" *ngIf="image">Завершить сеанс</button>
   </div>
 </div>
 
@@ -14,7 +14,7 @@
   </mat-radio-group>
 </div>
 
-<div class="error" *ngIf="message">{{message}}</div>
+<div [class]="messageIsError ? 'error' : 'message'" *ngIf="message">{{message}}</div>
 
 <section class="important">
   <section *ngIf="imageUploadRequired">
@@ -70,4 +70,5 @@ third:123 547 0</code></pre>
   </button>
 </div>
 
+<div [class]="coordinateMessage && coordinateMessageError ? 'error' : 'message'" [class.info]="coordinateMessage">{{coordinateMessage}}</div>
 <app-command-table></app-command-table>

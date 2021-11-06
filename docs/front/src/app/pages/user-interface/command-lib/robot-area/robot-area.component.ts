@@ -27,7 +27,6 @@ export class RobotAreaComponent implements OnInit {
   maxWidthLen: number = 4; // Макс количество символов для задания ширины
 
   image: any = null;
-  imageId: number | undefined;
 
   gridLineThin: number = 1;
   gridVerticalCount: number = 0;
@@ -79,6 +78,10 @@ export class RobotAreaComponent implements OnInit {
     this.imageService.getImageEditAllowed().subscribe(data => {
       this.editingAllowed = data;
     });
+
+    this.imageService.getImageWidth().subscribe(data => {
+      this.imageWidthPx = data;
+    });
   }
 
   ngAfterViewChecked() {
@@ -123,8 +126,7 @@ export class RobotAreaComponent implements OnInit {
         return;
       }
 
-      this.dataSource.push(res.details.coordinate);
-      this.storage.setCoordinateList(this.dataSource);
+      this.storage.addCoordinateInList(res.details.coordinate);
 
       this._snackBar.open(`Точка сохранена с координатами x=${coordinate.x}, y=${coordinate.y}`, 'X', {
         duration: 2000
@@ -144,6 +146,7 @@ export class RobotAreaComponent implements OnInit {
     }
 
     this.imageWidthPx = this.sizeService.toPxTranslate(Number(width), 'mm', this.robotAreaWidth);
+    this.imageService.setImageWidth(this.imageWidthPx);
   }
 
   setVisibleGrid(completed: boolean) {
@@ -166,7 +169,8 @@ export class RobotAreaComponent implements OnInit {
 
   setEditingCompleted() {
     this.imageService.setImageEditAllowed(false);
-    this.httpService.saveSessionState(this.imageId, this.imageWidthPx, this.dragImagePosition).subscribe(res => {
+    this.httpService.saveSessionState(this.imageWidthPx, this.dragImagePosition).subscribe(res => {
+
     });
     this.storage.setCurrentStep(3);
   }
@@ -176,6 +180,7 @@ export class RobotAreaComponent implements OnInit {
       this.imageWidthPx = this.uploadImage.nativeElement.width;
 
       if (this.imageWidthPx) {
+        this.imageService.setImageWidth(this.imageWidthPx);
         this.imageWidthMm = this.sizeService.fromPxTranslate(this.imageWidthPx, 'mm', this.robotAreaWidth);
       }
     }

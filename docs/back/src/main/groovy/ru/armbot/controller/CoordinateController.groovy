@@ -79,7 +79,7 @@ class CoordinateController {
     def removeAll() {
         try {
             coordinateRepository.deleteAll()
-            return new ResponseDto(status: ResponseStatus.SUCCESS)
+            return new ResponseDto(status: ResponseStatus.SUCCESS, message: 'Координаты успешно удалены')
         } catch (e) {
             println("Ошибка удаления координат, ${e}")
             return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'DELETE_ERROR', message: 'Ошибка удаления координат')

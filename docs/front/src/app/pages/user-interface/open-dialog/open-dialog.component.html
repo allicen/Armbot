@@ -1,6 +1,8 @@
-<h1 mat-dialog-title>Удалить строку?</h1>
-<div mat-dialog-content>Действие отменить нельзя.</div>
+<h1 mat-dialog-title>{{title}}</h1>
+<div mat-dialog-content>{{text}}</div>
 <div mat-dialog-actions>
   <button mat-button mat-dialog-close>Отмена</button>
-  <button mat-flat-button color="warn" (click)="deleteRow()">Удалить</button>
+  <button mat-flat-button color="warn" (click)="deleteRow()" *ngIf="type === 'delete_coordinate'">Удалить</button>
+  <button mat-flat-button color="warn" (click)="removeSession()" *ngIf="type === 'remove_session'">Удалить</button>
+  <button mat-flat-button color="warn" (click)="removeAllRows()" *ngIf="type === 'remove_all_coordinates'">Удалить</button>
 </div>

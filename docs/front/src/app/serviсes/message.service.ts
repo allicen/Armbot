@@ -6,6 +6,9 @@ export class MessageService {
 
   private messageImport$: BehaviorSubject<string> = new BehaviorSubject<string>('');
   private importErrors$: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
+  private coordinateMessage$: BehaviorSubject<string> = new BehaviorSubject<string>('');
+  private coordinateMessageIsError$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
 
   importErrors = [];
   importMessage: string = '';
@@ -27,5 +30,21 @@ export class MessageService {
 
   setMessageImportErrors(list: string[]): void {
     this.importErrors$.next(list);
+  }
+
+  getCoordinateMessage(): Observable<string> {
+    return this.coordinateMessage$.asObservable();
+  }
+
+  setCoordinateMessage(message: string): void {
+    this.coordinateMessage$.next(message);
+  }
+
+  getCoordinateMessageIsError(): Observable<boolean> {
+    return this.coordinateMessageIsError$.asObservable();
+  }
+
+  setCoordinateMessageIsError(error: boolean): void {
+    this.coordinateMessageIsError$.next(error);
   }
 }

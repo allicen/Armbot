@@ -38,20 +38,21 @@ class SessionController {
     }
 
     @Post(value = "/save")
-    def save(@Part long imageId, @Part int imageSize, @Part int imagePositionX, @Part int imagePositionY) {
+    def save(@Part int imageSize, @Part int imagePositionX, @Part int imagePositionY) {
 
         List<SessionState> sessionList = sessionStateRepository.list()
-        Image image = imageRepository.list().find { it.id == imageId }
 
-        if (!image) {
+        if (imageRepository.list().size() == 0) {
             return new ResponseDto(status: ResponseStatus.ERROR, errorCode: "IMAGE_NOT_FOUND", message: 'Картинка не найдена')
         }
+
+        Image image = imageRepository.list()[0]
 
         try {
             SessionState session
 
             if (sessionList.size() == 0) {
-                session = new SessionState(imageId: imageId, imageSize: imageSize, imagePositionX: imagePositionX, imagePositionY: imagePositionY)
+                session = new SessionState(imageId: image.id, imageSize: imageSize, imagePositionX: imagePositionX, imagePositionY: imagePositionY)
                 sessionStateRepository.save(session)
             } else {
                 session = sessionList.get(0)
@@ -73,11 +74,13 @@ class SessionController {
     @Get(value = "/remove")
     def remove() {
         try {
+            imageRepository.deleteAll()
+            coordinateRepository.deleteAll()
             sessionStateRepository.deleteAll()
-            return new ResponseDto(status: ResponseStatus.SUCCESS)
+            return new ResponseDto(status: ResponseStatus.SUCCESS, message: 'Сеанс успешно завершен')
         } catch (e) {
             println(e)
-            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'ERROR_REMOVE_SESSION', message: 'Ошибка удаления сессии')
+            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'ERROR_REMOVE_SESSION', message: 'При завершении сеанса произошла ошибка')
         }
     }
 

@@ -7,6 +7,9 @@ export interface Coordinate {
 }
 
 export interface IdData {
+  type: string;
+  title: string;
+  text: string;
   id: 0;
 }
 
