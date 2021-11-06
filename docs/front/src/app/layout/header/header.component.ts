@@ -2,7 +2,9 @@ import {Component, Input, Output} from '@angular/core';
 import {StorageService} from "../../serviсes/storage.service";
 import {Subscription} from "rxjs";
 import {Router} from "@angular/router";
+import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 
+@UntilDestroy()
 @Component({
     selector: 'app-header',
     templateUrl: './header.component.html',
@@ -14,7 +16,7 @@ export class HeaderComponent {
     userInterfaceOn: boolean = false;
 
     constructor(public storage: StorageService, private router: Router) {
-        this.storage.getUserInterface().subscribe(data => this.userInterfaceOn = data);
+        this.storage.getUserInterface().pipe(untilDestroyed(this)).subscribe(data => this.userInterfaceOn = data);
     }
 
     userInterfaceChange() {

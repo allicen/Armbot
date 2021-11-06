@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Coordinate, Position} from "../../../../model/models";
 import {SizeService} from "../../../../serviсes/size.service";
 import {HttpService} from "../../../../serviсes/http.service";
@@ -6,7 +6,9 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 import {CdkDragEnd} from "@angular/cdk/drag-drop";
 import {ImageService} from "../../../../serviсes/image.service";
 import {StorageService} from "../../../../serviсes/storage.service";
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-robot-area',
   templateUrl: './robot-area.component.html',
@@ -49,11 +51,29 @@ export class RobotAreaComponent implements OnInit {
               private storage: StorageService) {}
 
   ngOnInit(): void {
-    this.imageService.getImagePosition().subscribe(data => {
+    this.imageService.getImagePosition().pipe(untilDestroyed(this)).subscribe(data => {
       this.dragImagePosition = data;
     });
 
-    this.imageService.getImage().subscribe(image => {
+    this.storage.getCoordinateList().pipe(untilDestroyed(this)).subscribe(data => {
+      this.dataSource = data;
+    });
+
+    this.storage.getClickCoordinate().pipe(untilDestroyed(this)).subscribe(data => {
+      if (data.id !== -1) {
+        this.clickCoordinate = data;
+      }
+    });
+
+    this.imageService.getImageEditAllowed().pipe(untilDestroyed(this)).subscribe(data => {
+      this.editingAllowed = data;
+    });
+
+    this.imageService.getImageWidth().pipe(untilDestroyed(this)).subscribe(data => {
+      this.imageWidthPx = data;
+    });
+
+    this.imageService.getImage().pipe(untilDestroyed(this)).subscribe(image => {
       if (image) {
         this.image = image;
 
@@ -63,24 +83,6 @@ export class RobotAreaComponent implements OnInit {
         }, 1000);
 
       }
-    });
-
-    this.storage.getCoordinateList().subscribe(data => {
-      this.dataSource = data;
-    });
-
-    this.storage.getClickCoordinate().subscribe(data => {
-      if (data.id !== -1) {
-        this.clickCoordinate = data;
-      }
-    });
-
-    this.imageService.getImageEditAllowed().subscribe(data => {
-      this.editingAllowed = data;
-    });
-
-    this.imageService.getImageWidth().subscribe(data => {
-      this.imageWidthPx = data;
     });
   }
 
@@ -120,7 +122,7 @@ export class RobotAreaComponent implements OnInit {
 
   coordinateSaveServer(coordinate: Coordinate) {
 
-    this.httpService.saveCoordinate(coordinate).pipe().subscribe((res) => {
+    this.httpService.saveCoordinate(coordinate).pipe(untilDestroyed(this)).subscribe((res) => {
 
       if (!res) {
         return;
@@ -169,7 +171,7 @@ export class RobotAreaComponent implements OnInit {
 
   setEditingCompleted() {
     this.imageService.setImageEditAllowed(false);
-    this.httpService.saveSessionState(this.imageWidthPx, this.dragImagePosition).subscribe(res => {
+    this.httpService.saveSessionState(this.imageWidthPx, this.dragImagePosition).pipe(untilDestroyed(this)).subscribe(res => {
 
     });
     this.storage.setCurrentStep(3);
@@ -185,5 +187,4 @@ export class RobotAreaComponent implements OnInit {
       }
     }
   }
-
 }

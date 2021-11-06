@@ -1,6 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {StorageService} from "../../serviсes/storage.service";
+import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 
+@UntilDestroy()
 @Component({
   selector: 'app-user-interface',
   templateUrl: './user-interface.component.html',
@@ -15,7 +17,7 @@ export class UserInterfaceComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.storageService.getUserInterfaceActiveTab().subscribe(data => {
+    this.storageService.getUserInterfaceActiveTab().pipe(untilDestroyed(this)).subscribe(data => {
       if (data !== '') {
         this.tab = data;
       }

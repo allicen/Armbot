@@ -4,7 +4,10 @@ import {IdData} from "../../../model/models";
 import {StorageService} from "../../../serviсes/storage.service";
 import {HttpService} from "../../../serviсes/http.service";
 import {MessageService} from "../../../serviсes/message.service";
+import {ImageService} from "../../../serviсes/image.service";
+import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 
+@UntilDestroy()
 @Component({
   selector: 'app-open-dialog',
   templateUrl: './open-dialog.component.html',
@@ -15,7 +18,8 @@ export class OpenDialogComponent implements OnInit {
               @Inject(MAT_DIALOG_DATA) public data: IdData,
               private storageService: StorageService,
               private httpService: HttpService,
-              private messageService: MessageService) {}
+              private messageService: MessageService,
+              private imageService: ImageService) {}
 
   title: string = '';
   text: string = '';
@@ -35,11 +39,13 @@ export class OpenDialogComponent implements OnInit {
   removeSession() {
     this.storageService.setSessionRemove(true);
     this.storageService.setSessionStart(false);
+    this.imageService.setImagePosition(0, 0);
+    this.imageService.setImageWidth(0);
     this.dialogRef.close();
   }
 
   removeAllRows() {
-    this.httpService.removeAllCoordinates().pipe().subscribe((res) => {
+    this.httpService.removeAllCoordinates().pipe(untilDestroyed(this)).subscribe((res) => {
 
       if (res.status === 'SUCCESS') {
         this.storageService.setCoordinateList([]);

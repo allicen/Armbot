@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {StorageService} from "../../../../serviсes/storage.service";
 import {Coordinate} from "../../../../model/models";
 import {HttpService} from "../../../../serviсes/http.service";
@@ -8,7 +8,9 @@ import {Config} from "../../../../config/config";
 import {OpenDialogComponent} from "../../open-dialog/open-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
 import {MessageService} from "../../../../serviсes/message.service";
+import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 
+@UntilDestroy()
 @Component({
   selector: 'app-command-table',
   templateUrl: './command-table.component.html',
@@ -44,7 +46,7 @@ export class CommandTableComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.storageService.getCoordinateList().subscribe(data => {
+    this.storageService.getCoordinateList().pipe(untilDestroyed(this)).subscribe(data => {
 
       if (data.length === 0) {
         this.clickCoordinate = undefined;
@@ -55,7 +57,7 @@ export class CommandTableComponent implements OnInit {
       this.renderTable();
     });
 
-    this.storageService.getCoordinateDelete().subscribe(id => {
+    this.storageService.getCoordinateDelete().pipe(untilDestroyed(this)).subscribe(id => {
 
       const index = this.coordinateList.findIndex(c => c.id == id);
       this.coordinateList.splice(index, 1);
@@ -63,7 +65,7 @@ export class CommandTableComponent implements OnInit {
       this.hideMessage();
     });
 
-    this.wsService.connect(this.config.webSocketUrl).pipe().subscribe(res => {
+    this.wsService.connect(this.config.webSocketUrl).pipe().pipe(untilDestroyed(this)).subscribe(res => {
       const response = JSON.parse(res.data);
       if (response.details) {
         const coordinate: Coordinate = response.details;
@@ -76,22 +78,22 @@ export class CommandTableComponent implements OnInit {
       }
     });
 
-    this.storageService.getClickCoordinate().subscribe(data => {
+    this.storageService.getClickCoordinate().pipe(untilDestroyed(this)).subscribe(data => {
       if (data.id !== -1) {
         this.clickCoordinate = data;
       }
     });
 
-    this.storageService.getCoordinateDeleteError().subscribe(err => this.validateError = err);
-    this.storageService.getCoordinateDeleteMessage().subscribe(mess => this.coordValidateMessage = mess);
+    this.storageService.getCoordinateDeleteError().pipe(untilDestroyed(this)).subscribe(err => this.validateError = err);
+    this.storageService.getCoordinateDeleteMessage().pipe(untilDestroyed(this)).subscribe(mess => this.coordValidateMessage = mess);
     this.exportCoordinateUrl = this.httpService.getUrlExport();
     this.exportTxtCoordinateUrl = this.httpService.getUrlExportTxt();
 
-    this.messageService.getMessageImport().subscribe(data => {
+    this.messageService.getMessageImport().pipe(untilDestroyed(this)).subscribe(data => {
       this.messageImport = data;
       this.hideMessage();
     });
-    this.messageService.getMessageImportErrors().subscribe(data => { this.messageImportErrors = data });
+    this.messageService.getMessageImportErrors().pipe(untilDestroyed(this)).subscribe(data => { this.messageImportErrors = data });
   }
 
   changeCoordinateRow(value: any, type: string, id: number) {
@@ -119,7 +121,7 @@ export class CommandTableComponent implements OnInit {
         break;
     }
 
-    this.httpService.updateCoordinate(coordinate).pipe().subscribe((res) => {
+    this.httpService.updateCoordinate(coordinate).pipe(untilDestroyed(this)).subscribe((res) => {
       if (!res) {
         return;
       }

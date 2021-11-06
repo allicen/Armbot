@@ -3,7 +3,9 @@ import { BehaviorSubject, Observable } from "rxjs";
 import { Router } from "@angular/router";
 import {HttpService} from "./http.service";
 import {Coordinate} from "../model/models";
+import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 
+@UntilDestroy()
 @Injectable({ providedIn: 'root' })
 export class StorageService {
 
@@ -46,7 +48,7 @@ export class StorageService {
     }
 
     setCoordinateDelete(id: number): void {
-      this.httpService.removeCoordinate(id).pipe().subscribe((res: any) => {
+      this.httpService.removeCoordinate(id).pipe(untilDestroyed(this)).subscribe((res: any) => {
         if (!res) {
           return;
         }

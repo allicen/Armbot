@@ -11,7 +11,9 @@ import {SizeService} from "../../../serviсes/size.service";
 import {OpenDialogComponent} from "../open-dialog/open-dialog.component";
 import {ImageService} from "../../../serviсes/image.service";
 import {MessageService} from "../../../serviсes/message.service";
+import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 
+@UntilDestroy()
 @Component({
   selector: 'app-command-lib',
   templateUrl: './command-lib.component.html',
@@ -62,7 +64,7 @@ export class CommandLibComponent implements OnInit {
       this.editingAllowed = data;
     });
 
-    this.imageService.getImage().subscribe(data => {
+    this.imageService.getImage().pipe(untilDestroyed(this)).subscribe(data => {
       this.image = data;
       if (this.image && this.editingAllowed) {
         this.storageService.setCurrentStep(2);
@@ -71,26 +73,26 @@ export class CommandLibComponent implements OnInit {
       }
     });
 
-    this.imageService.getImageUploadRequired().subscribe(data => {
+    this.imageService.getImageUploadRequired().pipe(untilDestroyed(this)).subscribe(data => {
       this.imageUploadRequired = data;
     });
 
-    this.storageService.getCurrentStep().subscribe(data => {
+    this.storageService.getCurrentStep().pipe(untilDestroyed(this)).subscribe(data => {
       this.currentStep = data;
     });
 
-    this.storageService.getSessionStart().subscribe(start => {
+    this.storageService.getSessionStart().pipe(untilDestroyed(this)).subscribe(start => {
       this.sessionStart = start;
     });
 
-    this.storageService.getSessionRemove().subscribe(remove => {
+    this.storageService.getSessionRemove().pipe(untilDestroyed(this)).subscribe(remove => {
       if (remove) {
         this.removeSessionAccept();
       }
     });
 
-    this.messageService.getCoordinateMessage().subscribe(data => this.coordinateMessage = data);
-    this.messageService.getCoordinateMessageIsError().subscribe(data => {
+    this.messageService.getCoordinateMessage().pipe(untilDestroyed(this)).subscribe(data => this.coordinateMessage = data);
+    this.messageService.getCoordinateMessageIsError().pipe(untilDestroyed(this)).subscribe(data => {
       this.coordinateMessageError = data;
       if (!data) {
         setTimeout(() => {
@@ -101,7 +103,7 @@ export class CommandLibComponent implements OnInit {
   }
 
   getSession() {
-    return this.httpService.getSession().subscribe((data: any) => {
+    return this.httpService.getSession().pipe(untilDestroyed(this)).subscribe((data: any) => {
 
       if (data.status === 'NO_SESSION') {
         this.storageService.setSessionStart(false);
@@ -136,7 +138,7 @@ export class CommandLibComponent implements OnInit {
   }
 
   removeSessionAccept() {
-    this.httpService.removeSession().subscribe((data: any) => {
+    this.httpService.removeSession().pipe(untilDestroyed(this)).subscribe((data: any) => {
 
       this.message = data.message;
 
@@ -187,7 +189,7 @@ export class CommandLibComponent implements OnInit {
       return;
     }
 
-    this.httpService.importCoordinates(element.files[0]).subscribe(res => {
+    this.httpService.importCoordinates(element.files[0]).pipe(untilDestroyed(this)).subscribe(res => {
       this.messageService.setMessageImport(res.message);
       if (res.status === 'SUCCESS' || !res.details?.errorDetails) {
         this.messageService.setMessageImportErrors([]);
@@ -203,7 +205,9 @@ export class CommandLibComponent implements OnInit {
         this.storageService.setSessionStart(true);
 
         if (!this.imageUploadRequired) {
-          this.httpService.saveSessionState(-1, {x: 0, y: 0}, this.imageUploadRequired).subscribe(res => {
+          this.httpService.saveSessionState(-1, {x: 0, y: 0}, this.imageUploadRequired)
+            .pipe(untilDestroyed(this))
+            .subscribe(res => {
 
           });
         }

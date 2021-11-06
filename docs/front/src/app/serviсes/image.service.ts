@@ -4,7 +4,9 @@ import {HttpService} from "./http.service";
 import {DomSanitizer} from "@angular/platform-browser";
 import {FileHandle} from "../pages/user-interface/command-lib/import-image/dragDrop.directive";
 import {Position} from "../model/models";
+import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 
+@UntilDestroy()
 @Injectable({ providedIn: 'root' })
 export class ImageService {
   constructor(private httpService: HttpService, private sanitizer: DomSanitizer) {
@@ -22,7 +24,7 @@ export class ImageService {
   }
 
   setImage(image: FileHandle): void {
-    this.httpService.uploadImage(image).pipe().subscribe(data => {
+    this.httpService.uploadImage(image).pipe(untilDestroyed(this)).subscribe(data => {
       if (data.status === 'OK') {
         this.getImageFromServer();
       }
@@ -34,7 +36,7 @@ export class ImageService {
   }
 
   getImageFromServer() {
-    this.httpService.getImage().subscribe((data: any) => {
+    this.httpService.getImage().pipe(untilDestroyed(this)).subscribe((data: any) => {
       if (data.status === 'OK') {
         this.image$.next(this.sanitizer.bypassSecurityTrustResourceUrl(`data:${data.image.contentType};base64,${data.image.imageByte}`));
       }

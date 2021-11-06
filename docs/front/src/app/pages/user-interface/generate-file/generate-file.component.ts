@@ -9,7 +9,9 @@ import {FormControl} from "@angular/forms";
 import {Observable} from "rxjs";
 import {map, startWith} from "rxjs/operators";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
+import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 
+@UntilDestroy()
 @Component({
   selector: 'app-generate-file',
   templateUrl: './generate-file.component.html',
@@ -38,7 +40,7 @@ export class GenerateFileComponent implements OnInit {
   }
 
   ngOnInit(): void {
-      this.httpService.getSession().subscribe((data: any) => {
+      this.httpService.getSession().pipe(untilDestroyed(this)).subscribe((data: any) => {
         if (data.status === 'SUCCESS' && data.details) {
           if (data.details.coordinateList) {
             this.storageService.setCoordinateList(data.details.coordinateList);
@@ -46,7 +48,7 @@ export class GenerateFileComponent implements OnInit {
         }
       });
 
-      this.storageService.getCoordinateList().subscribe(data => {
+      this.storageService.getCoordinateList().pipe(untilDestroyed(this)).subscribe(data => {
         this.coordinateList = data;
       });
 
