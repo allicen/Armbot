@@ -52,7 +52,7 @@ export class CommandTableComponent implements OnInit {
       }
 
       this.coordinateList = data;
-      // this.renderTable();
+      this.renderTable();
     });
 
     this.storageService.getCoordinateDelete().subscribe(id => {
