@@ -26,7 +26,7 @@
         [selectable]="selectable"
         [removable]="removable"
         (removed)="remove(item.id)">
-        {{i+1}}. Команда: <strong><u>{{item.name}}</u></strong>. Задержка: <input type="number"> сек.
+        {{i+1}}. Команда: <strong><u>{{item.name}}</u></strong>. Задержка: <input type="number" min="0"> сек.
         <button matChipRemove *ngIf="removable">
           <mat-icon>cancel</mat-icon>
         </button>

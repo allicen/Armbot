@@ -22,12 +22,17 @@
 #include <string>
 #include <fstream>
 
+#include "../lib/easywsclient/easywsclient.hpp"
+#include "../lib/easywsclient/easywsclient.cpp"
+
 #include "MoveOperationClass.hpp"
 #include "settings.hpp"
 #include "LogClass.hpp"
 
 char FILENAME[20] = "move.cpp";
 LogClass logs;
+using easywsclient::WebSocket;
+static WebSocket::pointer ws = NULL;
 
 
 bool isEmpty(std::ifstream& file) {
@@ -37,7 +42,7 @@ bool isEmpty(std::ifstream& file) {
 
 /// Logs Start ///
 void logSimple(const char* logText, const char* data) {
-    char log[255];
+    char log[400];
     strcpy(log, logText);
     strcat(log, data);
     logs.writeLog(log, FILENAME);
@@ -86,6 +91,31 @@ void logPrintJoints(const std::vector<double> joints) {
 /// Logs End ///
 
 
+void webSocketMessage(const std::string &message) {
+    printf(">>> %s\n", message.c_str());
+    logSimple("Websocket. Get message from server:  ", message.c_str());
+
+    // Не закрывать соединение при статусе CONNECT
+    if (message.find("\"status\":\"CONNECT\"") == std::string::npos) {
+        ws->close();
+        logs.writeLog("Websocket. Connect close.", FILENAME);
+    }
+}
+
+void webSocket(const std::string &message) {
+
+    ws = WebSocket::from_url(websocketUrl);
+    assert(ws);
+    logSimple("Websocket. Connect to:  ", websocketUrl);
+    ws->send(message.c_str());
+    logSimple("Websocket. Send data:  ", message.c_str());
+    while (ws->getReadyState() != WebSocket::CLOSED) {
+      ws->poll();
+      ws->dispatch(webSocketMessage);
+    }
+    delete ws;
+}
+
 void saveCommand() {
     tf::TransformListener listener;
 
@@ -97,32 +127,41 @@ void saveCommand() {
          auto y = boost::lexical_cast<std::string>(-transform.getOrigin().y()); // Почему-то записывает с другим знаком
          auto z = boost::lexical_cast<std::string>(transform.getOrigin().z());
 
-         ROS_INFO("Input command name:");
-         std::string commandName;
-         std::cin >> commandName;
-         logSimple("User input command name: ", commandName.c_str());
-         std::cout << "Command saved!" << std::endl;
 
-         std::ifstream file(commandDescriptionFile);
-         if (file.bad() == true) {
-            logs.writeLog("File is not exist", FILENAME);
-         } else {
-             std::ofstream out;
-             out.open(commandDescriptionFile, std::ios::app);
-             std::string command = commandName + ":" + x + " " + y + " " + z;
 
-             // Если файл не пустой, делаем перенос строки
-             std::ifstream file(commandDescriptionFile);
-             if (!isEmpty(file)) {
-                 out << std::endl;
-             }
-
-             out << command;
-             out.close();
-
-             logSimple("Point coordinates saved:  ", command.c_str());
+         if (saveWebSocket) {
+            // отправляем вебсокет
+            std::string commandForWebsocket = x + " " + y + " " + z;
+            webSocket(commandForWebsocket);
          }
 
+        if (saveToFile) {
+             ROS_INFO("Input command name:");
+             std::string commandName;
+             std::cin >> commandName;
+             logSimple("User input command name: ", commandName.c_str());
+             std::cout << "Command saved!" << std::endl;
+
+             std::ifstream file(commandDescriptionFile);
+             if (file.bad() == true) {
+                logs.writeLog("File is not exist", FILENAME);
+             } else {
+                 std::ofstream out;
+                 out.open(commandDescriptionFile, std::ios::app);
+                 std::string command = commandName + ":" + x + " " + y + " " + z;
+
+                 // Если файл не пустой, делаем перенос строки
+                 std::ifstream file(commandDescriptionFile);
+                 if (!isEmpty(file)) {
+                     out << std::endl;
+                 }
+
+                 out << command;
+                 out.close();
+
+                 logSimple("Point coordinates saved:  ", command.c_str());
+             }
+        }
     } catch (tf::TransformException ex){
         ROS_ERROR("%s",ex.what());
         ros::Duration(1.0).sleep();

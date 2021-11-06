@@ -42,6 +42,7 @@ export class OpenDialogComponent implements OnInit {
     this.imageService.setImagePosition(0, 0);
     this.imageService.setImageWidth(0);
     this.dialogRef.close();
+    this.storageService.setSessionRemove(false); // после завершения сеанса вернуть в исходное положение
   }
 
   removeAllRows() {

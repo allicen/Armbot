@@ -21,4 +21,9 @@ typedef struct DefaultPosition {
 	float z = 0.04744;
 } DefaultPosition;
 
+#define websocketUrl "ws://localhost:9080/ws/coordinate"
+
+#define saveWebSocket true
+#define saveToFile false
+
 #endif

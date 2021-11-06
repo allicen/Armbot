@@ -12,7 +12,7 @@ class LogClass {
 
 inline void LogClass::writeLog(const char* log, char* fileName) {
     char type[10] = "INFO";
-    char shell[255] = "$ARMBOT_PATH/scripts/extended/functions/functions_log_cpp.sh '[";
+    char shell[500] = "$ARMBOT_PATH/scripts/extended/functions/functions_log_cpp.sh '[";
     strcat (shell, type);
     strcat (shell, "] — ");
     strcat (shell, fileName);
