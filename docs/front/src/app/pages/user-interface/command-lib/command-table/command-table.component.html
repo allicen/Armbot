@@ -5,6 +5,11 @@
       <button mat-raised-button color="warn" (click)="removeAllPoint()">Удалить все</button>
     </section>
   </div>
+  <div class="message" *ngIf="coordValidateMessage && !validateError">{{coordValidateMessage}}</div>
+  <div [ngClass]="messageImportErrors.length > 0 ? 'error' : 'message'" *ngIf="messageImport">{{messageImport}}</div>
+  <ul *ngIf="messageImportErrors" class="error">
+    <li *ngFor="let error of messageImportErrors">{{error}}</li>
+  </ul>
   <table mat-table [dataSource]="coordinateList" class="mat-elevation-z8 demo-table">
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef>Название</th>

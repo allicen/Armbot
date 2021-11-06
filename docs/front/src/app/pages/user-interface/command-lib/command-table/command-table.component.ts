@@ -7,6 +7,7 @@ import {WebsocketService} from "../../../../serviсes/websocket.service";
 import {Config} from "../../../../config/config";
 import {OpenDialogComponent} from "../../open-dialog/open-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
+import {MessageService} from "../../../../serviсes/message.service";
 
 @Component({
   selector: 'app-command-table',
@@ -18,15 +19,17 @@ export class CommandTableComponent implements OnInit {
               private httpService: HttpService,
               private wsService: WebsocketService,
               private config: Config,
-              private dialog: MatDialog,) {}
+              private dialog: MatDialog,
+              private messageService: MessageService) {}
 
   coordinateList: Coordinate[] = [];
 
   validateError: boolean = true;
   fieldIdError: number | undefined; // поле с ошибкой
   coordValidateMessage: string = '';
-  importMessage: string = '';
-  importErrors: [] | undefined;
+  messageImport: string = '';
+  messageImportErrors: string[] = [];
+
   clickCoordinate: Coordinate | undefined;
   selectedPointIndex: number | undefined;
 
@@ -43,8 +46,6 @@ export class CommandTableComponent implements OnInit {
 
     this.storageService.getCoordinateList().subscribe(data => {
 
-      console.log('data = ', data);
-
       this.coordinateList = data;
       this.renderTable();
     });
@@ -54,8 +55,7 @@ export class CommandTableComponent implements OnInit {
       const index = this.coordinateList.findIndex(c => c.id == id);
       this.coordinateList.splice(index, 1);
       this.renderTable();
-
-      // this.hideMessage();
+      this.hideMessage();
     });
 
     this.wsService.connect(this.config.webSocketUrl).pipe().subscribe(res => {
@@ -67,7 +67,7 @@ export class CommandTableComponent implements OnInit {
 
         this.validateError = response.status === 'ERROR';
         this.coordValidateMessage = response.message ? response.message : '';
-        // this.hideMessage();
+        this.hideMessage();
       }
     });
 
@@ -81,6 +81,12 @@ export class CommandTableComponent implements OnInit {
     this.storageService.getCoordinateDeleteMessage().subscribe(mess => this.coordValidateMessage = mess);
     this.exportCoordinateUrl = this.httpService.getUrlExport();
     this.exportTxtCoordinateUrl = this.httpService.getUrlExportTxt();
+
+    this.messageService.getMessageImport().subscribe(data => {
+      this.messageImport = data;
+      this.hideMessage();
+    });
+    this.messageService.getMessageImportErrors().subscribe(data => { this.messageImportErrors = data });
   }
 
   changeCoordinateRow(value: any, type: string, id: number) {
@@ -90,6 +96,8 @@ export class CommandTableComponent implements OnInit {
     if (!coordinate) {
       return;
     }
+
+    const coordinateNamePrev = coordinate.name;
 
     switch (type) {
       case 'x':
@@ -121,12 +129,10 @@ export class CommandTableComponent implements OnInit {
 
       } else {
         this.fieldIdError = coordinate.id;
+        this.coordinateList[index].name = coordinateNamePrev;
       }
 
-      // this.hideMessage();
-      this.importMessage = '';
-      this.importErrors= [];
-
+      this.hideMessage();
       this.renderTable();
     });
   }
@@ -151,9 +157,9 @@ export class CommandTableComponent implements OnInit {
   removeAllPoint() {
     this.httpService.removeAllCoordinates().pipe().subscribe((res) => {
       if (res.status === 'SUCCESS') {
-        // this.coordinateList = [];
+        this.storageService.setCoordinateList([]);
         this.clickCoordinate = undefined;
-        // this.selectedPointIndex = undefined;
+        this.selectedPointIndex = undefined;
       }
     });
   }
@@ -164,5 +170,18 @@ export class CommandTableComponent implements OnInit {
 
   exportFileTxt() {
     this.exportTxt?.nativeElement.click();
+  }
+
+  hideMessage() {
+    if (!this.validateError) {
+      setTimeout(() => {
+        this.coordValidateMessage = '';
+      }, 3000);
+    }
+    if (this.messageImportErrors.length === 0) {
+      setTimeout(() => {
+        this.messageImport = '';
+      }, 3000);
+    }
   }
 }

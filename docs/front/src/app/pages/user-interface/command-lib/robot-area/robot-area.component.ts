@@ -117,8 +117,6 @@ export class RobotAreaComponent implements OnInit {
 
   coordinateSaveServer(coordinate: Coordinate) {
 
-    //this.dataSource.push(coordinate);
-
     this.httpService.saveCoordinate(coordinate).pipe().subscribe((res) => {
 
       if (!res) {
@@ -126,10 +124,6 @@ export class RobotAreaComponent implements OnInit {
       }
 
       this.dataSource.push(res.details.coordinate);
-
-      console.log('this.dataSource = ', this.dataSource);
-      console.log('--------------');
-
       this.storage.setCoordinateList(this.dataSource);
 
       this._snackBar.open(`Точка сохранена с координатами x=${coordinate.x}, y=${coordinate.y}`, 'X', {

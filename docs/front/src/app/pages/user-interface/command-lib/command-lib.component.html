@@ -37,35 +37,37 @@
   <app-robot-area></app-robot-area>
 </div>
 
-<app-command-table></app-command-table>
-
 <div class="import" *ngIf="!imageUploadRequired || (image && !editingAllowed)">
-  <h2>Импорт координат из файла .txt</h2>
-  <section class="import-info">
-    <p>На каждой строке - 1 координата в формате:</p>
-    <p><code>Название: X Y Z</code></p>
-    <p>Правила:</p>
-    <ul>
-      <li>Название должно быть уникальным для каждой координаты</li>
-      <li>После названия ставится двоеточие без пробелов</li>
-      <li>Координаты указываются через пробел (первое значение - X, второе - Y, третье - Z)</li>
-      <li>Значение коодинат указываются в миллиметрах</li>
-    </ul>
-    <p>Пример:</p>
-    <pre><code>first:0.237525 0.133799 0.0463589
+  <mat-expansion-panel (opened)="aboutImportOpen = true"
+                       (closed)="aboutImportOpen = false">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <h3>Импорт координат из файла .txt</h3>
+      </mat-panel-title>
+      <mat-panel-description>
+        Кликните, чтобы посмотреть подробности
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <section class="import-info">
+      <p>На каждой строке - 1 координата в формате:</p>
+      <p><code>Название: X Y Z</code></p>
+      <p>Правила:</p>
+      <ul>
+        <li>Название должно быть уникальным для каждой координаты</li>
+        <li>После названия ставится двоеточие без пробелов</li>
+        <li>Координаты указываются через пробел (первое значение - X, второе - Y, третье - Z)</li>
+        <li>Значение коодинат указываются в миллиметрах</li>
+      </ul>
+      <p>Пример:</p>
+      <pre><code>first:0.237525 0.133799 0.0463589
 second:1 2 3
 third:123 547 0</code></pre>
-  </section>
+    </section>
+  </mat-expansion-panel>
   <button mat-raised-button color="primary" (click)="openDialogPointsFile($event)">
     Выбрать файл для импорта
     <input type="file" style="display: none;" #inputFilePoints (change)="changeFilePoints($event)" />
   </button>
 </div>
 
-
-<!--<div [ngClass]="validateError ? 'error' : 'message'" *ngIf="validateError && !fieldIdError && importMessage">{{importMessage}}</div>-->
-<!--<ul *ngIf="importErrors && !fieldIdError && importMessage" class="error">-->
-<!--  <li *ngFor="let error of importErrors">{{error}}</li>-->
-<!--</ul>-->
-
-<!--  <div class="message" *ngIf="coordValidateMessage && !validateError">{{coordValidateMessage}}</div>-->
+<app-command-table></app-command-table>

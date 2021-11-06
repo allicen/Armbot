@@ -13,6 +13,7 @@ import {SizeService} from "../../../serviсes/size.service";
 import {OpenDialogComponent} from "../open-dialog/open-dialog.component";
 import {ImageService} from "../../../serviсes/image.service";
 import {delay} from "rxjs/operators";
+import {MessageService} from "../../../serviсes/message.service";
 
 @Component({
   selector: 'app-command-lib',
@@ -22,21 +23,21 @@ import {delay} from "rxjs/operators";
 export class CommandLibComponent implements OnInit {
   title = 'docs';
   files: FileHandle[] = [];
+  dataSource: Coordinate[] = [];
   fileUpload: boolean = false;
 
   message: string | undefined;
-  dragImagePosition: Position = {x: 0, y: 0};
   clickCoordinate: Coordinate | undefined;
 
   currentStep: number = 1;
 
   image: any = null;
-
+  dragImagePosition: Position = {x: 0, y: 0};
   imageUploadRequired: boolean = true;
 
   editingAllowed: boolean = true;
 
-  dataSource: Coordinate[] = [];
+  aboutImportOpen: boolean = false;
 
   @ViewChild("inputFilePoints") inputFilePoints: ElementRef | undefined;
 
@@ -48,7 +49,8 @@ export class CommandLibComponent implements OnInit {
               private config: Config,
               private storageService: StorageService,
               private sizeService: SizeService,
-              private imageService: ImageService) {
+              private imageService: ImageService,
+              private messageService: MessageService) {
   }
 
   ngOnInit(): void {
@@ -70,12 +72,6 @@ export class CommandLibComponent implements OnInit {
     this.imageService.getImageUploadRequired().subscribe(data => {
       this.imageUploadRequired = data;
     });
-
-    // this.storageService.getCoordinateList().pipe(
-    //   delay(500)
-    // ).subscribe(data => {
-    //   this.dataSourceSize = data.length;
-    // });
 
     this.storageService.getCurrentStep().subscribe(data => {
       this.currentStep = data;
@@ -114,16 +110,6 @@ export class CommandLibComponent implements OnInit {
     this.imageService.setImageEditAllowed(true);
   }
 
-
-  // hideMessage() {
-  //   if (!this.validateError) {
-  //     setTimeout(() => {
-  //       this.coordValidateMessage = '';
-  //     }, 3000);
-  //   }
-  // }
-
-
   openDialogPointsFile($event: MouseEvent) {
     if (this.inputFilePoints) {
       this.inputFilePoints.nativeElement.click();
@@ -142,19 +128,14 @@ export class CommandLibComponent implements OnInit {
     }
 
     this.httpService.importCoordinates(element.files[0]).subscribe(res => {
-      if (res.status === 'SUCCESS') {
-        // this.importMessage = res.message;
-        // this.validateError = false;
+      this.messageService.setMessageImport(res.message);
+      if (res.status === 'SUCCESS' || !res.details?.errorDetails) {
+        this.messageService.setMessageImportErrors([]);
       } else {
-        // this.validateError = true;
-        // this.importMessage = res.message;
-        // if (res.details?.errorDetails) {
-        //   this.importErrors = res.details.errorDetails
-        // }
+        this.messageService.setMessageImportErrors(res.details.errorDetails);
       }
 
       if (res.details?.savedCoordinates) {
-
         for (let item of res.details?.savedCoordinates) {
           this.dataSource.push(item);
           this.storageService.setCoordinateList(this.dataSource);

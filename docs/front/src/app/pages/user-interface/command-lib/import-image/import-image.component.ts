@@ -51,8 +51,6 @@ export class ImportImageComponent implements OnInit {
     if (fileList) {
       const file = fileList[0];
 
-      console.log(file);
-
       if (this.config.allowImageMimeTypes.includes(file.type) && file.size < this.config.imageMaxSize) {
           const url = this.sanitizer.bypassSecurityTrustUrl(window.URL.createObjectURL(file));
           this.files.push({ file, url });
