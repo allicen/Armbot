@@ -8,7 +8,7 @@ import {StorageService} from "../../serviсes/storage.service";
 })
 export class UserInterfaceComponent implements OnInit {
 
-  tab: string = 'command-lib';
+  tab: string = 'user-interface';
 
   constructor(private storageService: StorageService) {
 
@@ -19,7 +19,9 @@ export class UserInterfaceComponent implements OnInit {
       if (data !== '') {
         this.tab = data;
       }
-    })
+    });
+
+    this.tab = this.storageService.getUserInterfaceTab();
   }
 
   changeTab(tab: string) {

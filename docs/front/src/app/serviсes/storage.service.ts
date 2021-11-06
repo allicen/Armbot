@@ -27,6 +27,10 @@ export class StorageService {
       return this.urlArr.length > 0 && this.urlArr[1] === 'user-interface';
     }
 
+    getUserInterfaceTab(): string {
+      return this.urlArr[this.urlArr.length - 1];
+    }
+
     constructor(private router: Router, private httpService: HttpService) {
         router.events.subscribe(() => {
             this.setUserInterface(this.isUserInterface());
