@@ -123,11 +123,9 @@ void saveCommand() {
     try{
          listener.waitForTransform("/link_grip","/base_link", ros::Time(), ros::Duration(5.0));
          listener.lookupTransform("/link_grip", "/base_link", ros::Time(), transform);
-         auto x = boost::lexical_cast<std::string>(transform.getOrigin().x());
-         auto y = boost::lexical_cast<std::string>(-transform.getOrigin().y()); // Почему-то записывает с другим знаком
-         auto z = boost::lexical_cast<std::string>(transform.getOrigin().z());
-
-
+         auto x = boost::lexical_cast<std::string>(transform.getOrigin().x() * 1000);
+         auto y = boost::lexical_cast<std::string>(-transform.getOrigin().y() * 1000); // Почему-то записывает с другим знаком
+         auto z = boost::lexical_cast<std::string>(transform.getOrigin().z() * 1000);
 
          if (saveWebSocket) {
             // отправляем вебсокет
