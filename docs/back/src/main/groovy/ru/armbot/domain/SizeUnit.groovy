@@ -1,5 +1,9 @@
 package ru.armbot.domain
 
+/**
+ * Единицы измерения
+ * */
+
 enum SizeUnit {
     MM('mm', 'мм'),
     SM('sm', 'см'),

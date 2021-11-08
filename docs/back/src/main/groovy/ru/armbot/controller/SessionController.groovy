@@ -3,14 +3,12 @@ package ru.armbot.controller
 
 import ru.armbot.dto.ResponseDto
 import ru.armbot.domain.ResponseStatus
-import ru.armbot.dto.SessionStateDto
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
-import io.micronaut.http.annotation.Part
 import io.micronaut.http.annotation.Post
 import jakarta.inject.Inject
-import ru.armbot.domain.Image
 import ru.armbot.domain.SessionState
+import ru.armbot.dto.SessionStateDto
 import ru.armbot.repository.CoordinateRepository
 import ru.armbot.repository.ImageRepository
 import ru.armbot.repository.SessionStateRepository
@@ -32,42 +30,28 @@ class SessionController {
             return new ResponseDto(status: ResponseStatus.NO_SESSION)
         }
 
-        SessionStateDto session =
-                new SessionStateDto(sessionState: sessionList.get(0), coordinateList: coordinateRepository.list())
-        return new ResponseDto(status: ResponseStatus.SUCCESS, details: session)
+        SessionState session = sessionStateRepository.list()[0]
+        SessionStateDto sessionStateDto = new SessionStateDto(sessionId: session.id,
+                image: session.image,
+                settings: session.settings,
+                coordinateList: coordinateRepository.list())
+
+        return new ResponseDto(status: ResponseStatus.SUCCESS, details: sessionStateDto)
     }
 
     @Post(value = "/save")
-    def save(@Part int imageSize, @Part int imagePositionX, @Part int imagePositionY, @Part boolean imageRequired = true) {
+    def save() {
 
         List<SessionState> sessionList = sessionStateRepository.list()
-
-        if (imageSize > 0 && imageRepository.list().size() == 0) {
-            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: "IMAGE_NOT_FOUND", message: 'Картинка не найдена')
-        }
-
-        def imageId = null
-
-        if (imageRepository.list().size() > 0) {
-            Image image = imageRepository.list()[0]
-            imageId = image.id
-        }
 
         try {
             SessionState session
 
             if (sessionList.size() == 0) {
-                session = new SessionState(imageId: imageId,
-                        imageSize: imageSize,
-                        imagePositionX: imagePositionX,
-                        imagePositionY: imagePositionY,
-                        imageRequired: imageRequired)
+                session = new SessionState()
                 sessionStateRepository.save(session)
             } else {
                 session = sessionList.get(0)
-                session.imageSize = imageSize
-                session.imagePositionX = imagePositionX
-                session.imagePositionY = imagePositionY
                 sessionStateRepository.update(session)
             }
 

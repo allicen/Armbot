@@ -1,5 +1,9 @@
 package ru.armbot.domain
 
+/**
+ * Статусы ответа после обработки запроса сервером
+ * */
+
 enum ResponseStatus {
 
     SUCCESS('success', 'Успех'),

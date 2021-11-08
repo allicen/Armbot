@@ -25,7 +25,7 @@ export class ImageService {
 
   setImage(image: FileHandle): void {
     this.httpService.uploadImage(image).pipe(untilDestroyed(this)).subscribe(data => {
-      if (data.status === 'OK') {
+      if (data.status === 'SUCCESS') {
         this.getImageFromServer();
       }
     });
@@ -37,7 +37,7 @@ export class ImageService {
 
   getImageFromServer() {
     this.httpService.getImage().pipe(untilDestroyed(this)).subscribe((data: any) => {
-      if (data.status === 'OK') {
+      if (data.status === 'SUCCESS') {
         this.image$.next(this.sanitizer.bypassSecurityTrustResourceUrl(`data:${data.image.contentType};base64,${data.image.imageByte}`));
       }
     });

@@ -3,7 +3,6 @@ package ru.armbot.controller
 import ru.armbot.dto.ResponseDto
 import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.Part
-import ru.armbot.domain.Image
 import ru.armbot.domain.ResponseStatus
 import io.micronaut.http.HttpStatus
 import io.micronaut.http.annotation.Body
@@ -21,6 +20,7 @@ import ru.armbot.service.CoordinateService
 import ru.armbot.service.CoordinateTxtService
 
 import java.nio.charset.StandardCharsets
+import java.time.ZonedDateTime
 
 @Controller("/coordinate")
 class CoordinateController {
@@ -39,6 +39,7 @@ class CoordinateController {
     def save(@Body Coordinate coordinate) {
         coordinate.id = null
         coordinate.name = coordinateService.generateName()
+        coordinate.timeCreate = ZonedDateTime.now()
 
         try {
             coordinateRepository.save(coordinate)

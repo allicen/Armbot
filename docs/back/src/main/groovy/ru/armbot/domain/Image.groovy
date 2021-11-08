@@ -2,15 +2,19 @@ package ru.armbot.domain
 
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
-import io.micronaut.core.annotation.Creator
 import io.micronaut.core.annotation.Introspected
 import io.micronaut.core.annotation.NonNull
+import io.micronaut.core.annotation.Nullable
 
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.validation.constraints.NotBlank
+
+/**
+ * Изображение
+ * */
 
 @Entity
 @CompileStatic
@@ -22,6 +26,7 @@ class Image {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id
 
+    @Nullable
     String name
 
     @NonNull
@@ -32,14 +37,20 @@ class Image {
     @NotBlank
     byte[] imageByte
 
-    @Creator
-    Image(@NonNull @NotBlank byte[] imageByte, @NonNull @NotBlank String contentType, String name) {
-        this.name = name
+    @Nullable
+    Integer imagePositionX
+
+    @Nullable
+    Integer imagePositionY
+
+    @Nullable
+    Integer imageWidthPx
+
+    Image() { }
+
+    Image(byte[] imageByte, String name, String contentType) {
         this.imageByte = imageByte
+        this.name = name
         this.contentType = contentType
-    }
-
-    Image() {
-
     }
 }
