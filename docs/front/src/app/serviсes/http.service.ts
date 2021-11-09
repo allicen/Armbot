@@ -12,19 +12,19 @@ export class HttpService {
 
     constructor(private http: HttpClient, private config: Config){ }
 
-    uploadImage(file: FileHandle): Observable<any> {
-
-      const formData: FormData = new FormData();
-      formData.append('file', file.file);
-      formData.append('name', file.file.name);
-      formData.append('contentType', file.file.type);
-
-      return this.http.post(`${this.config.httpUrl}/image/upload`, formData).pipe(
-        map(res => {
-          return res;
-        })
-      );
-    }
+    // uploadImage(file: FileHandle): Observable<any> {
+    //
+    //   const formData: FormData = new FormData();
+    //   formData.append('file', file.file);
+    //   formData.append('name', file.file.name);
+    //   formData.append('contentType', file.file.type);
+    //
+    //   return this.http.post(`${this.config.httpUrl}/image/upload`, formData).pipe(
+    //     map(res => {
+    //       return res;
+    //     })
+    //   );
+    // }
 
     importCoordinates(file: File): Observable<any> {
 
@@ -107,9 +107,40 @@ export class HttpService {
   }
 
 
-  saveSessionState(imageSize: number = 0, imagePosition: Position, imageRequired: boolean = true): Observable<any> {
-    return this.http.post(`${this.config.httpUrl}/session/save`,
-      {imageSize: imageSize, imagePositionX: imagePosition.x, imagePositionY: imagePosition.y, imageRequired}).pipe(
+  // uploadImage(file: FileHandle): Observable<any> {
+  //
+  //   const formData: FormData = new FormData();
+  //   formData.append('file', file.file);
+  //   formData.append('name', file.file.name);
+  //   formData.append('contentType', file.file.type);
+  // }
+
+
+  // @Part Optional<byte[]> file,
+  // @Part Optional<String> name,
+  // @Part Optional<String> contentType,
+  // @Part Optional<Integer> imagePositionX,
+  // @Part Optional<Integer> imagePositionY,
+  // @Part Optional<Integer> imageWidthPx,
+  // @Part Optional<Integer> cursorArea)
+
+
+  saveSessionState(file: FileHandle | null,
+                   imagePositionX: number = 0,
+                   imagePositionY: number = 0,
+                   imageWidthPx: number = 0,
+                   cursorArea: number = 0): Observable<any> {
+
+    const formData: FormData = new FormData();
+    formData.append('file', file?.file || '');
+    formData.append('name', file?.file?.name || '');
+    formData.append('contentType', file?.file?.type || '');
+    formData.append('imagePositionX', imagePositionX.toString());
+    formData.append('imagePositionY', imagePositionY.toString());
+    formData.append('imageWidthPx', imageWidthPx.toString());
+    formData.append('cursorArea', cursorArea.toString());
+
+    return this.http.post(`${this.config.httpUrl}/session/save`, formData).pipe(
       catchError((error: HttpErrorResponse) => {
         return throwError(error);
       }),
@@ -119,7 +150,8 @@ export class HttpService {
     );
   }
 
-  getSession() {
+
+  getSession(): Observable<any> {
     return this.http.get(`${this.config.httpUrl}/session/get`).pipe(
       catchError((error: HttpErrorResponse) => {
         return throwError(error);

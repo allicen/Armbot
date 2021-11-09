@@ -37,11 +37,9 @@ class Image {
     @NotBlank
     byte[] imageByte
 
-    @Nullable
-    Integer imagePositionX
+    Integer imagePositionX = 0
 
-    @Nullable
-    Integer imagePositionY
+    Integer imagePositionY = 0
 
     @Nullable
     Integer imageWidthPx

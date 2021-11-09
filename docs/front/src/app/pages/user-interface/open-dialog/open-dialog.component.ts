@@ -4,7 +4,7 @@ import {IdData} from "../../../model/models";
 import {StorageService} from "../../../serviсes/storage.service";
 import {HttpService} from "../../../serviсes/http.service";
 import {MessageService} from "../../../serviсes/message.service";
-import {ImageService} from "../../../serviсes/image.service";
+import {SessionService} from "../../../serviсes/session.service";
 import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 
 @UntilDestroy()
@@ -19,7 +19,7 @@ export class OpenDialogComponent implements OnInit {
               private storageService: StorageService,
               private httpService: HttpService,
               private messageService: MessageService,
-              private imageService: ImageService) {}
+              private imageService: SessionService) {}
 
   title: string = '';
   text: string = '';

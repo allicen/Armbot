@@ -9,7 +9,7 @@ import {StorageService} from "../../../serviсes/storage.service";
 import {Config} from "../../../config/config";
 import {SizeService} from "../../../serviсes/size.service";
 import {OpenDialogComponent} from "../open-dialog/open-dialog.component";
-import {ImageService} from "../../../serviсes/image.service";
+import {SessionService} from "../../../serviсes/session.service";
 import {MessageService} from "../../../serviсes/message.service";
 import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 
@@ -53,27 +53,29 @@ export class CommandLibComponent implements OnInit {
               private config: Config,
               private storageService: StorageService,
               private sizeService: SizeService,
-              private imageService: ImageService,
+              private sessionService: SessionService,
               private messageService: MessageService) {
   }
 
   ngOnInit(): void {
-    this.getSession();
+    this.sessionService.getImage().subscribe(data => {
+      this.image = data
+    });
 
-    this.imageService.getImageEditAllowed().subscribe(data => {
+    this.sessionService.getImageEditAllowed().subscribe(data => {
       this.editingAllowed = data;
     });
 
-    this.imageService.getImage().pipe(untilDestroyed(this)).subscribe(data => {
-      this.image = data;
-      if (this.image && this.editingAllowed) {
-        this.storageService.setCurrentStep(2);
-        this.storageService.setSessionStart(true);
-        this.sessionNotFound = false;
-      }
-    });
+    // this.sessionService.getImage().pipe(untilDestroyed(this)).subscribe(data => {
+    //   this.image = data;
+    //   if (this.image && this.editingAllowed) {
+    //     this.storageService.setCurrentStep(2);
+    //     // this.storageService.setSessionStart(true);
+    //     // this.sessionNotFound = false;
+    //   }
+    // });
 
-    this.imageService.getImageUploadRequired().pipe(untilDestroyed(this)).subscribe(data => {
+    this.sessionService.getImageUploadRequired().pipe(untilDestroyed(this)).subscribe(data => {
       this.imageUploadRequired = data;
     });
 
@@ -111,17 +113,17 @@ export class CommandLibComponent implements OnInit {
 
       if (data.status === 'SUCCESS' && data.details) {
         const details = data.details.sessionState;
-        this.imageService.setImagePosition(details.imagePositionX, details.imagePositionY);
-        this.imageService.setImageWidth(details.imageSize);
-        this.imageService.setImageEditAllowed(false);
-        this.storageService.setCurrentStep(3);
-        this.sessionStart = true;
+        // this.imageService.setImagePosition(details.imagePositionX, details.imagePositionY);
+        // this.imageService.setImageWidth(details.imageSize);
+        // this.imageService.setImageEditAllowed(false);
+        // this.storageService.setCurrentStep(3);
+        // this.sessionStart = true;
 
         if (data.details.coordinateList) {
           this.storageService.setCoordinateList(data.details.coordinateList);
         }
 
-        this.imageService.setImageUploadRequired(data.details.sessionState.imageRequired);
+        // this.imageService.setImageUploadRequired(data.details.sessionState.imageRequired);
 
         this.sessionNotFound = false;
       }
@@ -150,11 +152,11 @@ export class CommandLibComponent implements OnInit {
           this.message = '';
         }, 3000);
 
-        this.imageService.deleteImage();
+        this.sessionService.deleteImage();
         this.storageService.setCurrentStep(1);
-        this.imageService.setImageEditAllowed(true);
-        this.imageService.setImageWidth(0);
-        this.imageService.setImagePosition(0, 0);
+        this.sessionService.setImageEditAllowed(true);
+        this.sessionService.setImageWidth(0);
+        this.sessionService.setImagePosition(0, 0);
         this.storageService.setCoordinateList([]);
 
       } else {
@@ -167,7 +169,7 @@ export class CommandLibComponent implements OnInit {
 
   setEditAllowed() {
     this.clearImportMessage();
-    this.imageService.setImageEditAllowed(true);
+    this.sessionService.setImageEditAllowed(true);
     this.storageService.setCurrentStep(2);
   }
 
@@ -178,7 +180,7 @@ export class CommandLibComponent implements OnInit {
   }
 
   changeWorkOption() {
-    this.imageService.setImageUploadRequired(!this.imageUploadRequired);
+    this.sessionService.setImageUploadRequired(!this.imageUploadRequired);
   }
 
   changeFilePoints($event: Event) {
@@ -204,13 +206,13 @@ export class CommandLibComponent implements OnInit {
 
         this.storageService.setSessionStart(true);
 
-        if (!this.imageUploadRequired) {
-          this.httpService.saveSessionState(-1, {x: 0, y: 0}, this.imageUploadRequired)
-            .pipe(untilDestroyed(this))
-            .subscribe(res => {
-
-          });
-        }
+        // if (!this.imageUploadRequired) {
+        //   this.httpService.saveSessionState(-1, {x: 0, y: 0}, this.imageUploadRequired)
+        //     .pipe(untilDestroyed(this))
+        //     .subscribe(res => {
+        //
+        //   });
+        // }
       }
     })
   }

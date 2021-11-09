@@ -8,7 +8,7 @@ import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 
 @UntilDestroy()
 @Injectable({ providedIn: 'root' })
-export class ImageService {
+export class SessionService {
   constructor(private httpService: HttpService, private sanitizer: DomSanitizer) {
   }
 
@@ -19,28 +19,31 @@ export class ImageService {
   private imageWidth$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
 
   getImage(): Observable<any> {
-    this.getImageFromServer();
+    this.getSession();
     return this.image$.asObservable();
   }
 
-  setImage(image: FileHandle): void {
-    this.httpService.uploadImage(image).pipe(untilDestroyed(this)).subscribe(data => {
-      if (data.status === 'SUCCESS') {
-        this.getImageFromServer();
+  setSession(image: FileHandle): void {
+    this.httpService.saveSessionState(image, 0, 0, 0, 0)
+      .pipe(untilDestroyed(this)).subscribe(data => {
+      if (data.status === 'SUCCESS' && data?.details?.image) {
+        this.image$.next(this.sanitizer.bypassSecurityTrustResourceUrl(`data:${data.details.image.contentType};base64,${data.details.image.imageByte}`));
+      }
+    });
+  }
+
+  getSession(): void {
+    this.httpService.getSession()
+      .pipe(untilDestroyed(this))
+      .subscribe(data => {
+      if (data.status === 'SUCCESS' && data?.details?.image) {
+        this.image$.next(this.sanitizer.bypassSecurityTrustResourceUrl(`data:${data.details.image.contentType};base64,${data.details.image.imageByte}`));
       }
     });
   }
 
   deleteImage(): void {
-    this.image$.next(null);
-  }
-
-  getImageFromServer() {
-    this.httpService.getImage().pipe(untilDestroyed(this)).subscribe((data: any) => {
-      if (data.status === 'SUCCESS') {
-        this.image$.next(this.sanitizer.bypassSecurityTrustResourceUrl(`data:${data.image.contentType};base64,${data.image.imageByte}`));
-      }
-    });
+    // this.image$.next(null);
   }
 
   getImagePosition(): Observable<Position> {
@@ -74,6 +77,4 @@ export class ImageService {
   setImageWidth(width: number): void {
     this.imageWidth$.next(width);
   }
-
-
 }

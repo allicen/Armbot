@@ -17,7 +17,7 @@
 <div [class]="messageIsError ? 'error' : 'message'" *ngIf="message && !sessionNotFound">{{message}}</div>
 
 <section class="important">
-  <section *ngIf="imageUploadRequired">
+  <section>
     <p [class.current]="currentStep === 1"><mat-icon [style.opacity]="currentStep > 1 ? '1' : '0'">check</mat-icon>
       Шаг 1. Загрузите изображение.</p>
     <p [class.current]="currentStep === 2"><mat-icon [style.opacity]="currentStep > 2 ? '1' : '0'">check</mat-icon>
@@ -26,14 +26,14 @@
       Шаг 3. Кликайте на область клавиатуры, чтобы сохранить координаты. Импортируйте координаты из файла. При необходимости
       измените значения координат вручную.</p>
   </section>
-  <section *ngIf="!imageUploadRequired">
+  <section>
     <p>Импортируйте координаты из файла.</p>
   </section>
 </section>
 
-<app-import-image *ngIf="!image && imageUploadRequired"></app-import-image>
+<app-import-image *ngIf="!image"></app-import-image>
 
-<div *ngIf="image && imageUploadRequired" class="image-block">
+<div *ngIf="image" class="image-block">
   <app-robot-area></app-robot-area>
 </div>
 

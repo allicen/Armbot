@@ -2,7 +2,7 @@ import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {FileHandle} from "./dragDrop.directive";
 import {DomSanitizer} from "@angular/platform-browser";
 import {HttpService} from "../../../../serviсes/http.service";
-import {ImageService} from "../../../../serviсes/image.service";
+import {SessionService} from "../../../../serviсes/session.service";
 import {Config} from "../../../../config/config";
 
 @Component({
@@ -13,7 +13,7 @@ import {Config} from "../../../../config/config";
 export class ImportImageComponent implements OnInit {
   constructor(private sanitizer: DomSanitizer,
               private httpService: HttpService,
-              private imageService: ImageService,
+              private sessionService: SessionService,
               private config: Config) {}
 
   message: string = '';
@@ -81,7 +81,7 @@ export class ImportImageComponent implements OnInit {
       return;
     }
 
-    this.imageService.setImage(this.files[0]);
+    this.sessionService.setSession(this.files[0]);
     this.messageClear();
   }
 

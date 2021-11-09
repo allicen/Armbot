@@ -4,7 +4,7 @@ import {SizeService} from "../../../../serviсes/size.service";
 import {HttpService} from "../../../../serviсes/http.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {CdkDragEnd} from "@angular/cdk/drag-drop";
-import {ImageService} from "../../../../serviсes/image.service";
+import {SessionService} from "../../../../serviсes/session.service";
 import {StorageService} from "../../../../serviсes/storage.service";
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
@@ -47,11 +47,12 @@ export class RobotAreaComponent implements OnInit {
   constructor(private sizeService: SizeService,
               private httpService: HttpService,
               private _snackBar: MatSnackBar,
-              private imageService: ImageService,
+              private sessionService: SessionService,
               private storage: StorageService) {}
 
   ngOnInit(): void {
-    this.imageService.getImagePosition().pipe(untilDestroyed(this)).subscribe(data => {
+
+    this.sessionService.getImagePosition().pipe(untilDestroyed(this)).subscribe(data => {
       this.dragImagePosition = data;
     });
 
@@ -65,15 +66,15 @@ export class RobotAreaComponent implements OnInit {
       }
     });
 
-    this.imageService.getImageEditAllowed().pipe(untilDestroyed(this)).subscribe(data => {
+    this.sessionService.getImageEditAllowed().pipe(untilDestroyed(this)).subscribe(data => {
       this.editingAllowed = data;
     });
 
-    this.imageService.getImageWidth().pipe(untilDestroyed(this)).subscribe(data => {
+    this.sessionService.getImageWidth().pipe(untilDestroyed(this)).subscribe(data => {
       this.imageWidthPx = data;
     });
 
-    this.imageService.getImage().pipe(untilDestroyed(this)).subscribe(image => {
+    this.sessionService.getImage().pipe(untilDestroyed(this)).subscribe(image => {
       if (image) {
         this.image = image;
 
@@ -139,7 +140,7 @@ export class RobotAreaComponent implements OnInit {
 
   getDragImagePosition($event: CdkDragEnd) {
     const position = $event.source.getFreeDragPosition();
-    this.imageService.setImagePosition(position.x, position.y);
+    this.sessionService.setImagePosition(position.x, position.y);
   }
 
   renderImage(width: string) {
@@ -148,7 +149,7 @@ export class RobotAreaComponent implements OnInit {
     }
 
     this.imageWidthPx = this.sizeService.toPxTranslate(Number(width), 'mm', this.robotAreaWidth);
-    this.imageService.setImageWidth(this.imageWidthPx);
+    this.sessionService.setImageWidth(this.imageWidthPx);
   }
 
   setVisibleGrid(completed: boolean) {
@@ -170,10 +171,10 @@ export class RobotAreaComponent implements OnInit {
   }
 
   setEditingCompleted() {
-    this.imageService.setImageEditAllowed(false);
-    this.httpService.saveSessionState(this.imageWidthPx, this.dragImagePosition).pipe(untilDestroyed(this)).subscribe(res => {
-
-    });
+    this.sessionService.setImageEditAllowed(false);
+    // this.httpService.saveSessionState(this.imageWidthPx, this.dragImagePosition).pipe(untilDestroyed(this)).subscribe(res => {
+    //
+    // });
     this.storage.setCurrentStep(3);
   }
 
@@ -182,7 +183,7 @@ export class RobotAreaComponent implements OnInit {
       this.imageWidthPx = this.uploadImage.nativeElement.width;
 
       if (this.imageWidthPx) {
-        this.imageService.setImageWidth(this.imageWidthPx);
+        this.sessionService.setImageWidth(this.imageWidthPx);
         this.imageWidthMm = this.sizeService.fromPxTranslate(this.imageWidthPx, 'mm', this.robotAreaWidth);
       }
     }
