@@ -11,6 +11,8 @@ class SessionStateDto {
     @Nullable
     Long sessionId
 
+    String workOption
+
     @Nullable
     Image image
 

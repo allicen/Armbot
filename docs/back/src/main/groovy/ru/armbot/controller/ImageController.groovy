@@ -9,6 +9,7 @@ import jakarta.inject.Inject
 import ru.armbot.domain.Image
 import ru.armbot.domain.ResponseStatus
 import ru.armbot.domain.SessionState
+import ru.armbot.domain.WorkOption
 import ru.armbot.dto.ResponseDto
 import ru.armbot.repository.CoordinateRepository
 import ru.armbot.repository.ImageRepository
@@ -51,7 +52,7 @@ class ImageController {
             imageRepository.save(image)
 
             // После загрузки изображения создаем сессию
-            SessionState sessionState = new SessionState(image: image)
+            SessionState sessionState = new SessionState(image: image, workOption: WorkOption.UPLOAD_IMAGE)
             sessionStateRepository.save(sessionState)
 
             return new ResponseDto(status: ResponseStatus.SUCCESS, message: 'Изображение успешно загружено')
@@ -67,6 +68,30 @@ class ImageController {
             }
 
             return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'ERROR_SAVE_IMAGE', message: message)
+        }
+    }
+
+
+    @Post(value = "/setImageDetails", consumes = MediaType.MULTIPART_FORM_DATA)
+    def setImageDetails(@Part Integer imagePositionX, @Part Integer imagePositionY, @Part Integer imageWidthPx, @Part boolean canEdit) {
+
+        List<Image> images = imageRepository.list()
+        if (images.size() == 0) {
+            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'IMAGE_NOT_FOUND', message: 'Картинка не найдена')
+        }
+
+        Image image = images[0]
+        image.imagePositionX = imagePositionX
+        image.imagePositionY = imagePositionY
+        image.imageWidthPx = imageWidthPx
+        image.canEdit = canEdit
+
+        try {
+            imageRepository.update(image)
+            return new ResponseDto(status: ResponseStatus.SUCCESS)
+        } catch (e) {
+            println(e)
+            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'IMAGE_NOT_UPDATE', message: 'Картинка не обновлена')
         }
     }
 }

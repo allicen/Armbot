@@ -35,5 +35,8 @@ class SessionState {
     @OneToOne(optional=false, fetch = FetchType.EAGER)
     Settings settings
 
+    @Nullable
+    WorkOption workOption
+
     SessionState() {}
 }

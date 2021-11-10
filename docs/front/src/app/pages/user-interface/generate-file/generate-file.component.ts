@@ -40,18 +40,6 @@ export class GenerateFileComponent implements OnInit {
   }
 
   ngOnInit(): void {
-      this.httpService.getSession().pipe(untilDestroyed(this)).subscribe((data: any) => {
-        if (data.status === 'SUCCESS' && data.details) {
-          if (data.details.coordinateList) {
-            this.storageService.setCoordinateList(data.details.coordinateList);
-          }
-        }
-      });
-
-      this.storageService.getCoordinateList().pipe(untilDestroyed(this)).subscribe(data => {
-        this.coordinateList = data;
-      });
-
   }
 
   add(event: MatChipInputEvent): void {

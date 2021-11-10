@@ -1,23 +1,22 @@
 <div class="title">
   <h1>Формирование команд</h1>
   <div class="buttons">
-    <button mat-stroked-button color="primary" (click)="setEditAllowed()" *ngIf="image && !editingAllowed">Вернуться к редактированию</button>
-    <button mat-stroked-button color="warn" (click)="removeSession()" *ngIf="image || sessionStart">Завершить сеанс</button>
+    <button mat-stroked-button color="primary" (click)="setEditAllowed()" *ngIf="imageUploaded && !editingAllowed">Вернуться к редактированию</button>
+    <button mat-stroked-button color="warn" (click)="removeSession()" *ngIf="sessionExists">Завершить сеанс</button>
   </div>
 </div>
 
-<div class="choice" *ngIf="imageUploadRequired && !image || !sessionStart">
+<div class="choice" *ngIf="!sessionExists">
   <label>Выберите вариант работы с системой:</label>
   <mat-radio-group>
-    <mat-radio-button value="1" color="warn" [checked]="imageUploadRequired" (change)="changeWorkOption()">Я хочу загрузить изображение клавиатуры</mat-radio-button>
-    <mat-radio-button value="2" color="warn" [checked]="!imageUploadRequired" (change)="changeWorkOption()">Перейти к импорту координат</mat-radio-button>
+    <mat-radio-button *ngFor="let item of workOptions;let i = index;" [value]="item.key" color="warn" [checked]="workOptionChecked === item.key" (change)="changeWorkOption(item.key)">{{item.value}}</mat-radio-button>
   </mat-radio-group>
 </div>
 
-<div [class]="messageIsError ? 'error' : 'message'" *ngIf="message && !sessionNotFound">{{message}}</div>
+<div [class]="messageIsError ? 'error' : 'message'" *ngIf="message">{{message}}</div>
 
-<section class="important">
-  <section>
+<section>
+  <section *ngIf="workOptionChecked === 'uploadImage' && !sessionExists || imageUploaded && sessionExists" class="important">
     <p [class.current]="currentStep === 1"><mat-icon [style.opacity]="currentStep > 1 ? '1' : '0'">check</mat-icon>
       Шаг 1. Загрузите изображение.</p>
     <p [class.current]="currentStep === 2"><mat-icon [style.opacity]="currentStep > 2 ? '1' : '0'">check</mat-icon>
@@ -26,18 +25,21 @@
       Шаг 3. Кликайте на область клавиатуры, чтобы сохранить координаты. Импортируйте координаты из файла. При необходимости
       измените значения координат вручную.</p>
   </section>
-  <section>
+  <section *ngIf="workOptionChecked === 'uploadSession'" class="important">
+    <p>Выберите файл с сессией.</p>
+  </section>
+  <section *ngIf="workOptionChecked === 'uploadCoordinateList'" class="important">
     <p>Импортируйте координаты из файла.</p>
   </section>
 </section>
 
-<app-import-image *ngIf="!image"></app-import-image>
+<app-import-image *ngIf="!sessionExists && !imageUploaded && workOptionChecked === 'uploadImage'"></app-import-image>
 
-<div *ngIf="image" class="image-block">
+<div *ngIf="sessionExists && imageUploaded && workOptionChecked === 'uploadImage'" class="image-block">
   <app-robot-area></app-robot-area>
 </div>
 
-<div class="import" *ngIf="!imageUploadRequired || (image && !editingAllowed)">
+<div class="import" *ngIf="sessionExists && workOptionChecked === 'uploadImage' && imageUploaded || workOptionChecked === 'uploadCoordinateList'">
   <mat-expansion-panel (opened)="aboutImportOpen = true"
                        (closed)="aboutImportOpen = false">
     <mat-expansion-panel-header>

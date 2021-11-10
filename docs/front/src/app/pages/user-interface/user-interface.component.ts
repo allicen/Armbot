@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {StorageService} from "../../serviсes/storage.service";
 import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 import {Router} from "@angular/router";
+import {SessionService} from "../../serviсes/session.service";
 
 @UntilDestroy()
 @Component({
@@ -12,8 +13,9 @@ import {Router} from "@angular/router";
 export class UserInterfaceComponent implements OnInit {
 
   tab: string = 'user-interface';
+  sessionExists: boolean = false;
 
-  constructor(private storageService: StorageService, private router: Router) {
+  constructor(private storageService: StorageService, private router: Router, private sessionService: SessionService) {
   }
 
   ngOnInit(): void {
@@ -24,6 +26,10 @@ export class UserInterfaceComponent implements OnInit {
     });
 
     this.tab = this.storageService.getUserInterfaceTab(this.router.url);
+
+      this.sessionService.getSession().pipe(untilDestroyed(this)).subscribe(data => {
+      this.sessionExists = data;
+    });
   }
 
   changeTab(tab: string) {

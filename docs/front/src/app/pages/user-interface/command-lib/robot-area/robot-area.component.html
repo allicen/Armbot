@@ -36,7 +36,7 @@
 
   </div>
   <div>
-    <button mat-raised-button color="warn" (click)="setEditingCompleted()" [disabled]="imageWidthPx === 0">Отметить точки</button>
+    <button mat-raised-button color="warn" (click)="setEditingCompleted()" [disabled]="imageWidthPx === 0 || !imageWidthPx">Отметить точки</button>
   </div>
 </section>
 

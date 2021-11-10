@@ -19,7 +19,8 @@ export class OpenDialogComponent implements OnInit {
               private storageService: StorageService,
               private httpService: HttpService,
               private messageService: MessageService,
-              private imageService: SessionService) {}
+              private imageService: SessionService,
+              private sessionService: SessionService) {}
 
   title: string = '';
   text: string = '';
@@ -37,19 +38,15 @@ export class OpenDialogComponent implements OnInit {
   }
 
   removeSession() {
-    this.storageService.setSessionRemove(true);
-    this.storageService.setSessionStart(false);
-    this.imageService.setImagePosition(0, 0);
-    this.imageService.setImageWidth(0);
+    this.sessionService.removeSession();
     this.dialogRef.close();
-    this.storageService.setSessionRemove(false); // после завершения сеанса вернуть в исходное положение
   }
 
   removeAllRows() {
     this.httpService.removeAllCoordinates().pipe(untilDestroyed(this)).subscribe((res) => {
 
       if (res.status === 'SUCCESS') {
-        this.storageService.setCoordinateList([]);
+        this.sessionService.setCoordinateList([]);
       }
 
       this.messageService.setCoordinateMessage(res.message);

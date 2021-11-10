@@ -1,5 +1,7 @@
 package ru.armbot.controller
 
+import ru.armbot.domain.SessionState
+import ru.armbot.domain.WorkOption
 import ru.armbot.dto.ResponseDto
 import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.Part
@@ -15,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory
 import ru.armbot.domain.Coordinate
 import ru.armbot.repository.CoordinateRepository
+import ru.armbot.repository.SessionStateRepository
 import ru.armbot.service.CoordinateExcelService
 import ru.armbot.service.CoordinateService
 import ru.armbot.service.CoordinateTxtService
@@ -34,6 +37,7 @@ class CoordinateController {
     @Inject CoordinateRepository coordinateRepository
     @Inject CoordinateExcelService coordinateExcelService
     @Inject CoordinateTxtService coordinateTxtService
+    @Inject SessionStateRepository sessionStateRepository
 
     @Post(value = "/save")
     def save(@Body Coordinate coordinate) {
@@ -162,6 +166,11 @@ class CoordinateController {
             } else {
                 result.errorDetails += "Строка ${index} - содержит не 1 двоеточие".toString()
             }
+        }
+
+        if (coordinateRepository.list().size() > 0 && sessionStateRepository.list().size() == 0) {
+            SessionState sessionState = new SessionState(workOption: WorkOption.UPLOAD_COORDINATE_LIST)
+            sessionStateRepository.save(sessionState)
         }
 
         if (result.errorDetails.size() > 0) {

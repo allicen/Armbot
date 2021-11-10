@@ -1,6 +1,6 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnInit, Output, ViewChild} from '@angular/core';
 import {FileHandle} from "./import-image/dragDrop.directive";
-import {Coordinate} from "../../../model/models";
+import {Coordinate, WorkOption} from "../../../model/models";
 import {Subject} from "rxjs";
 import {HttpService} from "../../../serviсes/http.service";
 import {DomSanitizer} from "@angular/platform-browser";
@@ -35,15 +35,15 @@ export class CommandLibComponent implements OnInit {
 
   sessionExists: boolean = false;
 
-  image: any = null;
+  imageUploaded: boolean = false;
   imageUploadRequired: boolean = true;
 
   editingAllowed: boolean = true;
 
   aboutImportOpen: boolean = false;
 
-  sessionStart: boolean = false;
-  sessionNotFound: boolean = true;
+  workOptions: WorkOption[] = this.config.workOptions
+  workOptionChecked: string = this.workOptions[0].key;
 
   @ViewChild("inputFilePoints") inputFilePoints: ElementRef | undefined;
 
@@ -60,76 +60,27 @@ export class CommandLibComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.sessionService.getImage().subscribe(data => {
-      this.image = data
-    });
 
-    this.sessionService.getImageEditAllowed().subscribe(data => {
-      this.editingAllowed = data;
-    });
-
-    // this.sessionService.getImage().pipe(untilDestroyed(this)).subscribe(data => {
-    //   this.image = data;
-    //   if (this.image && this.editingAllowed) {
-    //     this.storageService.setCurrentStep(2);
-    //     // this.storageService.setSessionStart(true);
-    //     // this.sessionNotFound = false;
-    //   }
-    // });
-
-    this.sessionService.getImageUploadRequired().pipe(untilDestroyed(this)).subscribe(data => {
-      this.imageUploadRequired = data;
-    });
+    this.sessionService.setWorkOptionKey(this.workOptionChecked);
 
     this.storageService.getCurrentStep().pipe(untilDestroyed(this)).subscribe(data => {
       this.currentStep = data;
-    });
 
-    this.storageService.getSessionStart().pipe(untilDestroyed(this)).subscribe(start => {
-      this.sessionStart = start;
-    });
-
-    this.storageService.getSessionRemove().pipe(untilDestroyed(this)).subscribe(remove => {
-      if (remove) {
-        this.removeSessionAccept();
+      // текущие шаги запоминаем, только если есть сессия и картинка
+      if (data > 1) {
+        this.imageUploaded = true;
+      } else {
+        this.imageUploaded = false;
       }
     });
 
-    this.messageService.getCoordinateMessage().pipe(untilDestroyed(this)).subscribe(data => this.coordinateMessage = data);
-    this.messageService.getCoordinateMessageIsError().pipe(untilDestroyed(this)).subscribe(data => {
-      this.coordinateMessageError = data;
-      if (!data) {
-        setTimeout(() => {
-          this.coordinateMessage = '';
-        }, 3000);
-      }
+    this.sessionService.getSessionExists().pipe(untilDestroyed(this)).subscribe(data => this.sessionExists = data);
+
+    this.sessionService.getImageEditAllowed().pipe(untilDestroyed(this)).subscribe(data => {
+      this.editingAllowed = data;
     });
-  }
 
-  getSession() {
-    return this.httpService.getSession().pipe(untilDestroyed(this)).subscribe((data: any) => {
-
-      if (data.status === 'NO_SESSION') {
-        this.storageService.setSessionStart(false);
-      }
-
-      if (data.status === 'SUCCESS' && data.details) {
-        const details = data.details.sessionState;
-        // this.imageService.setImagePosition(details.imagePositionX, details.imagePositionY);
-        // this.imageService.setImageWidth(details.imageSize);
-        // this.imageService.setImageEditAllowed(false);
-        // this.storageService.setCurrentStep(3);
-        // this.sessionStart = true;
-
-        if (data.details.coordinateList) {
-          this.storageService.setCoordinateList(data.details.coordinateList);
-        }
-
-        // this.imageService.setImageUploadRequired(data.details.sessionState.imageRequired);
-
-        this.sessionNotFound = false;
-      }
-    });
+    this.sessionService.getWorkOptionKey().pipe(untilDestroyed(this)).subscribe(data => this.workOptionChecked = data);
   }
 
   removeSession() {
@@ -141,36 +92,7 @@ export class CommandLibComponent implements OnInit {
     });
   }
 
-  removeSessionAccept() {
-    this.httpService.removeSession().pipe(untilDestroyed(this)).subscribe((data: any) => {
-
-      this.message = data.message;
-
-      if (data.status === 'SUCCESS') {
-        this.fileUpload = false;
-        this.messageIsError = false;
-
-        setTimeout(() => {
-          this.message = '';
-        }, 3000);
-
-        this.sessionService.deleteImage();
-        this.storageService.setCurrentStep(1);
-        this.sessionService.setImageEditAllowed(true);
-        this.sessionService.setImageWidth(0);
-        this.sessionService.setImagePosition(0, 0);
-        this.storageService.setCoordinateList([]);
-
-      } else {
-        this.messageIsError = true;
-      }
-    });
-
-    this.files = [];
-  }
-
   setEditAllowed() {
-    this.clearImportMessage();
     this.sessionService.setImageEditAllowed(true);
     this.storageService.setCurrentStep(2);
   }
@@ -181,8 +103,8 @@ export class CommandLibComponent implements OnInit {
     }
   }
 
-  changeWorkOption() {
-    this.sessionService.setImageUploadRequired(!this.imageUploadRequired);
+  changeWorkOption(optionKey: string) {
+    this.sessionService.setWorkOptionKey(optionKey);
   }
 
   changeFilePoints($event: Event) {
@@ -202,28 +124,16 @@ export class CommandLibComponent implements OnInit {
       }
 
       if (res.details?.savedCoordinates) {
+        this.sessionExists = true;
+
         for (let item of res.details?.savedCoordinates) {
-          this.storageService.addCoordinateInList(item);
+          this.sessionService.addCoordinateInList(item);
         }
-
-        this.storageService.setSessionStart(true);
-
-        // if (!this.imageUploadRequired) {
-        //   this.httpService.saveSessionState(-1, {x: 0, y: 0}, this.imageUploadRequired)
-        //     .pipe(untilDestroyed(this))
-        //     .subscribe(res => {
-        //
-        //   });
-        // }
       }
     })
   }
 
   clearImportMessage() {
-    this.messageService.setMessageImport('');
-    this.messageService.setMessageImportErrors([]);
-    this.messageService.setCoordinateMessage('');
-    this.messageService.setCoordinateMessageIsError(false);
   }
 
 
