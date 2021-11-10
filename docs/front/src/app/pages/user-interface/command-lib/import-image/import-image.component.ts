@@ -81,7 +81,7 @@ export class ImportImageComponent implements OnInit {
       return;
     }
 
-    this.sessionService.setSession(this.files[0]);
+    this.httpService.uploadImage(this.files[0]);
     this.messageClear();
   }
 

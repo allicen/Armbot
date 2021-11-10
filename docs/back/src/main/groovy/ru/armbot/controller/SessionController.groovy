@@ -45,56 +45,29 @@ class SessionController {
         return new ResponseDto(status: ResponseStatus.SUCCESS, details: sessionStateDto)
     }
 
-    @Post(value = "/save", consumes = MediaType.MULTIPART_FORM_DATA)
-    def save(@Part byte[] file,
-             @Part String name,
-             @Part String contentType,
-             @Part Integer imagePositionX,
+
+    @Post(value = "/update")
+    def update(@Part Integer imagePositionX,
              @Part Integer imagePositionY,
              @Part Integer imageWidthPx,
-             @Part Integer cursorArea) {
+             @Part Integer cursorArea,
+             @Part boolean canEditImage = true) {
 
         List<SessionState> sessionList = sessionStateRepository.list()
-        SessionState session
+
+        if (sessionList.size() == 0) {
+            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: "ERROR_SESSION__NOT_FOUND", message: 'Сессия не найдена')
+        }
 
         try {
 
-            if (sessionList.size() == 0) {
-                session = new SessionState()
-            } else {
-                session = sessionList.get(0)
-            }
-
-            if (file && contentType) {
-                Image image = new Image(name: name,
-                        contentType: contentType,
-                        imageByte: file,
-                        imagePositionX: imagePositionX,
-                        imagePositionY: imagePositionY)
-
-                if (imageWidthPx > 0) {
-                    image.imageWidthPx = imageWidthPx
-                }
-
-                if (cursorArea > 0) {
-                    Settings settings = new Settings(cursorArea: cursorArea)
-                    settingsRepository.save(settings)
-                }
-
-                imageRepository.save(image)
-                session.image = image
-            }
-
-            if (sessionList.size() == 0) {
-                sessionStateRepository.save(session)
-            } else {
-                sessionStateRepository.update(session)
-            }
+            SessionState session = sessionList.get(0)
+            sessionStateRepository.update(session)
 
             return new ResponseDto(status: ResponseStatus.SUCCESS, details: getSession(session))
         } catch (e) {
             println(e)
-            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: "ERROR_SAVE_SESSION", message: 'Ошибка сохранения сессии')
+            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: "ERROR_SAVE_SESSION", message: 'Ошибка обновления сессии')
         }
     }
 

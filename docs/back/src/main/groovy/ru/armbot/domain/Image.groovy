@@ -44,6 +44,8 @@ class Image {
     @Nullable
     Integer imageWidthPx
 
+    boolean canEdit = true
+
     Image() { }
 
     Image(byte[] imageByte, String name, String contentType) {

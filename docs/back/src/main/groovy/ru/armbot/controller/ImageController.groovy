@@ -31,29 +31,6 @@ class ImageController {
 
     ImageController() {}
 
-    //TODO Удалить этот метод, получать всю сессию.
-    @Get(value = "/getImage")
-    def getImage() {
-        def images = imageRepository.list()
-
-        if (images.isEmpty()) {
-            return [status : 'ERROR',
-                    code: 'IMAGE_LIST_EMPTY',
-                    message: 'Не найдено ни одного изображения.']
-        }
-
-        def image = images.pop()
-
-        // Если в базе больше 1 картинки, оставляем последнюю загруженную
-        if (images.size() > 1) {
-            for (i in 0..< images.size()-1) {
-                imageRepository.deleteById(images[i].id)
-            }
-        }
-
-        return [status: 'OK', image: image]
-    }
-
 
     @Post(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA)
     def uploadImage(@Part byte[] file, @Part String name, @Part String contentType) {

@@ -33,6 +33,8 @@ export class CommandLibComponent implements OnInit {
 
   currentStep: number = 1;
 
+  sessionExists: boolean = false;
+
   image: any = null;
   imageUploadRequired: boolean = true;
 

@@ -12,19 +12,19 @@ export class HttpService {
 
     constructor(private http: HttpClient, private config: Config){ }
 
-    // uploadImage(file: FileHandle): Observable<any> {
-    //
-    //   const formData: FormData = new FormData();
-    //   formData.append('file', file.file);
-    //   formData.append('name', file.file.name);
-    //   formData.append('contentType', file.file.type);
-    //
-    //   return this.http.post(`${this.config.httpUrl}/image/upload`, formData).pipe(
-    //     map(res => {
-    //       return res;
-    //     })
-    //   );
-    // }
+    uploadImage(file: FileHandle): Observable<any> {
+
+      const formData: FormData = new FormData();
+      formData.append('file', file.file);
+      formData.append('name', file.file.name);
+      formData.append('contentType', file.file.type);
+
+      return this.http.post(`${this.config.httpUrl}/image/upload`, formData).pipe(
+        map(res => {
+          return res;
+        })
+      );
+    }
 
     importCoordinates(file: File): Observable<any> {
 
