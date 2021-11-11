@@ -70,7 +70,9 @@ export class RobotAreaComponent implements OnInit {
         });
 
         this.sessionService.getImageWidth().pipe(untilDestroyed(this)).subscribe(data => {
-            this.imageWidthPx = data;
+            if (data && data > 0) {
+                this.imageWidthPx = data;
+            }
         });
 
         this.sessionService.getImage().pipe(untilDestroyed(this)).subscribe(image => {
@@ -170,6 +172,10 @@ export class RobotAreaComponent implements OnInit {
         this.sessionService.setImageEditAllowed(false);
         this.httpService.setImageDetails(this.dragImagePosition, this.imageWidthPx || 0, false)
             .pipe(untilDestroyed(this)).subscribe();
+
+        if (this.imageWidthPx) {
+            this.sessionService.setImageWidth(this.imageWidthPx);
+        }
 
         this.storage.setCurrentStep(3);
     }

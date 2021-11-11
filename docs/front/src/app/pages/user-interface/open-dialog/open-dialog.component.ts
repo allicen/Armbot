@@ -47,6 +47,7 @@ export class OpenDialogComponent implements OnInit {
 
       if (res.status === 'SUCCESS') {
         this.sessionService.setCoordinateList([]);
+        this.sessionService.setLaunchFileRow([]);
       }
 
       this.messageService.setCoordinateMessage(res.message);
