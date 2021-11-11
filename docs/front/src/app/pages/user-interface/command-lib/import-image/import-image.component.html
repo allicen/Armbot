@@ -7,7 +7,7 @@
     <div class="centered">
       <div class="text">Для загрузки перетащите файл в эту область или выберите на своем компьютере</div>
       <div class="buttons">
-        <button mat-raised-button color="primary" (click)="openDialogChangeFile($event)">Выбрать файл
+        <button mat-raised-button color="primary" (click)="openDialogChangeFile()">Выбрать файл
           <input type="file" style="display: none;" #inputFile (change)="changeFile($event)" />
         </button>
       </div>

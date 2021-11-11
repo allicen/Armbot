@@ -1,7 +1,5 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Coordinate} from "../../../model/models";
-import {StorageService} from "../../../serviсes/storage.service";
-import {HttpService} from "../../../serviсes/http.service";
 import {MatAutocompleteSelectedEvent} from "@angular/material/autocomplete";
 import {MatChipInputEvent} from "@angular/material/chips";
 import {COMMA, ENTER} from "@angular/cdk/keycodes";
@@ -9,7 +7,7 @@ import {FormControl} from "@angular/forms";
 import {Observable} from "rxjs";
 import {map, startWith} from "rxjs/operators";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
-import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
+import {UntilDestroy} from "@ngneat/until-destroy";
 
 @UntilDestroy()
 @Component({
@@ -31,7 +29,7 @@ export class GenerateFileComponent implements OnInit {
   @ViewChild('coordinateInput') coordinateInput: ElementRef<HTMLInputElement> | undefined;
 
 
-  constructor(private storageService: StorageService, private httpService: HttpService) {
+  constructor() {
 
     this.filteredCommand = this.commandCtrl.valueChanges.pipe(
       startWith(null),

@@ -12,7 +12,7 @@ export class WebsocketService {
 
     private subject: Subject<MessageEvent> | undefined;
 
-    public connect(webSocketUrl: string): Subject<MessageEvent> {
+    public connect(): Subject<MessageEvent> {
         if (!this.subject) {
             this.subject = this.create(this.url);
             console.log("Successfully connected: " + this.url);

@@ -67,7 +67,7 @@ export class CommandTableComponent implements OnInit {
             this.hideMessage();
         });
 
-        this.wsService.connect(this.config.webSocketUrl).pipe().pipe(untilDestroyed(this)).subscribe(res => {
+        this.wsService.connect().pipe().pipe(untilDestroyed(this)).subscribe(res => {
             const response = JSON.parse(res.data);
             if (response.details) {
                 const coordinate: Coordinate = response.details;
@@ -152,14 +152,12 @@ export class CommandTableComponent implements OnInit {
     }
 
     renderTable(): void {
-        this.clearImportMessage();
         if (this.table) {
             this.table.renderRows();
         }
     }
 
     removeAllPoint() {
-        this.clearImportMessage();
         this.dialog.open(OpenDialogComponent, {
             data: {title: 'Удалить все координаты?',
               text: 'Действие отменить нельзя.',
@@ -168,12 +166,10 @@ export class CommandTableComponent implements OnInit {
     }
 
     exportFile() {
-        this.clearImportMessage();
         this.exportExcel?.nativeElement.click();
     }
 
     exportFileTxt() {
-        this.clearImportMessage();
         this.exportTxt?.nativeElement.click();
     }
 
@@ -187,8 +183,5 @@ export class CommandTableComponent implements OnInit {
                 this.messageImport = '';
             }, 3000);
         }
-    }
-
-    clearImportMessage() {
     }
 }

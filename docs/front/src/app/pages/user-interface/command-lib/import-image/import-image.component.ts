@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {FileHandle} from "./dragDrop.directive";
 import {DomSanitizer} from "@angular/platform-browser";
 import {HttpService} from "../../../../serviсes/http.service";
@@ -39,7 +39,7 @@ export class ImportImageComponent implements OnInit {
         }
     }
 
-    openDialogChangeFile($event: Event) {
+    openDialogChangeFile() {
         if (this.inputFile) {
             this.inputFile.nativeElement.click();
         }
@@ -95,10 +95,6 @@ export class ImportImageComponent implements OnInit {
                 this.sessionService.setSession(false);
             }
         });
-    }
-
-    getSession() {
-        this.sessionService.getSession().pipe().subscribe();
     }
 
     messageClear() {
