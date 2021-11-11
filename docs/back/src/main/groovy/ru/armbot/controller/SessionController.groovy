@@ -1,20 +1,16 @@
 package ru.armbot.controller
 
-import io.micronaut.core.annotation.Nullable
-import io.micronaut.http.MediaType
-import io.micronaut.http.annotation.Part
-import ru.armbot.domain.Image
-import ru.armbot.domain.Settings
+import ru.armbot.dto.FileRowDto
 import ru.armbot.dto.ResponseDto
 import ru.armbot.domain.ResponseStatus
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
-import io.micronaut.http.annotation.Post
 import jakarta.inject.Inject
 import ru.armbot.domain.SessionState
 import ru.armbot.dto.SessionStateDto
 import ru.armbot.repository.CoordinateRepository
 import ru.armbot.repository.ImageRepository
+import ru.armbot.repository.LaunchFileRowRepository
 import ru.armbot.repository.SessionStateRepository
 import ru.armbot.repository.SettingsRepository
 
@@ -25,6 +21,7 @@ class SessionController {
     @Inject CoordinateRepository coordinateRepository
     @Inject ImageRepository imageRepository
     @Inject SettingsRepository settingsRepository
+    @Inject LaunchFileRowRepository launchFileRowRepository
 
 
     @Get(value = '/get')
@@ -36,12 +33,20 @@ class SessionController {
             return new ResponseDto(status: ResponseStatus.NO_SESSION)
         }
 
+        List<FileRowDto> fileRows = []
+        launchFileRowRepository.list().each {
+            fileRows += new FileRowDto(id: it.id, coordinateId: it.coordinate.id, delay: it.delay, sortOrder: it.sortOrder)
+        }
+
+        fileRows.sort { it.sortOrder }
+
         SessionState session = sessionStateRepository.list()[0]
         SessionStateDto sessionStateDto = new SessionStateDto(sessionId: session.id,
                 workOption: session.workOption.id,
                 image: session.image,
                 settings: session.settings,
-                coordinateList: coordinateRepository.list())
+                coordinateList: coordinateRepository.list(),
+                launchFileRowList: fileRows)
 
         return new ResponseDto(status: ResponseStatus.SUCCESS, details: sessionStateDto)
     }

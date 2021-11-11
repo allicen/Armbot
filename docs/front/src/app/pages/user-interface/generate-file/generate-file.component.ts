@@ -1,13 +1,11 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {Coordinate} from "../../../model/models";
-import {MatAutocompleteSelectedEvent} from "@angular/material/autocomplete";
-import {MatChipInputEvent} from "@angular/material/chips";
-import {COMMA, ENTER} from "@angular/cdk/keycodes";
-import {FormControl} from "@angular/forms";
-import {Observable} from "rxjs";
-import {map, startWith} from "rxjs/operators";
+import {Coordinate, LaunchFileRow} from "../../../model/models";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
-import {UntilDestroy} from "@ngneat/until-destroy";
+import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
+import {SessionService} from "../../../serviсes/session.service";
+import {HttpService} from "../../../serviсes/http.service";
+import {main} from "@angular/compiler-cli/src/main";
+import {StorageService} from "../../../serviсes/storage.service";
 
 @UntilDestroy()
 @Component({
@@ -17,77 +15,105 @@ import {UntilDestroy} from "@ngneat/until-destroy";
 })
 export class GenerateFileComponent implements OnInit {
 
-  coordinateList: Coordinate[] = [];
+    coordinateList: Coordinate[] = [];
+    commands: LaunchFileRow[] = [];
+    rowHasError: boolean = false;
+    messageRow: string = '';
+    rowId: number = -1;
+    prevDelay: number = 0;
+    maxId: number = 0;
+    exportTxtUrl: string = '';
+    coordinateDelete: number = -1;
 
-  selectable = true;
-  removable = true;
-  separatorKeysCodes: number[] = [ENTER, COMMA];
-  commandCtrl = new FormControl();
-  filteredCommand: Observable<Coordinate[]> | undefined;
-  commands: Coordinate[] = [];
+    @ViewChild('coordinateInput') coordinateInput: ElementRef<HTMLInputElement> | undefined;
+    @ViewChild("commandList") commandList: ElementRef | undefined;
+    @ViewChild("exportTxt") exportTxt: ElementRef | undefined;
 
-  @ViewChild('coordinateInput') coordinateInput: ElementRef<HTMLInputElement> | undefined;
+    constructor(private sessionService: SessionService,
+                private httpService: HttpService,
+                private storageService: StorageService) { }
 
-
-  constructor() {
-
-    this.filteredCommand = this.commandCtrl.valueChanges.pipe(
-      startWith(null),
-      map((item: string | null) => (item ? this._filter(item) : this.coordinateList.slice())),
-    );
-  }
-
-  ngOnInit(): void {
-  }
-
-  add(event: MatChipInputEvent): void {
-
-    const value = (event.value || '').trim();
-    const cIndex = this.coordinateList.findIndex(c => c.name === value);
-
-    if (cIndex > 0) {
-      this.commands.push(this.coordinateList[cIndex]);
-    }
-    event.chipInput!.clear();
-
-    this.commandCtrl.setValue(null);
-  }
-
-  choice(id: number): void {
-    const cIndex = this.coordinateList.findIndex(c => c.id == id);
-    this.commands.push(this.coordinateList[cIndex]);
-  }
-
-  remove(index: number): void {
-      const cIndex = this.commands.findIndex(c => c.id === index);
-      this.commands.splice(cIndex, 1);
-  }
-
-  selected(event: MatAutocompleteSelectedEvent): void {
-    const name = event.option.viewValue;
-    const coordinate = this.coordinateList.filter(item => item.name === name);
-
-    if (coordinate.length > 0) {
-      this.commands.push(coordinate[0]);
+    ngOnInit(): void {
+        this.exportTxtUrl = this.httpService.exportLaunchFileTxt();
+        this.sessionService.getCoordinateList().pipe(untilDestroyed(this)).subscribe(data => this.coordinateList = data);
+        this.sessionService.getLaunchFileRow().pipe(untilDestroyed(this)).subscribe(data => {
+            this.commands = data;
+        });
+        this.sessionService.getNextFileRowId().pipe(untilDestroyed(this)).subscribe(data => this.maxId = data);
+        this.storageService.getCoordinateDelete().pipe(untilDestroyed(this)).subscribe(data => {
+            if (data != -1) {
+                const cIndex = this.commands.findIndex(c => c.id === data);
+                this.commands.splice(cIndex, 1);
+            }
+        });
     }
 
-    if (!this.coordinateInput) {
-      return;
+    choice(id: number): void {
+        const cIndex = this.coordinateList.findIndex(c => c.id == id);
+        const next: number = this.maxId + 1;
+        const command: LaunchFileRow = {id: next, coordinate: this.coordinateList[cIndex], delay: 0, sortOrder: next};
+        this.sessionService.addLaunchFileRowList(command);
+        this.clearMessage();
     }
 
-    this.coordinateInput.nativeElement.value = '';
-    this.commandCtrl.setValue(null);
-  }
+    remove(index: number): void {
+        this.httpService.removeLaunchFileRow(index).pipe().subscribe(data => {
+            if (data.status === 'SUCCESS') {
+                const cIndex = this.commands.findIndex(c => c.id === index);
+                this.commands.splice(cIndex, 1);
+                this.clearMessage();
+            }
+        });
+    }
 
-  private _filter(value: string): Coordinate[] {
-    const filterValue = value.toLowerCase();
-    return this.coordinateList.filter(item => item.name.toLowerCase().includes(filterValue));
-  }
+    drop(event: CdkDragDrop<Coordinate[]>) {
+        const previousIndex: number = event.previousIndex;
+        const currentIndex: number = event.currentIndex;
 
+        moveItemInArray(this.commands, previousIndex, currentIndex);
+        this.sessionService.launchFileRowListSort(previousIndex, currentIndex, event.previousIndex, event.currentIndex);
+        this.clearMessage();
+    }
 
+    changeDelay(item: LaunchFileRow, delay: string) {
+      this.rowId = item.id;
 
-  drop(event: CdkDragDrop<Coordinate[]>) {
-    moveItemInArray(this.commands, event.previousIndex, event.currentIndex);
-  }
+      if (!this.isNumber(delay)) {
+          this.messageRow = 'Не число!';
+          this.rowHasError = true;
 
+          if (this.commandList) {
+              this.commandList.nativeElement.value;
+              this.commandList.nativeElement.querySelector(`#delay-${item.id}`).value = this.prevDelay;
+          }
+          return;
+      }
+        this.rowHasError = false;
+        this.messageRow = 'Сохранено!';
+
+        setTimeout(() => {
+            this.rowId = -1;
+            this.messageRow = '';
+        }, 3000);
+
+        this.prevDelay = Number(delay);
+        this.sessionService.changeDelay(item.id, delay);
+    }
+
+    savePrevDelay(delay: string) {
+        this.prevDelay = this.isNumber(delay) ? Number(delay) : 0;
+    }
+
+    isNumber(value: any) {
+        return value.match(/^[\d\\.]+$/);
+    }
+
+    clearMessage() {
+        this.messageRow = '';
+        this.rowId = -1;
+    }
+
+    exportFileTxt() {
+        this.exportTxt?.nativeElement.click();
+    }
 }

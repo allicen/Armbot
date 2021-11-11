@@ -2,7 +2,7 @@ import {Injectable} from "@angular/core";
 import {BehaviorSubject, Observable} from "rxjs";
 import {HttpService} from "./http.service";
 import {DomSanitizer} from "@angular/platform-browser";
-import {Coordinate, Position} from "../model/models";
+import {Coordinate, LaunchFileRow, Position} from "../model/models";
 import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 import {StorageService} from "./storage.service";
 import {MessageService} from "./message.service";
@@ -23,8 +23,12 @@ export class SessionService {
     private canEditImage$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
     private coordinateList$: BehaviorSubject<Coordinate[]> = new BehaviorSubject<Coordinate[]>([]);
     private workOptionKey$: BehaviorSubject<string> = new BehaviorSubject<string>('uploadImage');
+    private launchFileRow$: BehaviorSubject<LaunchFileRow[]> = new BehaviorSubject<LaunchFileRow[]>([]);
+    private  nextId$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
 
+    private maxId: number = 0;
     private coordinateList: Coordinate[] = [];
+    private launchFileRowList: LaunchFileRow[] = [];
 
 
     getSession(): Observable<any> {
@@ -54,36 +58,69 @@ export class SessionService {
 
     fillFieldsSession(data: any) {
 
-      if (data.status === 'NO_SESSION') {
-          this.sessionExists$.next(false);
-          return;
-      }
+        if (data.status === 'NO_SESSION') {
+            this.sessionExists$.next(false);
+            return;
+        }
 
-      if (data.status === 'SUCCESS') {
-          this.sessionExists$.next(true);
-          this.workOptionKey$.next(data.details.workOption);
-      }
+        if (data.status === 'SUCCESS') {
+            this.sessionExists$.next(true);
+            this.workOptionKey$.next(data.details.workOption);
+        }
 
-      if (data.status === 'SUCCESS' && data.details.image) {
-          this.image$.next(this.sanitizer.bypassSecurityTrustResourceUrl(`data:${data.details.image.contentType};base64,${data.details.image.imageByte}`));
-          this.imagePosition$.next({x: data.details.image.imagePositionX, y: data.details.image.imagePositionY});
-          this.imageWidth$.next(data.details.image.imageWidthPx);
-          this.canEditImage$.next(data.details.image.canEdit);
-
-          if (data.details.image.canEdit) {
-              this.storageService.setCurrentStep(2);
-          } else {
-              this.storageService.setCurrentStep(3);
-          }
-      }
+        if (data.status === 'SUCCESS' && data.details.image) {
+            this.addImageDetails(data.details.image);
+        }
 
         if (data.status === 'SUCCESS' && data.details.coordinateList) {
-            data.details.coordinateList.forEach((item: any) => {
-                const coordinate: Coordinate = {id: item.id, name: item.name, x: item.x, y: item.y, z: item.z};
-                this.coordinateList.push(coordinate);
-                this.setCoordinateList(this.coordinateList);
-            });
+            this.addCoordinateList(data.details.coordinateList);
         }
+
+        if (data.status === 'SUCCESS' && data.details.launchFileRowList) {
+            this.addFileRows(data.details.launchFileRowList);
+        }
+    }
+
+    addImageDetails(image: any) {
+        this.image$.next(this.sanitizer.bypassSecurityTrustResourceUrl(`data:${image.contentType};base64,${image.imageByte}`));
+        this.imagePosition$.next({x: image.imagePositionX, y: image.imagePositionY});
+        this.imageWidth$.next(image.imageWidthPx);
+        this.canEditImage$.next(image.canEdit);
+
+        if (image.canEdit) {
+            this.storageService.setCurrentStep(2);
+        } else {
+            this.storageService.setCurrentStep(3);
+        }
+    }
+
+    addCoordinateList(coordinates: any) {
+        const list: Coordinate[] = [];
+        coordinates.forEach((item: any) => {
+            const coordinate: Coordinate = {id: item.id, name: item.name, x: item.x, y: item.y, z: item.z};
+            list.push(coordinate);
+        });
+
+        this.setCoordinateList(list);
+    }
+
+    addFileRows(fileRows: any) {
+        const list: LaunchFileRow[] = [];
+        let maxId: number = 0;
+        fileRows.forEach((item: any) => {
+            const coordinate: Coordinate | undefined = this.coordinateList.find(c => c.id == item.coordinateId);
+            if (coordinate) {
+                const fileRow: LaunchFileRow = {coordinate: coordinate, id: item.id, delay: item.delay, sortOrder: item.sortOrder};
+                list.push(fileRow);
+
+                if (maxId < item.id) {
+                    maxId = item.id;
+                }
+            }
+        });
+
+        this.setNextFileRowId(maxId);
+        this.setLaunchFileRow(list);
     }
 
     removeSession(): void {
@@ -130,7 +167,8 @@ export class SessionService {
     }
 
     setCoordinateList(coordinateList: Coordinate[]): void {
-        this.coordinateList$.next(coordinateList);
+        this.coordinateList = coordinateList;
+        this.coordinateList$.next(this.coordinateList);
     }
 
     getCoordinateList(): Observable<Coordinate[]> {
@@ -150,4 +188,60 @@ export class SessionService {
         this.workOptionKey$.next(option);
     }
 
+    getLaunchFileRow(): Observable<LaunchFileRow[]> {
+        return this.launchFileRow$.asObservable();
+    }
+
+    setLaunchFileRow(launchFileRowList: LaunchFileRow[]): void {
+        this.launchFileRowList = launchFileRowList;
+        this.launchFileRow$.next(launchFileRowList);
+    }
+
+    addLaunchFileRowList(launchFileRow: LaunchFileRow): void {
+        this.httpService.saveLaunchFileRow(launchFileRow.coordinate.id).pipe(untilDestroyed(this)).subscribe(data => {
+            if (data && data.status === 'SUCCESS') {
+                this.launchFileRowList.push(launchFileRow);
+                this.setLaunchFileRow(this.launchFileRowList);
+               this.setNextFileRowId(this.maxId + 1);
+            }
+        });
+    }
+
+    changeDelay(itemId: number, delay: string): void {
+        this.httpService.updateDelayFileRow(itemId, Number(delay)).pipe().subscribe(data => {
+            if (data.status === 'SUCCESS') {
+                const rowIndex: number = this.launchFileRowList.findIndex(c => c.id == itemId);
+                this.launchFileRowList[rowIndex].delay = Number(delay);
+                this.setLaunchFileRow(this.launchFileRowList);
+            }
+        });
+    }
+
+    launchFileRowListSort(firstElemId: number, secondElemId: number, firstSortOrder: number, secondSortOrder: number) {
+
+        console.log('firstSortOrder = ', firstSortOrder);
+        console.log('secondSortOrder = ', secondSortOrder);
+
+        this.httpService.updateSortOrderFileRow(firstElemId, secondSortOrder, secondElemId, firstSortOrder)
+            .pipe().subscribe(data => {
+                if (data.status === 'SUCCESS') {
+                    const firstIndex: number = this.launchFileRowList.findIndex(c => c.id === firstElemId);
+                    const secondIndex: number = this.launchFileRowList.findIndex(c => c.id === secondElemId);
+
+                    this.launchFileRowList[firstIndex].sortOrder = secondSortOrder;
+                    this.launchFileRowList[secondIndex].sortOrder = firstSortOrder;
+
+                    this.setLaunchFileRow(this.launchFileRowList);
+                }
+        });
+    }
+
+    getNextFileRowId(): Observable<number> {
+        return this.nextId$.asObservable();
+    }
+
+    setNextFileRowId(id: number): void {
+        this.maxId = id;
+        this.nextId$.next(id);
+    }
 }

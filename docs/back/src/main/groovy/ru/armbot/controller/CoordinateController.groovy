@@ -1,5 +1,6 @@
 package ru.armbot.controller
 
+import ru.armbot.domain.LaunchFileRow
 import ru.armbot.domain.SessionState
 import ru.armbot.domain.WorkOption
 import ru.armbot.dto.ResponseDto
@@ -17,10 +18,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory
 import ru.armbot.domain.Coordinate
 import ru.armbot.repository.CoordinateRepository
+import ru.armbot.repository.LaunchFileRowRepository
 import ru.armbot.repository.SessionStateRepository
 import ru.armbot.service.CoordinateExcelService
 import ru.armbot.service.CoordinateService
-import ru.armbot.service.CoordinateTxtService
+import ru.armbot.service.txtService
 
 import java.nio.charset.StandardCharsets
 import java.time.ZonedDateTime
@@ -36,8 +38,9 @@ class CoordinateController {
     @Inject CoordinateService coordinateService
     @Inject CoordinateRepository coordinateRepository
     @Inject CoordinateExcelService coordinateExcelService
-    @Inject CoordinateTxtService coordinateTxtService
+    @Inject txtService txtService
     @Inject SessionStateRepository sessionStateRepository
+    @Inject LaunchFileRowRepository launchFileRowRepository
 
     @Post(value = "/save")
     def save(@Body Coordinate coordinate) {
@@ -83,6 +86,7 @@ class CoordinateController {
     @Get(value = "/removeAll")
     def removeAll() {
         try {
+            launchFileRowRepository.deleteAll()
             coordinateRepository.deleteAll()
             return new ResponseDto(status: ResponseStatus.SUCCESS, message: 'Координаты успешно удалены')
         } catch (e) {
@@ -99,7 +103,10 @@ class CoordinateController {
             return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'NOT_FOUND', message: 'Координата не найдена')
         }
 
+        LaunchFileRow launchFileRow = launchFileRowRepository.list().find {it.coordinate.id == id}
+
         try {
+            launchFileRowRepository.delete(launchFileRow)
             coordinateRepository.delete(coordinate)
             return new ResponseDto(status: ResponseStatus.SUCCESS, message: 'Координата удалена!')
         } catch (e) {
@@ -118,7 +125,7 @@ class CoordinateController {
     @Get(value = "/txt")
     def exportCoordinatesTxt() {
         def list = coordinateRepository.list()
-        return coordinateTxtService.txtFile(list)
+        return txtService.coordinateTxtFile(list)
     }
 
     @Post(value = "/import", consumes = MediaType.MULTIPART_FORM_DATA)
@@ -126,7 +133,7 @@ class CoordinateController {
 
         if (!accessMimeType.contains(contentType)) {
             def message = "Тип файла ${contentType} не поддерживается! Разрешены: ${accessMimeType.join(', ')}".toString()
-            return new ResponseDto(status : 'ERROR',
+            return new ResponseDto(status : ResponseStatus.ERROR,
                     errorCode: 'INVALID_MIME_TYPE',
                     message: message)
         }
@@ -134,7 +141,7 @@ class CoordinateController {
         String data = new String(file, StandardCharsets.UTF_8)
 
         if (data.size() == 0) {
-            return new ResponseDto(status: 'ERROR', errorCode: 'EMPTY_FILE', message: 'Выбран пустой файл')
+            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'EMPTY_FILE', message: 'Выбран пустой файл')
         }
 
         def result = [success: 0, savedCoordinates: [], errorDetails: []]

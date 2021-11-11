@@ -14,36 +14,37 @@
       <mat-divider></mat-divider>
     </div>
   </mat-list>
-
   <h2>Файл запуска</h2>
-  <p>Начните вводить команду, чтобы увидеть подсказки.</p>
-  <mat-form-field appearance="fill">
-    <mat-label>Команды</mat-label>
-    <mat-chip-list #chipList aria-label="Command selection" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)">
-      <mat-chip
-        cdkDrag
-        *ngFor="let item of commands; let i = index"
-        [selectable]="selectable"
-        [removable]="removable"
-        (removed)="remove(item.id)">
-        {{i+1}}. Команда: <strong><u>{{item.name}}</u></strong>. Задержка: <input type="number" min="0"> сек.
-        <button matChipRemove *ngIf="removable">
-          <mat-icon>cancel</mat-icon>
-        </button>
-      </mat-chip>
-      <input
-        placeholder="Начните вводить команду..."
-        #coordinateInput
-        [formControl]="commandCtrl"
-        [matAutocomplete]="auto"
-        [matChipInputFor]="chipList"
-        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-        (matChipInputTokenEnd)="add($event)">
-    </mat-chip-list>
-    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
-      <mat-option *ngFor="let item of filteredCommand | async" [value]="item.name">
-        {{item.name}}
-      </mat-option>
-    </mat-autocomplete>
-  </mat-form-field>
+  <p>Сформируйте файл запуска. Команды можно менять местами.</p>
+  <div cdkDropList class="list" (cdkDropListDropped)="drop($event)" #commandList>
+    <div class="box" *ngFor="let item of commands; let i = index" cdkDrag>
+      <div class="handle" cdkDragHandle>
+        <svg width="24px" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"></path>
+          <path d="M0 0h24v24H0z" fill="none"></path>
+        </svg>
+      </div>
+      <div class="custom-placeholder" *cdkDragPlaceholder>Вставь меня сюда</div>
+      <div class="text">
+        <div class="command-name">
+          №{{i+1}}. Команда: <strong><u>{{item.coordinate.name}}</u></strong> (ID={{item.id}})
+        </div>
+        <div class="delay">
+          <span>пауза:</span>
+          <mat-form-field appearance="fill">
+            <input type="text" matInput [id]="'delay-' + item.id" #delay [value]="item.delay"
+                   (change)="changeDelay(item, delay.value)" (click)="savePrevDelay(delay.value)">
+          </mat-form-field>
+          <span>сек.</span>
+          <span [class]="rowHasError ? 'error' : 'message'" *ngIf="rowId == item.id">{{messageRow}}</span>
+        </div>
+      </div>
+      <mat-icon color="warn" (click)="remove(item.id)">cancel</mat-icon>
+    </div>
+  </div>
+  <div class="export" *ngIf="commands.length > 0">
+    <button mat-raised-button color="primary" (click)="exportFileTxt()">Экспорт в .txt
+      <a [href]="exportTxtUrl" style="display: none" #exportTxt></a>
+    </button>
+  </div>
 </ng-container>

@@ -22,7 +22,6 @@ import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 export class CommandLibComponent implements OnInit {
   title = 'docs';
   files: FileHandle[] = [];
-  dataSource: Coordinate[] = [];
   fileUpload: boolean = false;
 
   message: string | undefined;
@@ -60,8 +59,6 @@ export class CommandLibComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
-    this.sessionService.setWorkOptionKey(this.workOptionChecked);
 
     this.storageService.getCurrentStep().pipe(untilDestroyed(this)).subscribe(data => {
       this.currentStep = data;

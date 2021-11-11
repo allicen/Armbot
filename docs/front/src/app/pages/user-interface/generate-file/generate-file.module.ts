@@ -11,27 +11,29 @@ import {MatIconModule} from "@angular/material/icon";
 import {ReactiveFormsModule} from "@angular/forms";
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {MatButtonModule} from "@angular/material/button";
+import {MatInputModule} from "@angular/material/input";
 
 @NgModule({
   declarations: [
     GenerateFileComponent,
   ],
-  imports: [
-    RouterModule.forChild([{
-      path: '',
-      component: GenerateFileComponent
-    }]),
-    MatListModule,
-    CommonModule,
-    MatFormFieldModule,
-    MatChipsModule,
-    MatAutocompleteModule,
-    MatOptionModule,
-    MatIconModule,
-    ReactiveFormsModule,
-    DragDropModule,
-    MatButtonModule,
-  ],
+    imports: [
+        RouterModule.forChild([{
+            path: '',
+            component: GenerateFileComponent
+        }]),
+        MatListModule,
+        CommonModule,
+        MatFormFieldModule,
+        MatChipsModule,
+        MatAutocompleteModule,
+        MatOptionModule,
+        MatIconModule,
+        ReactiveFormsModule,
+        DragDropModule,
+        MatButtonModule,
+        MatInputModule,
+    ],
   exports: [GenerateFileComponent],
   providers: [],
   bootstrap: [GenerateFileComponent]

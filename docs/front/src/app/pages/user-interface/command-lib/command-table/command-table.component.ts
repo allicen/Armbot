@@ -60,8 +60,15 @@ export class CommandTableComponent implements OnInit {
         });
 
         this.storageService.getCoordinateDelete().pipe(untilDestroyed(this)).subscribe(id => {
+            if (id === -1) {
+                return;
+            }
 
             const index = this.coordinateList.findIndex(c => c.id == id);
+            if (index === -1) {
+                return;
+            }
+
             this.coordinateList.splice(index, 1);
             this.renderTable();
             this.hideMessage();
@@ -142,7 +149,8 @@ export class CommandTableComponent implements OnInit {
 
     removeCoordinate(id: number) {
         this.dialog.open(OpenDialogComponent, {
-            data: { id: id, title: 'Удалить строку?', text: 'Действие отменить нельзя.', type: 'delete_coordinate' }
+            data: { id: id, title: 'Удалить строку?', text: 'Будут удалены команды из файла запуска с этой координатой. ' +
+                                                            'Действие отменить нельзя.', type: 'delete_coordinate' }
         });
     }
 

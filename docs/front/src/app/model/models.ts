@@ -6,6 +6,13 @@ export interface Coordinate {
   z: number;
 }
 
+export interface LaunchFileRow {
+  id: number,
+  coordinate: Coordinate,
+  delay: number,
+  sortOrder: number
+}
+
 export interface IdData {
   type: string;
   title: string;
