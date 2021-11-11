@@ -1,12 +1,10 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Coordinate, LaunchFileRow} from "../../../model/models";
-import {COMMA, ENTER} from "@angular/cdk/keycodes";
-import {FormControl} from "@angular/forms";
-import {Observable} from "rxjs";
-import {map, startWith} from "rxjs/operators";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 import {SessionService} from "../../../serviсes/session.service";
+import {HttpService} from "../../../serviсes/http.service";
+import {main} from "@angular/compiler-cli/src/main";
 
 @UntilDestroy()
 @Component({
@@ -23,32 +21,37 @@ export class GenerateFileComponent implements OnInit {
     rowId: number = -1;
     prevDelay: number = 0;
     exportTxtRowsUrl: any;
-    saveTxtRowsUrl: any;
+    maxId: number = 0;
 
     @ViewChild('coordinateInput') coordinateInput: ElementRef<HTMLInputElement> | undefined;
     @ViewChild("commandList") commandList: ElementRef | undefined;
 
-    constructor(private sessionService: SessionService) { }
+    constructor(private sessionService: SessionService, private httpService: HttpService) { }
 
     ngOnInit(): void {
         this.sessionService.getCoordinateList().pipe(untilDestroyed(this)).subscribe(data => this.coordinateList = data);
         this.sessionService.getLaunchFileRow().pipe(untilDestroyed(this)).subscribe(data => {
             this.commands = data;
         });
+        this.sessionService.getNextFileRowId().pipe(untilDestroyed(this)).subscribe(data => this.maxId = data);
     }
 
     choice(id: number): void {
         const cIndex = this.coordinateList.findIndex(c => c.id == id);
-        const next: number = this.commands.length;
+        const next: number = this.maxId + 1;
         const command: LaunchFileRow = {id: next, coordinate: this.coordinateList[cIndex], delay: 0, sortOrder: next};
         this.sessionService.addLaunchFileRowList(command);
         this.clearMessage();
     }
 
     remove(index: number): void {
-        const cIndex = this.commands.findIndex(c => c.id === index);
-        this.commands.splice(cIndex, 1);
-        this.clearMessage();
+        this.httpService.removeLaunchFileRow(index).pipe().subscribe(data => {
+            if (data.status === 'SUCCESS') {
+                const cIndex = this.commands.findIndex(c => c.id === index);
+                this.commands.splice(cIndex, 1);
+                this.clearMessage();
+            }
+        });
     }
 
     drop(event: CdkDragDrop<Coordinate[]>) {

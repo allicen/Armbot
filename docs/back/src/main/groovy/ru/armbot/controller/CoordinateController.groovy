@@ -126,7 +126,7 @@ class CoordinateController {
 
         if (!accessMimeType.contains(contentType)) {
             def message = "Тип файла ${contentType} не поддерживается! Разрешены: ${accessMimeType.join(', ')}".toString()
-            return new ResponseDto(status : 'ERROR',
+            return new ResponseDto(status : ResponseStatus.ERROR,
                     errorCode: 'INVALID_MIME_TYPE',
                     message: message)
         }
@@ -134,7 +134,7 @@ class CoordinateController {
         String data = new String(file, StandardCharsets.UTF_8)
 
         if (data.size() == 0) {
-            return new ResponseDto(status: 'ERROR', errorCode: 'EMPTY_FILE', message: 'Выбран пустой файл')
+            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'EMPTY_FILE', message: 'Выбран пустой файл')
         }
 
         def result = [success: 0, savedCoordinates: [], errorDetails: []]
