@@ -22,7 +22,7 @@ import ru.armbot.repository.LaunchFileRowRepository
 import ru.armbot.repository.SessionStateRepository
 import ru.armbot.service.CoordinateExcelService
 import ru.armbot.service.CoordinateService
-import ru.armbot.service.txtService
+import ru.armbot.service.TxtService
 
 import java.nio.charset.StandardCharsets
 import java.time.ZonedDateTime
@@ -38,7 +38,7 @@ class CoordinateController {
     @Inject CoordinateService coordinateService
     @Inject CoordinateRepository coordinateRepository
     @Inject CoordinateExcelService coordinateExcelService
-    @Inject txtService txtService
+    @Inject TxtService txtService
     @Inject SessionStateRepository sessionStateRepository
     @Inject LaunchFileRowRepository launchFileRowRepository
 

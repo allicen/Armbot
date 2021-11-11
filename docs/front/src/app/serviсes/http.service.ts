@@ -248,4 +248,12 @@ export class HttpService {
     exportLaunchFileTxt(): string {
         return `${this.config.httpUrl}/file/txt`
     }
+
+
+    /**
+     * Экспорт сессии в json
+     * */
+    exportSessionJson(): string {
+        return `${this.config.httpUrl}/session/export`
+    }
 }
