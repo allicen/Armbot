@@ -240,4 +240,12 @@ export class HttpService {
             }),
         );
     }
+
+
+    /**
+     * Экспорт txt
+     * */
+    exportLaunchFileTxt(): string {
+        return `${this.config.httpUrl}/file/txt`
+    }
 }

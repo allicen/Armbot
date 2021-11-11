@@ -20,7 +20,7 @@ import ru.armbot.repository.CoordinateRepository
 import ru.armbot.repository.SessionStateRepository
 import ru.armbot.service.CoordinateExcelService
 import ru.armbot.service.CoordinateService
-import ru.armbot.service.CoordinateTxtService
+import ru.armbot.service.txtService
 
 import java.nio.charset.StandardCharsets
 import java.time.ZonedDateTime
@@ -36,7 +36,7 @@ class CoordinateController {
     @Inject CoordinateService coordinateService
     @Inject CoordinateRepository coordinateRepository
     @Inject CoordinateExcelService coordinateExcelService
-    @Inject CoordinateTxtService coordinateTxtService
+    @Inject txtService txtService
     @Inject SessionStateRepository sessionStateRepository
 
     @Post(value = "/save")
@@ -118,7 +118,7 @@ class CoordinateController {
     @Get(value = "/txt")
     def exportCoordinatesTxt() {
         def list = coordinateRepository.list()
-        return coordinateTxtService.txtFile(list)
+        return txtService.coordinateTxtFile(list)
     }
 
     @Post(value = "/import", consumes = MediaType.MULTIPART_FORM_DATA)

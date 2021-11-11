@@ -20,15 +20,17 @@ export class GenerateFileComponent implements OnInit {
     messageRow: string = '';
     rowId: number = -1;
     prevDelay: number = 0;
-    exportTxtRowsUrl: any;
     maxId: number = 0;
+    exportTxtUrl: string = '';
 
     @ViewChild('coordinateInput') coordinateInput: ElementRef<HTMLInputElement> | undefined;
     @ViewChild("commandList") commandList: ElementRef | undefined;
+    @ViewChild("exportTxt") exportTxt: ElementRef | undefined;
 
     constructor(private sessionService: SessionService, private httpService: HttpService) { }
 
     ngOnInit(): void {
+        this.exportTxtUrl = this.httpService.exportLaunchFileTxt();
         this.sessionService.getCoordinateList().pipe(untilDestroyed(this)).subscribe(data => this.coordinateList = data);
         this.sessionService.getLaunchFileRow().pipe(untilDestroyed(this)).subscribe(data => {
             this.commands = data;
@@ -101,7 +103,7 @@ export class GenerateFileComponent implements OnInit {
         this.rowId = -1;
     }
 
-  exportFileTxt() {
-
-  }
+    exportFileTxt() {
+        this.exportTxt?.nativeElement.click();
+    }
 }

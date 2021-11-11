@@ -44,7 +44,7 @@
   </div>
   <div class="export" *ngIf="commands.length > 0">
     <button mat-raised-button color="primary" (click)="exportFileTxt()">Экспорт в .txt
-      <a [href]="exportTxtRowsUrl" style="display: none" #exportTxt></a>
+      <a [href]="exportTxtUrl" style="display: none" #exportTxt></a>
     </button>
   </div>
 </ng-container>

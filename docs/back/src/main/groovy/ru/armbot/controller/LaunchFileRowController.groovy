@@ -12,12 +12,14 @@ import ru.armbot.domain.ResponseStatus
 import ru.armbot.dto.ResponseDto
 import ru.armbot.repository.CoordinateRepository
 import ru.armbot.repository.LaunchFileRowRepository
+import ru.armbot.service.txtService
 
 @Controller("/file")
 class LaunchFileRowController {
 
     @Inject LaunchFileRowRepository launchFileRowRepository
     @Inject CoordinateRepository coordinateRepository
+    @Inject txtService txtService
 
     LaunchFileRowController() {}
 
@@ -105,6 +107,13 @@ class LaunchFileRowController {
             return new ResponseDto(status: ResponseStatus.ERROR,
                     errorCode: 'ERROR_SET_SORT_ORDER', message: 'При сохранении сортировки произошла ошибка')
         }
+    }
+
+
+    @Get(value = "/txt")
+    def exportCoordinatesTxt() {
+        def list = launchFileRowRepository.list()
+        return txtService.fileRowTxtFile(list)
     }
 
 
