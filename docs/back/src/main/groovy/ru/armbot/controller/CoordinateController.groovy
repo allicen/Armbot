@@ -1,5 +1,6 @@
 package ru.armbot.controller
 
+import ru.armbot.domain.LaunchFileRow
 import ru.armbot.domain.SessionState
 import ru.armbot.domain.WorkOption
 import ru.armbot.dto.ResponseDto
@@ -17,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory
 import ru.armbot.domain.Coordinate
 import ru.armbot.repository.CoordinateRepository
+import ru.armbot.repository.LaunchFileRowRepository
 import ru.armbot.repository.SessionStateRepository
 import ru.armbot.service.CoordinateExcelService
 import ru.armbot.service.CoordinateService
@@ -38,6 +40,7 @@ class CoordinateController {
     @Inject CoordinateExcelService coordinateExcelService
     @Inject txtService txtService
     @Inject SessionStateRepository sessionStateRepository
+    @Inject LaunchFileRowRepository launchFileRowRepository
 
     @Post(value = "/save")
     def save(@Body Coordinate coordinate) {
@@ -83,6 +86,7 @@ class CoordinateController {
     @Get(value = "/removeAll")
     def removeAll() {
         try {
+            launchFileRowRepository.deleteAll()
             coordinateRepository.deleteAll()
             return new ResponseDto(status: ResponseStatus.SUCCESS, message: 'Координаты успешно удалены')
         } catch (e) {
@@ -99,7 +103,10 @@ class CoordinateController {
             return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'NOT_FOUND', message: 'Координата не найдена')
         }
 
+        LaunchFileRow launchFileRow = launchFileRowRepository.list().find {it.coordinate.id == id}
+
         try {
+            launchFileRowRepository.delete(launchFileRow)
             coordinateRepository.delete(coordinate)
             return new ResponseDto(status: ResponseStatus.SUCCESS, message: 'Координата удалена!')
         } catch (e) {

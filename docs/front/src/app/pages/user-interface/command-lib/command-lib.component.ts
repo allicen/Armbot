@@ -60,8 +60,6 @@ export class CommandLibComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.sessionService.setWorkOptionKey(this.workOptionChecked);
-
     this.storageService.getCurrentStep().pipe(untilDestroyed(this)).subscribe(data => {
       this.currentStep = data;
 

@@ -149,7 +149,8 @@ export class CommandTableComponent implements OnInit {
 
     removeCoordinate(id: number) {
         this.dialog.open(OpenDialogComponent, {
-            data: { id: id, title: 'Удалить строку?', text: 'Действие отменить нельзя.', type: 'delete_coordinate' }
+            data: { id: id, title: 'Удалить строку?', text: 'Будут удалены команды из файла запуска с этой координатой. ' +
+                                                            'Действие отменить нельзя.', type: 'delete_coordinate' }
         });
     }
 

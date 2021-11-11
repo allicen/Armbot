@@ -5,6 +5,7 @@ import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 import {SessionService} from "../../../serviсes/session.service";
 import {HttpService} from "../../../serviсes/http.service";
 import {main} from "@angular/compiler-cli/src/main";
+import {StorageService} from "../../../serviсes/storage.service";
 
 @UntilDestroy()
 @Component({
@@ -22,12 +23,15 @@ export class GenerateFileComponent implements OnInit {
     prevDelay: number = 0;
     maxId: number = 0;
     exportTxtUrl: string = '';
+    coordinateDelete: number = -1;
 
     @ViewChild('coordinateInput') coordinateInput: ElementRef<HTMLInputElement> | undefined;
     @ViewChild("commandList") commandList: ElementRef | undefined;
     @ViewChild("exportTxt") exportTxt: ElementRef | undefined;
 
-    constructor(private sessionService: SessionService, private httpService: HttpService) { }
+    constructor(private sessionService: SessionService,
+                private httpService: HttpService,
+                private storageService: StorageService) { }
 
     ngOnInit(): void {
         this.exportTxtUrl = this.httpService.exportLaunchFileTxt();
@@ -36,6 +40,12 @@ export class GenerateFileComponent implements OnInit {
             this.commands = data;
         });
         this.sessionService.getNextFileRowId().pipe(untilDestroyed(this)).subscribe(data => this.maxId = data);
+        this.storageService.getCoordinateDelete().pipe(untilDestroyed(this)).subscribe(data => {
+            if (data != -1) {
+                const cIndex = this.commands.findIndex(c => c.id === data);
+                this.commands.splice(cIndex, 1);
+            }
+        });
     }
 
     choice(id: number): void {
