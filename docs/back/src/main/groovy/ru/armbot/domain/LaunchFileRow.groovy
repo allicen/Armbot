@@ -22,7 +22,7 @@ import static org.hibernate.annotations.CascadeType.*
 import static org.hibernate.annotations.CascadeType.ALL as ALL
 
 /**
- * Файл запуска
+ * Строка файла запуска
  * */
 
 @Entity

@@ -25,7 +25,7 @@ export class UserInterfaceComponent implements OnInit {
       }
     });
 
-    this.tab = this.storageService.getUserInterfaceTab(this.router.url);
+      this.tab = this.storageService.getUserInterfaceTab(this.router.url);
 
       this.sessionService.getSession().pipe(untilDestroyed(this)).subscribe(data => {
       this.sessionExists = data;

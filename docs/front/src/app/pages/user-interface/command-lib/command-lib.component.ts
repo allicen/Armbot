@@ -22,7 +22,6 @@ import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 export class CommandLibComponent implements OnInit {
   title = 'docs';
   files: FileHandle[] = [];
-  dataSource: Coordinate[] = [];
   fileUpload: boolean = false;
 
   message: string | undefined;

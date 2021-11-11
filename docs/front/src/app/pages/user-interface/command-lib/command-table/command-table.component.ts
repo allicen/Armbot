@@ -60,8 +60,15 @@ export class CommandTableComponent implements OnInit {
         });
 
         this.storageService.getCoordinateDelete().pipe(untilDestroyed(this)).subscribe(id => {
+            if (id === -1) {
+                return;
+            }
 
             const index = this.coordinateList.findIndex(c => c.id == id);
+            if (index === -1) {
+                return;
+            }
+
             this.coordinateList.splice(index, 1);
             this.renderTable();
             this.hideMessage();

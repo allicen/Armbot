@@ -2,7 +2,7 @@ import {Injectable} from "@angular/core";
 import {BehaviorSubject, Observable} from "rxjs";
 import {HttpService} from "./http.service";
 import {DomSanitizer} from "@angular/platform-browser";
-import {Coordinate, Position} from "../model/models";
+import {Coordinate, LaunchFileRow, Position} from "../model/models";
 import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 import {StorageService} from "./storage.service";
 import {MessageService} from "./message.service";
@@ -23,8 +23,10 @@ export class SessionService {
     private canEditImage$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
     private coordinateList$: BehaviorSubject<Coordinate[]> = new BehaviorSubject<Coordinate[]>([]);
     private workOptionKey$: BehaviorSubject<string> = new BehaviorSubject<string>('uploadImage');
+    private launchFileRow$: BehaviorSubject<LaunchFileRow[]> = new BehaviorSubject<LaunchFileRow[]>([]);
 
     private coordinateList: Coordinate[] = [];
+    private launchFileRowList: LaunchFileRow[] = [];
 
 
     getSession(): Observable<any> {
@@ -54,35 +56,37 @@ export class SessionService {
 
     fillFieldsSession(data: any) {
 
-      if (data.status === 'NO_SESSION') {
-          this.sessionExists$.next(false);
-          return;
-      }
+        if (data.status === 'NO_SESSION') {
+            this.sessionExists$.next(false);
+            return;
+        }
 
-      if (data.status === 'SUCCESS') {
-          this.sessionExists$.next(true);
-          this.workOptionKey$.next(data.details.workOption);
-      }
+        if (data.status === 'SUCCESS') {
+            this.sessionExists$.next(true);
+            this.workOptionKey$.next(data.details.workOption);
+        }
 
-      if (data.status === 'SUCCESS' && data.details.image) {
-          this.image$.next(this.sanitizer.bypassSecurityTrustResourceUrl(`data:${data.details.image.contentType};base64,${data.details.image.imageByte}`));
-          this.imagePosition$.next({x: data.details.image.imagePositionX, y: data.details.image.imagePositionY});
-          this.imageWidth$.next(data.details.image.imageWidthPx);
-          this.canEditImage$.next(data.details.image.canEdit);
+        if (data.status === 'SUCCESS' && data.details.image) {
+            this.image$.next(this.sanitizer.bypassSecurityTrustResourceUrl(`data:${data.details.image.contentType};base64,${data.details.image.imageByte}`));
+            this.imagePosition$.next({x: data.details.image.imagePositionX, y: data.details.image.imagePositionY});
+            this.imageWidth$.next(data.details.image.imageWidthPx);
+            this.canEditImage$.next(data.details.image.canEdit);
 
-          if (data.details.image.canEdit) {
-              this.storageService.setCurrentStep(2);
-          } else {
-              this.storageService.setCurrentStep(3);
-          }
-      }
+            if (data.details.image.canEdit) {
+                this.storageService.setCurrentStep(2);
+            } else {
+                this.storageService.setCurrentStep(3);
+            }
+        }
 
         if (data.status === 'SUCCESS' && data.details.coordinateList) {
+            const list: Coordinate[] = [];
             data.details.coordinateList.forEach((item: any) => {
                 const coordinate: Coordinate = {id: item.id, name: item.name, x: item.x, y: item.y, z: item.z};
-                this.coordinateList.push(coordinate);
-                this.setCoordinateList(this.coordinateList);
+                list.push(coordinate);
             });
+
+            this.setCoordinateList(list);
         }
     }
 
@@ -130,7 +134,8 @@ export class SessionService {
     }
 
     setCoordinateList(coordinateList: Coordinate[]): void {
-        this.coordinateList$.next(coordinateList);
+        this.coordinateList = coordinateList;
+        this.coordinateList$.next(this.coordinateList);
     }
 
     getCoordinateList(): Observable<Coordinate[]> {
@@ -148,6 +153,35 @@ export class SessionService {
 
     setWorkOptionKey(option: string): void {
         this.workOptionKey$.next(option);
+    }
+
+    getLaunchFileRow(): Observable<LaunchFileRow[]> {
+        return this.launchFileRow$.asObservable();
+    }
+
+    setLaunchFileRow(launchFileRowList: LaunchFileRow[]): void {
+        this.launchFileRow$.next(launchFileRowList);
+    }
+
+    addLaunchFileRowList(launchFileRow: LaunchFileRow): void {
+        this.launchFileRowList.push(launchFileRow);
+        this.setLaunchFileRow(this.launchFileRowList);
+    }
+
+    changeDelay(itemId: number, delay: string): void {
+        const rowIndex: number = this.launchFileRowList.findIndex(c => c.id == itemId);
+        this.launchFileRowList[rowIndex].delay = Number(delay);
+        this.setLaunchFileRow(this.launchFileRowList);
+    }
+
+    launchFileRowListSort(firstElemId: number, secondElemId: number, firstSortOrder: number, secondSortOrder: number) {
+        const firstIndex: number = this.launchFileRowList.findIndex(c => c.id === firstElemId);
+        const secondIndex: number = this.launchFileRowList.findIndex(c => c.id === secondElemId);
+
+        this.launchFileRowList[firstIndex].sortOrder = secondSortOrder;
+        this.launchFileRowList[secondIndex].sortOrder = firstSortOrder;
+
+        this.setLaunchFileRow(this.launchFileRowList);
     }
 
 }
