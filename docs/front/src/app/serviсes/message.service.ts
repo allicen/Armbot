@@ -31,17 +31,17 @@ export class MessageService {
         this.importErrors$.next(list);
     }
 
-    getCoordinateMessage(): Observable<string> {
-        return this.coordinateMessage$.asObservable();
-    }
+    // getCoordinateMessage(): Observable<string> {
+    //     return this.coordinateMessage$.asObservable();
+    // }
 
     setCoordinateMessage(message: string): void {
         this.coordinateMessage$.next(message);
     }
 
-    getCoordinateMessageIsError(): Observable<boolean> {
-        return this.coordinateMessageIsError$.asObservable();
-    }
+    // getCoordinateMessageIsError(): Observable<boolean> {
+    //     return this.coordinateMessageIsError$.asObservable();
+    // }
 
     setCoordinateMessageIsError(error: boolean): void {
         this.coordinateMessageIsError$.next(error);

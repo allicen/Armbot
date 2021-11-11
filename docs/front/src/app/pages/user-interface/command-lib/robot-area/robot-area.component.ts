@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Coordinate, Position} from "../../../../model/models";
 import {SizeService} from "../../../../serviсes/size.service";
 import {HttpService} from "../../../../serviсes/http.service";
@@ -40,7 +40,6 @@ export class RobotAreaComponent implements OnInit {
     gridColors: string[] = ['default', 'black', 'yellow', 'red', 'green'];
 
     clickCoordinate: Coordinate | undefined;
-
 
     @ViewChild("uploadImage") uploadImage: ElementRef | undefined;
     @ViewChild("robotArea") robotArea: ElementRef | undefined;
@@ -170,8 +169,7 @@ export class RobotAreaComponent implements OnInit {
     setEditingCompleted() {
         this.sessionService.setImageEditAllowed(false);
         this.httpService.setImageDetails(this.dragImagePosition, this.imageWidthPx || 0, false)
-            .pipe(untilDestroyed(this)).subscribe(data => {
-        });
+            .pipe(untilDestroyed(this)).subscribe();
 
         this.storage.setCurrentStep(3);
     }

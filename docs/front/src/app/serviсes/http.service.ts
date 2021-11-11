@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {EMPTY, Observable, of, Subscription, throwError} from "rxjs";
+import {EMPTY, Observable, throwError} from "rxjs";
 import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 import {FileHandle} from "../pages/user-interface/command-lib/import-image/dragDrop.directive";
 import {Config} from "../config/config";

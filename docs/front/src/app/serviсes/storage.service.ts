@@ -4,7 +4,6 @@ import { Router } from "@angular/router";
 import {HttpService} from "./http.service";
 import {Coordinate} from "../model/models";
 import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
-import {SessionService} from "./session.service";
 
 @UntilDestroy()
 @Injectable({ providedIn: 'root' })

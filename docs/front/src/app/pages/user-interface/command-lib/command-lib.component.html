@@ -66,7 +66,7 @@ second:1 2 3
 third:123 547 0</code></pre>
     </section>
   </mat-expansion-panel>
-  <button mat-raised-button color="primary" (click)="openDialogPointsFile($event)">
+  <button mat-raised-button color="primary" (click)="openDialogPointsFile()">
     Выбрать файл для импорта
     <input type="file" style="display: none;" #inputFilePoints (change)="changeFilePoints($event)" />
   </button>

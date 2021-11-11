@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {FileHandle} from "./import-image/dragDrop.directive";
 import {Coordinate, WorkOption} from "../../../model/models";
 import {Subject} from "rxjs";
@@ -67,11 +67,7 @@ export class CommandLibComponent implements OnInit {
       this.currentStep = data;
 
       // текущие шаги запоминаем, только если есть сессия и картинка
-      if (data > 1) {
-        this.imageUploaded = true;
-      } else {
-        this.imageUploaded = false;
-      }
+      this.imageUploaded = data > 1;
     });
 
     this.sessionService.getSessionExists().pipe(untilDestroyed(this)).subscribe(data => this.sessionExists = data);
@@ -84,7 +80,6 @@ export class CommandLibComponent implements OnInit {
   }
 
   removeSession() {
-    this.clearImportMessage();
     this.dialog.open(OpenDialogComponent, {
       data: {title: 'Завершить сеанс?',
             text: 'Будут удалены все координаты и загруженное изображение. Действие отменить нельзя.',
@@ -97,7 +92,7 @@ export class CommandLibComponent implements OnInit {
     this.storageService.setCurrentStep(2);
   }
 
-  openDialogPointsFile($event: MouseEvent) {
+  openDialogPointsFile() {
     if (this.inputFilePoints) {
       this.inputFilePoints.nativeElement.click();
     }
@@ -108,7 +103,6 @@ export class CommandLibComponent implements OnInit {
   }
 
   changeFilePoints($event: Event) {
-    this.clearImportMessage();
     const element = $event.currentTarget as HTMLInputElement;
 
     if (!element.files) {
@@ -132,9 +126,5 @@ export class CommandLibComponent implements OnInit {
       }
     })
   }
-
-  clearImportMessage() {
-  }
-
 
 }
