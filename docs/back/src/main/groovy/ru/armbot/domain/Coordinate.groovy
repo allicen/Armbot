@@ -4,14 +4,12 @@ import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import io.micronaut.core.annotation.Introspected
 import io.micronaut.core.annotation.NonNull
-import io.micronaut.core.annotation.Nullable
 
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.validation.constraints.NotBlank
-import java.time.ZonedDateTime
 
 /**
  * Координата
@@ -43,9 +41,6 @@ class Coordinate {
     double z = 0
 
     SizeUnit unit = SizeUnit.MM
-
-    @Nullable
-    ZonedDateTime timeCreate
 
     Coordinate() {
     }

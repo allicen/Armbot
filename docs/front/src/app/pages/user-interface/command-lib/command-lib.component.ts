@@ -44,6 +44,7 @@ export class CommandLibComponent implements OnInit {
   workOptionChecked: string = this.workOptions[0].key;
 
   @ViewChild("inputFilePoints") inputFilePoints: ElementRef | undefined;
+  @ViewChild("inputFileSession") inputFileSession: ElementRef | undefined;
 
   public messages: Subject<any> | undefined;
 
@@ -116,4 +117,17 @@ export class CommandLibComponent implements OnInit {
     })
   }
 
+  openDialogSessionFile() {
+    this.inputFileSession?.nativeElement?.click();
+  }
+
+  changeFileSession($event: Event) {
+    const element = $event.currentTarget as HTMLInputElement;
+
+    if (!element.files) {
+      return;
+    }
+
+    this.sessionService.importSession(element.files[0]);
+  }
 }

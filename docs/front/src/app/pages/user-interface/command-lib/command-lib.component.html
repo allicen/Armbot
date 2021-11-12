@@ -38,6 +38,13 @@
   <app-robot-area></app-robot-area>
 </div>
 
+<div class="session" *ngIf="workOptionChecked === 'uploadSession'">
+  <button mat-raised-button color="primary" (click)="openDialogSessionFile()">
+    Выбрать файл для импорта
+    <input type="file" style="display: none;" #inputFileSession (change)="changeFileSession($event)" />
+  </button>
+</div>
+
 <div class="import" *ngIf="sessionExists && workOptionChecked === 'uploadImage' && imageUploaded || workOptionChecked === 'uploadCoordinateList'">
   <mat-expansion-panel (opened)="aboutImportOpen = true"
                        (closed)="aboutImportOpen = false">

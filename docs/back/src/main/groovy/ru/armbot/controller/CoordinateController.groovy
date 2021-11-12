@@ -46,7 +46,6 @@ class CoordinateController {
     def save(@Body Coordinate coordinate) {
         coordinate.id = null
         coordinate.name = coordinateService.generateName()
-        coordinate.timeCreate = ZonedDateTime.now()
 
         try {
             coordinateRepository.save(coordinate)
