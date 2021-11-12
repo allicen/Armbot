@@ -244,4 +244,16 @@ export class SessionService {
         this.maxId = id;
         this.nextId$.next(id);
     }
+
+    importSession(file: File) {
+        this.httpService.importSessionJson(file).pipe(untilDestroyed(this)).subscribe(res => {
+            if (!res) {
+                return;
+            }
+
+            if (res.status === 'SUCCESS') {
+                this.uploadSession();
+            }
+        });
+    }
 }

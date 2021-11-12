@@ -8,7 +8,6 @@ import {MatDialog} from "@angular/material/dialog";
 import {StorageService} from "../../../serviсes/storage.service";
 import {Config} from "../../../config/config";
 import {SizeService} from "../../../serviсes/size.service";
-import {OpenDialogComponent} from "../open-dialog/open-dialog.component";
 import {SessionService} from "../../../serviсes/session.service";
 import {MessageService} from "../../../serviсes/message.service";
 import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
@@ -45,6 +44,7 @@ export class CommandLibComponent implements OnInit {
   workOptionChecked: string = this.workOptions[0].key;
 
   @ViewChild("inputFilePoints") inputFilePoints: ElementRef | undefined;
+  @ViewChild("inputFileSession") inputFileSession: ElementRef | undefined;
 
   public messages: Subject<any> | undefined;
 
@@ -74,14 +74,6 @@ export class CommandLibComponent implements OnInit {
     });
 
     this.sessionService.getWorkOptionKey().pipe(untilDestroyed(this)).subscribe(data => this.workOptionChecked = data);
-  }
-
-  removeSession() {
-    this.dialog.open(OpenDialogComponent, {
-      data: {title: 'Завершить сеанс?',
-            text: 'Будут удалены все координаты и загруженное изображение. Действие отменить нельзя.',
-            type: 'remove_session'}
-    });
   }
 
   setEditAllowed() {
@@ -116,6 +108,7 @@ export class CommandLibComponent implements OnInit {
 
       if (res.details?.savedCoordinates) {
         this.sessionExists = true;
+        this.sessionService.setSession(true);
 
         for (let item of res.details?.savedCoordinates) {
           this.sessionService.addCoordinateInList(item);
@@ -124,4 +117,17 @@ export class CommandLibComponent implements OnInit {
     })
   }
 
+  openDialogSessionFile() {
+    this.inputFileSession?.nativeElement?.click();
+  }
+
+  changeFileSession($event: Event) {
+    const element = $event.currentTarget as HTMLInputElement;
+
+    if (!element.files) {
+      return;
+    }
+
+    this.sessionService.importSession(element.files[0]);
+  }
 }

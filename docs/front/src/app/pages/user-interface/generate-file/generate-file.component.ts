@@ -4,7 +4,6 @@ import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 import {SessionService} from "../../../serviсes/session.service";
 import {HttpService} from "../../../serviсes/http.service";
-import {main} from "@angular/compiler-cli/src/main";
 import {StorageService} from "../../../serviсes/storage.service";
 
 @UntilDestroy()
@@ -45,6 +44,7 @@ export class GenerateFileComponent implements OnInit {
                 const cIndex = this.commands.findIndex(c => c.id === data);
                 this.commands.splice(cIndex, 1);
             }
+            this.storageService.setCoordinateDelete(-1);
         });
     }
 

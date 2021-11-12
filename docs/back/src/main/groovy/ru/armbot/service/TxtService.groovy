@@ -8,7 +8,7 @@ import ru.armbot.domain.Coordinate
 import ru.armbot.domain.LaunchFileRow
 
 @Singleton
-class txtService {
+class TxtService {
     SystemFile coordinateTxtFile (List<Coordinate> coordinateList) {
 
         try {

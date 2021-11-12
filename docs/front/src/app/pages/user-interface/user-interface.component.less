@@ -3,6 +3,8 @@
 .tabs {
   margin-top: -20px;
   margin-bottom: 40px;
+  display: flex;
+  justify-content: space-between;
 
   a {
     color: rgba(0,0,0,.87);
@@ -13,4 +15,13 @@
     background: @grid-color-default;
     color: @black-color;
   }
+}
+
+
+::ng-deep .mat-tab-links {
+  justify-content: space-between;
+}
+
+section.buttons {
+  margin-top: 0;
 }

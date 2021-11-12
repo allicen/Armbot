@@ -2,7 +2,6 @@
   <h1>Формирование команд</h1>
   <div class="buttons">
     <button mat-stroked-button color="primary" (click)="setEditAllowed()" *ngIf="imageUploaded && !editingAllowed">Вернуться к редактированию</button>
-    <button mat-stroked-button color="warn" (click)="removeSession()" *ngIf="sessionExists">Завершить сеанс</button>
   </div>
 </div>
 
@@ -37,6 +36,13 @@
 
 <div *ngIf="sessionExists && imageUploaded && workOptionChecked === 'uploadImage'" class="image-block">
   <app-robot-area></app-robot-area>
+</div>
+
+<div class="session" *ngIf="workOptionChecked === 'uploadSession'">
+  <button mat-raised-button color="primary" (click)="openDialogSessionFile()">
+    Выбрать файл для импорта
+    <input type="file" style="display: none;" #inputFileSession (change)="changeFileSession($event)" />
+  </button>
 </div>
 
 <div class="import" *ngIf="sessionExists && workOptionChecked === 'uploadImage' && imageUploaded || workOptionChecked === 'uploadCoordinateList'">

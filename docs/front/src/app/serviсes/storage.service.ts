@@ -51,6 +51,9 @@ export class StorageService {
     }
 
     setCoordinateDelete(id: number): void {
+        if (id === -1) {
+            return;
+        }
         this.httpService.removeCoordinate(id).pipe(untilDestroyed(this)).subscribe((res: any) => {
             if (!res) {
                 return;

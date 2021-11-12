@@ -12,14 +12,14 @@ import ru.armbot.domain.ResponseStatus
 import ru.armbot.dto.ResponseDto
 import ru.armbot.repository.CoordinateRepository
 import ru.armbot.repository.LaunchFileRowRepository
-import ru.armbot.service.txtService
+import ru.armbot.service.TxtService
 
 @Controller("/file")
 class LaunchFileRowController {
 
     @Inject LaunchFileRowRepository launchFileRowRepository
     @Inject CoordinateRepository coordinateRepository
-    @Inject txtService txtService
+    @Inject TxtService txtService
 
     LaunchFileRowController() {}
 

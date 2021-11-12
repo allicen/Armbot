@@ -124,7 +124,7 @@ export class HttpService {
      * Экспорт Excel
      * */
     getUrlExport(): string {
-        return `${this.config.httpUrl}/coordinate/excel`
+        return `${this.config.httpUrl}/coordinate/excel`;
     }
 
 
@@ -132,7 +132,7 @@ export class HttpService {
      * Экспорт txt
      * */
     getUrlExportTxt(): string {
-        return `${this.config.httpUrl}/coordinate/txt`
+        return `${this.config.httpUrl}/coordinate/txt`;
     }
 
 
@@ -246,6 +246,26 @@ export class HttpService {
      * Экспорт txt
      * */
     exportLaunchFileTxt(): string {
-        return `${this.config.httpUrl}/file/txt`
+        return `${this.config.httpUrl}/file/txt`;
+    }
+
+
+    /**
+     * Экспорт сессии в json
+     * */
+    exportSessionJson(): string {
+        return `${this.config.httpUrl}/session/export`;
+    }
+
+
+    /**
+     * Импорт сессии из json
+     * */
+    importSessionJson(file: File): Observable<any> {
+        return this.http.post(`${this.config.httpUrl}/session/import`, file).pipe(
+            map(res => {
+                return res;
+            })
+        );
     }
 }
