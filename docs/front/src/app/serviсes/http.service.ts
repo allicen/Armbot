@@ -175,8 +175,12 @@ export class HttpService {
     /**
      * Записать строку в файл запуска
      * */
-    saveLaunchFileRow(coordinateId: number): Observable<any> {
-        return this.http.get(`${this.config.httpUrl}/file/save/${coordinateId}`).pipe(
+    saveLaunchFileRow(coordinateId: number, delay: number): Observable<any> {
+        const formData: FormData = new FormData();
+        formData.append('coordinateId', coordinateId.toString());
+        formData.append('delay', delay.toString());
+
+        return this.http.post(`${this.config.httpUrl}/file/save`, formData).pipe(
             catchError((error: HttpErrorResponse) => {
                 return throwError(error);
             }),

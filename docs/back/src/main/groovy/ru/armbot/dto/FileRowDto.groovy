@@ -8,7 +8,7 @@ class FileRowDto {
     long coordinateId
 
     // Задержка между нажатиями
-    int delay = 0
+    double delay = 0
 
     // Порядок сортировки строк
     int sortOrder = 0

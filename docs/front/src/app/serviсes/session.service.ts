@@ -203,11 +203,11 @@ export class SessionService {
     }
 
     addLaunchFileRowList(launchFileRow: LaunchFileRow): void {
-        this.httpService.saveLaunchFileRow(launchFileRow.coordinate.id).pipe(untilDestroyed(this)).subscribe(data => {
+        this.httpService.saveLaunchFileRow(launchFileRow.coordinate.id, launchFileRow.delay).pipe(untilDestroyed(this)).subscribe(data => {
             if (data && data.status === 'SUCCESS') {
                 this.launchFileRowList.push(launchFileRow);
                 this.setLaunchFileRow(this.launchFileRowList);
-               this.setNextFileRowId(this.maxId + 1);
+                this.setNextFileRowId(this.maxId + 1);
             }
         });
     }
