@@ -71,23 +71,24 @@ export class GenerateFileComponent implements OnInit {
         const currentIndex: number = event.currentIndex;
 
         moveItemInArray(this.commands, previousIndex, currentIndex);
-        this.sessionService.launchFileRowListSort(previousIndex, currentIndex, event.previousIndex, event.currentIndex);
+        this.sessionService.launchFileRowListSort(this.commands);
         this.clearMessage();
     }
 
     changeDelay(item: LaunchFileRow, delay: string) {
-      this.rowId = item.id;
+        this.rowId = item.id;
 
-      if (!this.isNumber(delay)) {
-          this.messageRow = 'Не число!';
-          this.rowHasError = true;
+        if (!this.isNumber(delay)) {
+            this.messageRow = 'Не число!';
+                this.rowHasError = true;
 
-          if (this.commandList) {
-              this.commandList.nativeElement.value;
-              this.commandList.nativeElement.querySelector(`#delay-${item.id}`).value = this.prevDelay;
-          }
-          return;
-      }
+                if (this.commandList) {
+                    this.commandList.nativeElement.value;
+                    this.commandList.nativeElement.querySelector(`#delay-${item.id}`).value = this.prevDelay;
+                }
+                return;
+        }
+
         this.rowHasError = false;
         this.messageRow = 'Сохранено!';
 

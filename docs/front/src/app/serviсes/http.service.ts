@@ -224,14 +224,8 @@ export class HttpService {
     /**
      * Обновить сортировку из файла запуска
      * */
-    updateSortOrderFileRow(rowIdFirst: number, sortOrderFirst: number, rowIdSecond: number, sortOrderSecond: number): Observable<any> {
-        const formData: FormData = new FormData();
-        formData.append('rowIdFirst', (rowIdFirst+1).toString()); // нумерация начинается с 1
-        formData.append('sortOrderFirst', sortOrderFirst.toString());
-        formData.append('rowIdSecond', (rowIdSecond+1).toString()); // нумерация начинается с 1
-        formData.append('sortOrderSecond', sortOrderSecond.toString());
-
-        return this.http.post(`${this.config.httpUrl}/file/sort`, formData).pipe(
+    updateSortOrderFileRow(sortOrderRows: string): Observable<any> {
+        return this.http.post(`${this.config.httpUrl}/file/sort`, sortOrderRows).pipe(
             catchError((error: HttpErrorResponse) => {
                 return throwError(error);
             }),

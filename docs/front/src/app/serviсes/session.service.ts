@@ -24,7 +24,7 @@ export class SessionService {
     private coordinateList$: BehaviorSubject<Coordinate[]> = new BehaviorSubject<Coordinate[]>([]);
     private workOptionKey$: BehaviorSubject<string> = new BehaviorSubject<string>('uploadImage');
     private launchFileRow$: BehaviorSubject<LaunchFileRow[]> = new BehaviorSubject<LaunchFileRow[]>([]);
-    private  nextId$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
+    private nextId$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
 
     private maxId: number = 0;
     private coordinateList: Coordinate[] = [];
@@ -135,9 +135,14 @@ export class SessionService {
                 this.canEditImage$.next(true);
                 this.coordinateList$.next([]);
                 this.workOptionKey$.next('uploadImage');
+                this.nextId$.next(0);
 
                 this.storageService.clearVariable();
                 this.messageService.clearVariable();
+
+                this.maxId = 0;
+                this.coordinateList = [];
+                this.launchFileRowList = [];
             }
         });
     }
@@ -217,21 +222,13 @@ export class SessionService {
         });
     }
 
-    launchFileRowListSort(firstElemId: number, secondElemId: number, firstSortOrder: number, secondSortOrder: number) {
-
-        console.log('firstSortOrder = ', firstSortOrder);
-        console.log('secondSortOrder = ', secondSortOrder);
-
-        this.httpService.updateSortOrderFileRow(firstElemId, secondSortOrder, secondElemId, firstSortOrder)
+    launchFileRowListSort(fileRows: LaunchFileRow[]) {
+        const sortOrderIndex: number[] = [];
+        this.launchFileRowList.forEach(item => sortOrderIndex.push(item.id));
+        this.httpService.updateSortOrderFileRow(sortOrderIndex.join(','))
             .pipe().subscribe(data => {
-                if (data.status === 'SUCCESS') {
-                    const firstIndex: number = this.launchFileRowList.findIndex(c => c.id === firstElemId);
-                    const secondIndex: number = this.launchFileRowList.findIndex(c => c.id === secondElemId);
-
-                    this.launchFileRowList[firstIndex].sortOrder = secondSortOrder;
-                    this.launchFileRowList[secondIndex].sortOrder = firstSortOrder;
-
-                    this.setLaunchFileRow(this.launchFileRowList);
+                if (data.status !== 'SUCCESS') {
+                    this.setLaunchFileRow(fileRows);
                 }
         });
     }
