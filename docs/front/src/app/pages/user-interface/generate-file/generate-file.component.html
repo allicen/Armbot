@@ -43,6 +43,7 @@
     </div>
   </div>
   <div class="export" *ngIf="commands.length > 0">
+    <div class="message" style="margin-bottom: 0;" *ngIf="_showSmileMessage">Будет сделано когда-то потом... Возможно :)</div>
     <button mat-raised-button color="warn" (click)="armbotStart()" class="rocket">Запустить робота</button>
     <button mat-raised-button color="primary" (click)="exportFileTxt()">Экспорт в .txt
       <a [href]="exportTxtUrl" style="display: none" #exportTxt></a>

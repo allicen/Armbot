@@ -25,6 +25,8 @@ export class GenerateFileComponent implements OnInit {
     exportTxtUrl: string = '';
     coordinateDelete: number = -1;
 
+    _showSmileMessage: boolean = false;
+
     @ViewChild('coordinateInput') coordinateInput: ElementRef<HTMLInputElement> | undefined;
     @ViewChild("commandList") commandList: ElementRef | undefined;
     @ViewChild("exportTxt") exportTxt: ElementRef | undefined;
@@ -120,6 +122,9 @@ export class GenerateFileComponent implements OnInit {
     }
 
     armbotStart() {
-        
+        this._showSmileMessage = true;
+        setTimeout(() => {
+          this._showSmileMessage = false;
+        }, 3000);
     }
 }
