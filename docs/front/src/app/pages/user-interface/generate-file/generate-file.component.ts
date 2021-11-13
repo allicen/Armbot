@@ -5,6 +5,7 @@ import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 import {SessionService} from "../../../serviсes/session.service";
 import {HttpService} from "../../../serviсes/http.service";
 import {StorageService} from "../../../serviсes/storage.service";
+import {RosLibService} from "../../../serviсes/roslib.service";
 
 @UntilDestroy()
 @Component({
@@ -119,6 +120,6 @@ export class GenerateFileComponent implements OnInit {
     }
 
     armbotStart() {
-
+        
     }
 }
