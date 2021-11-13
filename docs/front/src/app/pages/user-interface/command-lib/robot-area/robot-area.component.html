@@ -1,3 +1,30 @@
+<section *ngIf="!editingAllowed" class="play-buttons">
+  <section>
+    Начать запись:
+    <button mat-mini-fab color="warn" [disabled]="autoGenerateFileOn" (click)="autoGenerateFileStart()">
+      <mat-icon>play_circle_outline</mat-icon>
+    </button>
+    Закончить:
+    <button mat-mini-fab color="primary" [disabled]="!autoGenerateFileOn" (click)="autoGenerateFileStop()">
+      <mat-icon>stop</mat-icon>
+    </button>
+  </section>
+  <section>
+    Размеры точки:
+    <mat-form-field appearance="fill" class="radius">
+    <input matInput #radius
+           oninput = "if (this.value > 50) this.value = 50;"
+           [valueAsNumber] = "radiusPoint"
+           (change) = "changeRadiusPoint(radius.value)"
+           type = "number"
+           min="1"
+           max="50">
+    </mat-form-field>
+    px
+  </section>
+</section>
+
+
 <section class="control" *ngIf="editingAllowed">
   <div class="form">
     <div class="label">Введите ширину изображения<br />и нажмите Enter:</div>
@@ -23,7 +50,7 @@
                (change) = "changeGreedStep(gridChangeStep.value)"
                type = "number"
                min="1"
-               max="500">
+               max="340">
       </mat-form-field>
     </div>
 
@@ -43,6 +70,10 @@
 
 <div class="robot-area" #robotArea>
   <div class="point" *ngFor="let item of dataSource;"
+       (click)="copyCoordinate(item)"
+       [style.width]="radiusPoint+'px'"
+       [style.height]="radiusPoint+'px'"
+       [style.borderRadius]="radiusPoint+'px'"
        [style.left]="getPosition(item).x+'px'"
        [style.top]="getPosition(item).y+'px'"
        [style.background]="(clickCoordinate && clickCoordinate.x === item.x && clickCoordinate.y === item.y ? 'yellow' : 'red')"></div>

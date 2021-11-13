@@ -26,15 +26,15 @@ class LaunchFileRowController {
 
     LaunchFileRowController() {}
 
-    @Get(value = "/save/{coordinateId}")
-    def save(long coordinateId) {
+    @Post(value = "/save", consumes = MediaType.MULTIPART_FORM_DATA)
+    def save(@Part long coordinateId, @Part double delay) {
 
         Coordinate coordinate = coordinateRepository.list().find {it.id == coordinateId }
 
         if (!coordinate) {
             return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'COORDINATE_NOT_FOUND', message: 'Координата не найдена')
         }
-        LaunchFileRow fileRow = new LaunchFileRow(coordinate: coordinate, sortOrder: launchFileRowRepository.list().size())
+        LaunchFileRow fileRow = new LaunchFileRow(coordinate: coordinate, delay: delay, sortOrder: launchFileRowRepository.list().size())
         fileRow.sessionState = sessionStateRepository.list()?.getAt(0)
 
         try {
@@ -66,7 +66,7 @@ class LaunchFileRowController {
 
 
     @Post(value = "/setDelay", consumes = MediaType.MULTIPART_FORM_DATA)
-    def setDelay(@Part Long fileRowId, @Part int delay) {
+    def setDelay(@Part Long fileRowId, @Part double delay) {
         LaunchFileRow fileRow = launchFileRowRepository.list().find {it.id == fileRowId }
 
         if (!fileRow) {

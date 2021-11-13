@@ -1,5 +1,5 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {Coordinate, Position} from "../../../../model/models";
+import {Coordinate, LaunchFileRow, Position} from "../../../../model/models";
 import {SizeService} from "../../../../serviсes/size.service";
 import {HttpService} from "../../../../serviсes/http.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
@@ -40,6 +40,10 @@ export class RobotAreaComponent implements OnInit {
     gridColors: string[] = ['default', 'black', 'yellow', 'red', 'green'];
 
     clickCoordinate: Coordinate | undefined;
+    autoGenerateFileOn: boolean = false;
+    timerLastValue: number = 0;
+    maxId: number = 0;
+    radiusPoint: number = 6;
 
     @ViewChild("uploadImage") uploadImage: ElementRef | undefined;
     @ViewChild("robotArea") robotArea: ElementRef | undefined;
@@ -84,6 +88,8 @@ export class RobotAreaComponent implements OnInit {
                 }, 1000);
             }
         });
+
+        this.sessionService.getNextFileRowId().pipe(untilDestroyed(this)).subscribe(data => this.maxId = data);
     }
 
     ngAfterViewChecked() {
@@ -119,7 +125,6 @@ export class RobotAreaComponent implements OnInit {
     }
 
 
-
     coordinateSaveServer(coordinate: Coordinate) {
 
         this.httpService.saveCoordinate(coordinate).pipe(untilDestroyed(this)).subscribe((res) => {
@@ -129,6 +134,7 @@ export class RobotAreaComponent implements OnInit {
             }
 
             this.sessionService.addCoordinateInList(res.details.coordinate);
+            this.saveLaunchFileRow(res.details.coordinate);
 
             this._snackBar.open(`Точка сохранена с координатами x=${coordinate.x}, y=${coordinate.y}`, 'X', {
                 duration: 2000
@@ -188,5 +194,38 @@ export class RobotAreaComponent implements OnInit {
                 this.imageWidthMm = this.sizeService.fromPxTranslate(this.imageWidthPx, 'mm', this.robotAreaWidth);
             }
         }
+    }
+
+    autoGenerateFileStart() {
+        this.autoGenerateFileOn = true;
+    }
+
+    autoGenerateFileStop() {
+        this.autoGenerateFileOn = false;
+        this.timerLastValue = 0;
+    }
+
+    changeRadiusPoint(value: string) {
+        this.radiusPoint = Number(value);
+    }
+
+    copyCoordinate(clickCoordinate: Coordinate) {
+        this.saveLaunchFileRow(clickCoordinate);
+    }
+
+    saveLaunchFileRow(coordinate: Coordinate) {
+        if (!this.autoGenerateFileOn) {
+            return;
+        }
+
+        const now: number = Date.now();
+        const timerClick = this.timerLastValue === 0 ? 0 : now;
+        const timer: number = timerClick - this.timerLastValue;
+
+        const next: number = this.maxId + 1;
+        const launchFileRow: LaunchFileRow = {id: next, coordinate: coordinate, delay: timer/1000, sortOrder: next};
+        this.sessionService.addLaunchFileRowList(launchFileRow);
+
+        this.timerLastValue = now;
     }
 }
