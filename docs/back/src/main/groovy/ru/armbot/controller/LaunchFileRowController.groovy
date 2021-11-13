@@ -1,6 +1,7 @@
 package ru.armbot.controller
 
 import io.micronaut.http.MediaType
+import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Part
@@ -12,6 +13,7 @@ import ru.armbot.domain.ResponseStatus
 import ru.armbot.dto.ResponseDto
 import ru.armbot.repository.CoordinateRepository
 import ru.armbot.repository.LaunchFileRowRepository
+import ru.armbot.repository.SessionStateRepository
 import ru.armbot.service.TxtService
 
 @Controller("/file")
@@ -19,6 +21,7 @@ class LaunchFileRowController {
 
     @Inject LaunchFileRowRepository launchFileRowRepository
     @Inject CoordinateRepository coordinateRepository
+    @Inject SessionStateRepository sessionStateRepository
     @Inject TxtService txtService
 
     LaunchFileRowController() {}
@@ -32,6 +35,7 @@ class LaunchFileRowController {
             return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'COORDINATE_NOT_FOUND', message: 'Координата не найдена')
         }
         LaunchFileRow fileRow = new LaunchFileRow(coordinate: coordinate, sortOrder: launchFileRowRepository.list().size())
+        fileRow.sessionState = sessionStateRepository.list()?.getAt(0)
 
         try {
             launchFileRowRepository.save(fileRow)
@@ -85,27 +89,30 @@ class LaunchFileRowController {
     }
 
 
-    @Post(value = "/sort", consumes = MediaType.MULTIPART_FORM_DATA)
-    def sort(@Part Long rowIdFirst, @Part int sortOrderFirst, @Part Long rowIdSecond, @Part int sortOrderSecond) {
-        LaunchFileRow firstRow = findRow(rowIdFirst)
-        LaunchFileRow secondRow = findRow(rowIdSecond)
-
-        if (!firstRow || !secondRow) {
-            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'FILE_ROW_NOT_FOUND', message: 'Не найдена строка файла')
+    @Post(value = "/sort", consumes = MediaType.TEXT_PLAIN)
+    def sort(@Body String sortOrderRows) {
+        List<String> errors = [];
+        List<String> arr = sortOrderRows.split(',')
+        arr.eachWithIndex { id, i ->
+            LaunchFileRow fileRow = launchFileRowRepository.list().find {it.id == id.toLong()}
+            if (fileRow) {
+                fileRow.sortOrder = i
+                try {
+                    launchFileRowRepository.update(fileRow)
+                } catch (e) {
+                    println(e)
+                    errors.push("При сохранении строки с ID=${fileRow.id} возникли ошибки".toString())
+                }
+            } else {
+                errors.push("Строка с ID=${id} не найдена".toString())
+            }
         }
 
-        firstRow.sortOrder = sortOrderFirst
-        secondRow.sortOrder = sortOrderSecond
-
-        try {
-            launchFileRowRepository.update(firstRow)
-            launchFileRowRepository.update(secondRow)
+        if (errors.size() == 0) {
             return new ResponseDto(status: ResponseStatus.SUCCESS, message: 'Порядок сортировки успешно сохранен')
-
-        } catch (e) {
-            println(e)
+        } else {
             return new ResponseDto(status: ResponseStatus.ERROR,
-                    errorCode: 'ERROR_SET_SORT_ORDER', message: 'При сохранении сортировки произошла ошибка')
+                    errorCode: 'ERROR_SET_SORT_ORDER', message: 'При сохранении сортировки возникли ошибки', details: errors)
         }
     }
 

@@ -2,9 +2,6 @@ package ru.armbot.dto
 
 import io.micronaut.core.annotation.Introspected
 import io.micronaut.core.annotation.Nullable
-import ru.armbot.domain.Coordinate
-import ru.armbot.domain.Image
-import ru.armbot.domain.LaunchFileRow
 import ru.armbot.domain.Settings
 
 import javax.persistence.FetchType
@@ -18,12 +15,12 @@ class SessionStateDto {
     String workOption
 
     @Nullable
-    Image image
+    ImageDto image
 
     @Nullable
     Settings settings
 
-    List<Coordinate> coordinateList
+    List<CoordinateDto> coordinateList
 
     @Nullable
     @OneToOne(optional=false, fetch = FetchType.EAGER)

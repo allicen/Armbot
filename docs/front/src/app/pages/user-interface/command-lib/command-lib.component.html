@@ -39,6 +39,27 @@
 </div>
 
 <div class="session" *ngIf="workOptionChecked === 'uploadSession'">
+
+  <mat-expansion-panel (opened)="aboutImportOpen = true"
+                       (closed)="aboutImportOpen = false">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <h3>Импорт сессии из файла .json</h3>
+      </mat-panel-title>
+      <mat-panel-description>
+        Кликните, чтобы посмотреть подробности
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <section class="import-info">
+      <p>Формат файла:</p>
+      <pre><code>{{jsonInfo}}</code></pre>
+    </section>
+  </mat-expansion-panel>
+
+  <div [ngClass]="messageImportErrors.length > 0 ? 'error' : 'message'" *ngIf="messageImport">{{messageImport}}</div>
+  <ul *ngIf="messageImportErrors" class="error">
+    <li *ngFor="let error of messageImportErrors">{{error}}</li>
+  </ul>
   <button mat-raised-button color="primary" (click)="openDialogSessionFile()">
     Выбрать файл для импорта
     <input type="file" style="display: none;" #inputFileSession (change)="changeFileSession($event)" />
