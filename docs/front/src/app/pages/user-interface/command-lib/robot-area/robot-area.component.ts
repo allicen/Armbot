@@ -7,6 +7,7 @@ import {CdkDragEnd} from "@angular/cdk/drag-drop";
 import {SessionService} from "../../../../serviсes/session.service";
 import {StorageService} from "../../../../serviсes/storage.service";
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import {Config} from "../../../../config/config";
 
 @UntilDestroy()
 @Component({
@@ -43,16 +44,17 @@ export class RobotAreaComponent implements OnInit {
     autoGenerateFileOn: boolean = false;
     timerLastValue: number = 0;
     maxId: number = 0;
-    radiusPoint: number = 6;
+    diameterPoint: number = 6;
 
     @ViewChild("uploadImage") uploadImage: ElementRef | undefined;
     @ViewChild("robotArea") robotArea: ElementRef | undefined;
 
     constructor(private sizeService: SizeService,
                 private httpService: HttpService,
-                private _snackBar: MatSnackBar,
+                private snackBar: MatSnackBar,
                 private sessionService: SessionService,
-                private storage: StorageService) {}
+                private storage: StorageService,
+                private config: Config) {}
 
     ngOnInit(): void {
 
@@ -64,9 +66,7 @@ export class RobotAreaComponent implements OnInit {
         });
 
         this.storage.getClickCoordinate().pipe(untilDestroyed(this)).subscribe(data => {
-            if (data.id !== -1) {
-                this.clickCoordinate = data;
-            }
+            this.clickCoordinate = data;
         });
 
         this.sessionService.getImageEditAllowed().pipe(untilDestroyed(this)).subscribe(data => {
@@ -90,6 +90,7 @@ export class RobotAreaComponent implements OnInit {
         });
 
         this.sessionService.getNextFileRowId().pipe(untilDestroyed(this)).subscribe(data => this.maxId = data);
+        this.sessionService.getDiameterPoint().pipe(untilDestroyed(this)).subscribe(data => this.diameterPoint = data);
     }
 
     ngAfterViewChecked() {
@@ -136,7 +137,7 @@ export class RobotAreaComponent implements OnInit {
             this.sessionService.addCoordinateInList(res.details.coordinate);
             this.saveLaunchFileRow(res.details.coordinate);
 
-            this._snackBar.open(`Точка сохранена с координатами x=${coordinate.x}, y=${coordinate.y}`, 'X', {
+            this.snackBar.open(`Точка сохранена с координатами x=${coordinate.x}, y=${coordinate.y}`, 'X', {
                 duration: 2000
             });
         });
@@ -203,10 +204,11 @@ export class RobotAreaComponent implements OnInit {
     autoGenerateFileStop() {
         this.autoGenerateFileOn = false;
         this.timerLastValue = 0;
+        this.storage.setClickCoordinate(this.config.coordinateDefault);
     }
 
     changeRadiusPoint(value: string) {
-        this.radiusPoint = Number(value);
+      this.sessionService.setDiameterPoint(Number(value));
     }
 
     copyCoordinate(clickCoordinate: Coordinate) {

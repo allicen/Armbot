@@ -141,8 +141,25 @@ input {
   display: flex;
   justify-content: flex-end;
   margin-top: 20px;
+  align-items: center;
 
   button {
     margin-left: 20px;
   }
+}
+
+.rocket {
+  background-size: 30px;
+  padding-right: 50px;
+  position: relative;
+}
+
+.rocket:after {
+  content: "";
+  position: absolute;
+  right: 12px;
+  width: 25px;
+  height: 40px;
+  background:url(../../../../assets/img/rocket.svg) 95% 5px no-repeat;
+  transform: rotate(45deg);
 }

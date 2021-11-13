@@ -1,29 +1,29 @@
-<section *ngIf="!editingAllowed" class="play-buttons">
-  <section>
+<div *ngIf="!editingAllowed" class="play-buttons">
+  <div>
     Начать запись:
-    <button mat-mini-fab color="warn" [disabled]="autoGenerateFileOn" (click)="autoGenerateFileStart()">
-      <mat-icon>play_circle_outline</mat-icon>
+    <button mat-icon-button color="warn" [disabled]="autoGenerateFileOn" (click)="autoGenerateFileStart()">
+      <mat-icon>play_arrow</mat-icon>
     </button>
     Закончить:
-    <button mat-mini-fab color="primary" [disabled]="!autoGenerateFileOn" (click)="autoGenerateFileStop()">
+    <button mat-icon-button color="primary" [disabled]="!autoGenerateFileOn" (click)="autoGenerateFileStop()">
       <mat-icon>stop</mat-icon>
     </button>
-  </section>
-  <section>
-    Размеры точки:
+    <span class="info" *ngIf="autoGenerateFileOn">Запись включена!</span>
+  </div>
+  <div class="field">
+    <span>Размеры точки:</span>
     <mat-form-field appearance="fill" class="radius">
     <input matInput #radius
            oninput = "if (this.value > 50) this.value = 50;"
-           [valueAsNumber] = "radiusPoint"
+           [valueAsNumber] = "diameterPoint"
            (change) = "changeRadiusPoint(radius.value)"
            type = "number"
            min="1"
            max="50">
     </mat-form-field>
-    px
-  </section>
-</section>
-
+    <span>px</span>
+  </div>
+</div>
 
 <section class="control" *ngIf="editingAllowed">
   <div class="form">
@@ -71,11 +71,12 @@
 <div class="robot-area" #robotArea>
   <div class="point" *ngFor="let item of dataSource;"
        (click)="copyCoordinate(item)"
-       [style.width]="radiusPoint+'px'"
-       [style.height]="radiusPoint+'px'"
-       [style.borderRadius]="radiusPoint+'px'"
+       [style.width]="diameterPoint+'px'"
+       [style.height]="diameterPoint+'px'"
+       [style.borderRadius]="diameterPoint+'px'"
        [style.left]="getPosition(item).x+'px'"
        [style.top]="getPosition(item).y+'px'"
+       [style.cursor]="autoGenerateFileOn ? 'pointer' : 'default'"
        [style.background]="(clickCoordinate && clickCoordinate.x === item.x && clickCoordinate.y === item.y ? 'yellow' : 'red')"></div>
 
   <ng-container *ngIf="gridOn && editingAllowed">

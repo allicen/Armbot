@@ -5,6 +5,7 @@ import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 import {SessionService} from "../../../serviсes/session.service";
 import {HttpService} from "../../../serviсes/http.service";
 import {StorageService} from "../../../serviсes/storage.service";
+import {RosLibService} from "../../../serviсes/roslib.service";
 
 @UntilDestroy()
 @Component({
@@ -23,6 +24,8 @@ export class GenerateFileComponent implements OnInit {
     maxId: number = 0;
     exportTxtUrl: string = '';
     coordinateDelete: number = -1;
+
+    _showSmileMessage: boolean = false;
 
     @ViewChild('coordinateInput') coordinateInput: ElementRef<HTMLInputElement> | undefined;
     @ViewChild("commandList") commandList: ElementRef | undefined;
@@ -116,5 +119,12 @@ export class GenerateFileComponent implements OnInit {
 
     exportFileTxt() {
         this.exportTxt?.nativeElement.click();
+    }
+
+    armbotStart() {
+        this._showSmileMessage = true;
+        setTimeout(() => {
+          this._showSmileMessage = false;
+        }, 3000);
     }
 }

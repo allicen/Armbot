@@ -43,6 +43,7 @@ RUN sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main"
             ros-melodic-rosserial-arduino \
             ros-melodic-rosserial \
             ros-melodic-moveit-planners-chomp \
+            ros-melodic-rosbridge-server \
             ros-melodic-visp* && \
     rosdep init && rosdep update && \
     echo "source /opt/ros/melodic/setup.bash"  >> ~/.bashrc && \
