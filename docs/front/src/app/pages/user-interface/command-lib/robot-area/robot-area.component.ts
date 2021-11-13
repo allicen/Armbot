@@ -44,7 +44,7 @@ export class RobotAreaComponent implements OnInit {
     autoGenerateFileOn: boolean = false;
     timerLastValue: number = 0;
     maxId: number = 0;
-    radiusPoint: number = 6;
+    diameterPoint: number = 6;
 
     @ViewChild("uploadImage") uploadImage: ElementRef | undefined;
     @ViewChild("robotArea") robotArea: ElementRef | undefined;
@@ -90,6 +90,7 @@ export class RobotAreaComponent implements OnInit {
         });
 
         this.sessionService.getNextFileRowId().pipe(untilDestroyed(this)).subscribe(data => this.maxId = data);
+        this.sessionService.getDiameterPoint().pipe(untilDestroyed(this)).subscribe(data => this.diameterPoint = data);
     }
 
     ngAfterViewChecked() {
@@ -207,7 +208,7 @@ export class RobotAreaComponent implements OnInit {
     }
 
     changeRadiusPoint(value: string) {
-        this.radiusPoint = Number(value);
+      this.sessionService.setDiameterPoint(Number(value));
     }
 
     copyCoordinate(clickCoordinate: Coordinate) {

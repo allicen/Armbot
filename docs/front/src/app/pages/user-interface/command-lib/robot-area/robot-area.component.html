@@ -15,7 +15,7 @@
     <mat-form-field appearance="fill" class="radius">
     <input matInput #radius
            oninput = "if (this.value > 50) this.value = 50;"
-           [valueAsNumber] = "radiusPoint"
+           [valueAsNumber] = "diameterPoint"
            (change) = "changeRadiusPoint(radius.value)"
            type = "number"
            min="1"
@@ -71,9 +71,9 @@
 <div class="robot-area" #robotArea>
   <div class="point" *ngFor="let item of dataSource;"
        (click)="copyCoordinate(item)"
-       [style.width]="radiusPoint+'px'"
-       [style.height]="radiusPoint+'px'"
-       [style.borderRadius]="radiusPoint+'px'"
+       [style.width]="diameterPoint+'px'"
+       [style.height]="diameterPoint+'px'"
+       [style.borderRadius]="diameterPoint+'px'"
        [style.left]="getPosition(item).x+'px'"
        [style.top]="getPosition(item).y+'px'"
        [style.cursor]="autoGenerateFileOn ? 'pointer' : 'default'"

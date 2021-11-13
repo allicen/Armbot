@@ -25,6 +25,7 @@ export class SessionService {
     private workOptionKey$: BehaviorSubject<string> = new BehaviorSubject<string>('uploadImage');
     private launchFileRow$: BehaviorSubject<LaunchFileRow[]> = new BehaviorSubject<LaunchFileRow[]>([]);
     private nextId$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
+    private diameterPoint$: BehaviorSubject<number> = new BehaviorSubject<number>(6);
 
     private maxId: number = 0;
     private coordinateList: Coordinate[] = [];
@@ -257,5 +258,13 @@ export class SessionService {
 
             this.messageService.setMessageImport(res.message);
         });
+    }
+
+    getDiameterPoint(): Observable<number> {
+        return this.diameterPoint$.asObservable();
+    }
+
+    setDiameterPoint(diameter: number): void {
+        this.diameterPoint$.next(diameter);
     }
 }
