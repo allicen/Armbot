@@ -1,18 +1,17 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from "rxjs";
+import {BehaviorSubject, config, Observable} from "rxjs";
 import { Router } from "@angular/router";
 import {HttpService} from "./http.service";
 import {Coordinate} from "../model/models";
 import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
+import {Config} from "../config/config";
 
 @UntilDestroy()
 @Injectable({ providedIn: 'root' })
 export class StorageService {
 
-    constructor(private router: Router, private httpService: HttpService) {
-        router.events.subscribe(() => {
-            this.setUserInterface(this.isUserInterface());
-        });
+    constructor(private router: Router, private httpService: HttpService, private config: Config) {
+        this.changeInterface();
     }
 
     private userInterfaceOn$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
@@ -21,12 +20,18 @@ export class StorageService {
     private coordinateDelete$: BehaviorSubject<number> = new BehaviorSubject<number>(-1);
     private coordinateDeleteError$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     private coordinateDeleteMessage$: BehaviorSubject<string> = new BehaviorSubject<string>('');
-    private clickCoordinate$: BehaviorSubject<Coordinate> = new BehaviorSubject<Coordinate>({x: 0, y: 0, z: 0, name: '', id: -1});
+    private clickCoordinate$: BehaviorSubject<Coordinate> = new BehaviorSubject<Coordinate>(this.config.coordinateDefault);
 
     urlArr = this.router.url.split('/');
 
     isUserInterface(): boolean {
         return this.urlArr.length > 0 && this.urlArr[1] === 'user-interface';
+    }
+
+    changeInterface() {
+      this.router.events.subscribe(() => {
+        this.setUserInterface(this.isUserInterface());
+      });
     }
 
     setUserInterface(showHide: boolean): void {
@@ -105,6 +110,6 @@ export class StorageService {
         this.coordinateDelete$.next(-1);
         this.coordinateDeleteError$.next(false);
         this.coordinateDeleteMessage$.next('');
-        this.clickCoordinate$.next({x: 0, y: 0, z: 0, name: '', id: -1});
+        this.clickCoordinate$.next(this.config.coordinateDefault);
     }
 }

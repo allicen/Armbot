@@ -117,4 +117,8 @@ export class GenerateFileComponent implements OnInit {
     exportFileTxt() {
         this.exportTxt?.nativeElement.click();
     }
+
+    armbotStart() {
+
+    }
 }

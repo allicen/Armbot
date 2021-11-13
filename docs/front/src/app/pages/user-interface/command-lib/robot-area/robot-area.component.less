@@ -23,11 +23,14 @@
     position: absolute;
     width: 6px;
     height: 6px;
-    background-color: @contrast-color;
     border-radius: 6px;
     margin-left: -3px;
     margin-top: -3px;
     z-index: 8;
+  }
+
+  .point:hover {
+    background: #7C2EDD;
   }
 }
 
@@ -243,9 +246,10 @@
 }
 
 .play-buttons {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 
   .radius {
     width: 70px;
@@ -274,5 +278,23 @@
 
   ::ng-deep .mat-form-field-ripple {
     top: 15px;
+  }
+
+  mat-icon {
+    border: 2px solid;
+    border-radius: 20px;
+  }
+
+  .field {
+    display: flex;
+    align-items: center;
+
+    mat-form-field {
+      margin: 0 10px;
+    }
+  }
+
+  .info {
+    color: @green-color;
   }
 }

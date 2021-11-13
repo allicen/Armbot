@@ -1,8 +1,9 @@
-import {Component, Input, Output} from '@angular/core';
+import {Component, ElementRef, Input, Output, ViewChild} from '@angular/core';
 import {StorageService} from "../../serviсes/storage.service";
 import {Subscription} from "rxjs";
 import {Router} from "@angular/router";
 import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
+import {MatSlideToggle, MatSlideToggleChange} from "@angular/material/slide-toggle";
 
 @UntilDestroy()
 @Component({
@@ -19,13 +20,24 @@ export class HeaderComponent {
         this.storage.getUserInterface().pipe(untilDestroyed(this)).subscribe(data => this.userInterfaceOn = data);
     }
 
-    userInterfaceChange() {
+    userInterfaceChange($event: MatSlideToggleChange) {
+        this.userInterfaceOn = $event.checked;
+        this.navigate(this.userInterfaceOn);
+    }
 
-        if (this.userInterfaceOn) {
+    goToHome() {
+        this.navigate(false);
+        this.storage.changeInterface();
+    }
+
+
+    navigate(on: boolean) {
+        if (on) {
             this.router.navigate(['user-interface']);
         } else {
             this.router.navigate(['docs']);
         }
-      this.storage.setUserInterface(this.userInterfaceOn);
+
+        this.storage.setUserInterface(this.userInterfaceOn);
     }
 }

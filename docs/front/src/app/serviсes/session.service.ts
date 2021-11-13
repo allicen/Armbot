@@ -208,6 +208,7 @@ export class SessionService {
                 this.launchFileRowList.push(launchFileRow);
                 this.setLaunchFileRow(this.launchFileRowList);
                 this.setNextFileRowId(this.maxId + 1);
+                this.storageService.setClickCoordinate(launchFileRow.coordinate);
             }
         });
     }

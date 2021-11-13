@@ -1,4 +1,4 @@
 <div class="container">
-  <h2>Armbot 1.0</h2>
-  <mat-slide-toggle [(ngModel)]="userInterfaceOn" (change)="userInterfaceChange()">Режим управления</mat-slide-toggle>
+  <h2><a routerLink="/docs">Armbot 1.0</a></h2>
+  <mat-slide-toggle [checked]="userInterfaceOn" (change)="userInterfaceChange($event)">Режим управления</mat-slide-toggle>
 </div>
