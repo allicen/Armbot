@@ -6,9 +6,11 @@ import io.micronaut.core.annotation.Introspected
 import io.micronaut.core.annotation.NonNull
 
 import javax.persistence.Entity
+import javax.persistence.FetchType
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
+import javax.persistence.ManyToOne
 import javax.validation.constraints.NotBlank
 
 /**
@@ -41,6 +43,9 @@ class Coordinate {
     double z = 0
 
     SizeUnit unit = SizeUnit.MM
+
+    @ManyToOne(optional=false, fetch = FetchType.EAGER)
+    SessionState sessionState
 
     Coordinate() {
     }

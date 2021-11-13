@@ -7,9 +7,11 @@ import io.micronaut.core.annotation.NonNull
 import io.micronaut.core.annotation.Nullable
 
 import javax.persistence.Entity
+import javax.persistence.FetchType
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
+import javax.persistence.ManyToOne
 import javax.validation.constraints.NotBlank
 
 /**
@@ -46,11 +48,8 @@ class Image {
 
     boolean canEdit = true
 
-    Image() { }
+    @ManyToOne(optional=false, fetch = FetchType.EAGER)
+    SessionState sessionState
 
-    Image(byte[] imageByte, String name, String contentType) {
-        this.imageByte = imageByte
-        this.name = name
-        this.contentType = contentType
-    }
+    Image() { }
 }

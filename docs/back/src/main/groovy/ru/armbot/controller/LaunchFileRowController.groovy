@@ -13,6 +13,7 @@ import ru.armbot.domain.ResponseStatus
 import ru.armbot.dto.ResponseDto
 import ru.armbot.repository.CoordinateRepository
 import ru.armbot.repository.LaunchFileRowRepository
+import ru.armbot.repository.SessionStateRepository
 import ru.armbot.service.TxtService
 
 @Controller("/file")
@@ -20,6 +21,7 @@ class LaunchFileRowController {
 
     @Inject LaunchFileRowRepository launchFileRowRepository
     @Inject CoordinateRepository coordinateRepository
+    @Inject SessionStateRepository sessionStateRepository
     @Inject TxtService txtService
 
     LaunchFileRowController() {}
@@ -33,6 +35,7 @@ class LaunchFileRowController {
             return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'COORDINATE_NOT_FOUND', message: 'Координата не найдена')
         }
         LaunchFileRow fileRow = new LaunchFileRow(coordinate: coordinate, sortOrder: launchFileRowRepository.list().size())
+        fileRow.sessionState = sessionStateRepository.list()?.getAt(0)
 
         try {
             launchFileRowRepository.save(fileRow)

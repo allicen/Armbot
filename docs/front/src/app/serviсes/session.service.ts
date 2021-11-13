@@ -250,7 +250,11 @@ export class SessionService {
 
             if (res.status === 'SUCCESS') {
                 this.uploadSession();
+            } else {
+                this.messageService.setMessageImportErrors(res.details || []);
             }
+
+            this.messageService.setMessageImport(res.message);
         });
     }
 }

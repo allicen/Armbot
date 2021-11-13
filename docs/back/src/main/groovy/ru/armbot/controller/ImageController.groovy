@@ -2,7 +2,6 @@ package ru.armbot.controller
 
 import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.Controller
-import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Part
 import io.micronaut.http.annotation.Post
 import jakarta.inject.Inject
@@ -17,6 +16,7 @@ import ru.armbot.repository.ImageRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import ru.armbot.repository.SessionStateRepository
+import ru.armbot.service.SessionService
 
 
 @Controller("/image")
@@ -29,6 +29,7 @@ class ImageController {
     @Inject ImageRepository imageRepository
     @Inject CoordinateRepository coordinateRepository
     @Inject SessionStateRepository sessionStateRepository
+    @Inject SessionService sessionService
 
     ImageController() {}
 
@@ -41,33 +42,31 @@ class ImageController {
             return new ResponseDto(status : 'ERROR', errorCode: 'INVALID_MIME_TYPE', message: message)
         }
 
+        // Очищаем незавершенные сессии (если такие есть)
+        sessionService.clearAll()
+
+        SessionState sessionState = new SessionState(workOption: WorkOption.UPLOAD_IMAGE)
+
+        try {
+            sessionStateRepository.save(sessionState)
+        } catch (e) {
+            println(e)
+            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'SESSION_NOT_SAVE', message: 'Сессия не создана')
+        }
+
         // Может быть загружена только 1 картинка
         if (!imageRepository.list().isEmpty()) {
             imageRepository.deleteAll()
         }
 
-        Image image = new Image(file, contentType, name)
+        Image image = new Image(imageByte: file, contentType: contentType, name: name, sessionState: sessionState)
 
         try {
             imageRepository.save(image)
-
-            // После загрузки изображения создаем сессию
-            SessionState sessionState = new SessionState(image: image, workOption: WorkOption.UPLOAD_IMAGE)
-            sessionStateRepository.save(sessionState)
-
             return new ResponseDto(status: ResponseStatus.SUCCESS, message: 'Изображение успешно загружено')
-
         } catch (e) {
-            String message = 'При сохранении изображения произошла ошибка'
-            println("${message}: " + e)
-
-            // если сессия не создалась, но изображение загружено, удаляем его
-            if (image.id) {
-                imageRepository.deleteAll()
-                return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'CREATE_SESSION_ERROR', message: message)
-            }
-
-            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'ERROR_SAVE_IMAGE', message: message)
+            println(e)
+            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'ERROR_SAVE_IMAGE', message: 'При сохранении изображения произошла ошибка')
         }
     }
 

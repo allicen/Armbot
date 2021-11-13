@@ -29,8 +29,6 @@ class ResponseDto {
         this.details = details
     }
 
-    ResponseDto() {
-
-    }
+    ResponseDto() { }
 
 }

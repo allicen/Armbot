@@ -1,5 +1,9 @@
 package ru.armbot.domain
 
+/**
+ * Режим работы
+ * */
+
 enum WorkOption {
     UPLOAD_IMAGE('uploadImage', 'Загрузить изображение клавиатуры'),
     UPLOAD_SESSION('uploadSession', 'Загрузить сессию'),

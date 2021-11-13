@@ -25,7 +25,6 @@ import ru.armbot.service.CoordinateService
 import ru.armbot.service.TxtService
 
 import java.nio.charset.StandardCharsets
-import java.time.ZonedDateTime
 
 @Controller("/coordinate")
 class CoordinateController {
@@ -46,6 +45,7 @@ class CoordinateController {
     def save(@Body Coordinate coordinate) {
         coordinate.id = null
         coordinate.name = coordinateService.generateName()
+        coordinate.sessionState = sessionStateRepository.list()?.getAt(0)
 
         try {
             coordinateRepository.save(coordinate)
@@ -143,6 +143,14 @@ class CoordinateController {
             return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'EMPTY_FILE', message: 'Выбран пустой файл')
         }
 
+        SessionState sessionState = new SessionState(workOption: WorkOption.UPLOAD_COORDINATE_LIST)
+        try {
+            sessionStateRepository.save(sessionState)
+        } catch (e) {
+            println(e)
+            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'ERROR_CREATE_SESSION', message: 'При создании сессии произошла ошибка')
+        }
+
         def result = [success: 0, savedCoordinates: [], errorDetails: []]
 
         data.split('\n').eachWithIndex {row, i ->
@@ -158,7 +166,8 @@ class CoordinateController {
                             Coordinate coordinate = new Coordinate(name: rowData[0].toString(),
                                     x: Double.parseDouble(coordinates[0]),
                                     y: Double.parseDouble(coordinates[1]),
-                                    z: Double.parseDouble(coordinates[2]))
+                                    z: Double.parseDouble(coordinates[2]),
+                                    sessionState: sessionState)
                             coordinateRepository.save(coordinate)
                             result.savedCoordinates += coordinate
                         } catch (e) {
@@ -172,11 +181,6 @@ class CoordinateController {
             } else {
                 result.errorDetails += "Строка ${index} - содержит не 1 двоеточие".toString()
             }
-        }
-
-        if (coordinateRepository.list().size() > 0 && sessionStateRepository.list().size() == 0) {
-            SessionState sessionState = new SessionState(workOption: WorkOption.UPLOAD_COORDINATE_LIST)
-            sessionStateRepository.save(sessionState)
         }
 
         if (result.errorDetails.size() > 0) {

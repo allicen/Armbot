@@ -9,7 +9,7 @@ import javax.persistence.FetchType
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
-import javax.persistence.OneToOne
+import javax.persistence.ManyToOne
 
 /**
  * Строка файла запуска
@@ -24,12 +24,15 @@ class LaunchFileRow {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id
 
-    @OneToOne(optional=false, fetch = FetchType.EAGER)
+    @ManyToOne(optional=false, fetch = FetchType.EAGER)
     Coordinate coordinate
 
     double delay = 0
 
     int sortOrder = 0
+
+    @ManyToOne(optional=false, fetch = FetchType.EAGER)
+    SessionState sessionState
 
     LaunchFileRow() { }
 }

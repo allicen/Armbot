@@ -11,6 +11,7 @@ import {SizeService} from "../../../serviсes/size.service";
 import {SessionService} from "../../../serviсes/session.service";
 import {MessageService} from "../../../serviсes/message.service";
 import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
+import {Content} from "../../../content/content";
 
 @UntilDestroy()
 @Component({
@@ -43,6 +44,11 @@ export class CommandLibComponent implements OnInit {
   workOptions: WorkOption[] = this.config.workOptions
   workOptionChecked: string = this.workOptions[0].key;
 
+  messageImport: string = '';
+  messageImportErrors: string[] = [];
+
+  jsonInfo: string = '';
+
   @ViewChild("inputFilePoints") inputFilePoints: ElementRef | undefined;
   @ViewChild("inputFileSession") inputFileSession: ElementRef | undefined;
 
@@ -55,10 +61,13 @@ export class CommandLibComponent implements OnInit {
               private storageService: StorageService,
               private sizeService: SizeService,
               private sessionService: SessionService,
-              private messageService: MessageService) {
+              private messageService: MessageService,
+              private content: Content) {
   }
 
   ngOnInit(): void {
+
+    this.jsonInfo = this.content.jsonInfo;
 
     this.storageService.getCurrentStep().pipe(untilDestroyed(this)).subscribe(data => {
       this.currentStep = data;
@@ -74,6 +83,8 @@ export class CommandLibComponent implements OnInit {
     });
 
     this.sessionService.getWorkOptionKey().pipe(untilDestroyed(this)).subscribe(data => this.workOptionChecked = data);
+    this.messageService.getMessageImport().pipe(untilDestroyed(this)).subscribe(data => this.messageImport = data);
+    this.messageService.getMessageImportErrors().pipe(untilDestroyed(this)).subscribe(data => this.messageImportErrors = data);
   }
 
   setEditAllowed() {
