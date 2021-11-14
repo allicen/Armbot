@@ -14,7 +14,7 @@
 <code>sed -i -e 's/\r$//' scripts/docker/run_docs_docker.sh</code>.</p>
 <p>12. Запустить docker-контейнер с документацией: <code>./scripts/docker/run_docs_docker.sh</code></p>
 <p>13. Открыть документацию в браузере по адресу <code>localhost</code>.</p>
-<p>14. Собрать JAR-файл из папки docs <code>./gradlew build :back:shadowJar copyClientResources</code></p>
+<p>14. Собрать JAR-файл из папки docs <code>./gradlew copyClientResources :back:shadowJar build</code></p>
 <p>15. Запустить JAR-файл <code>java -jar back-0.1-all.jar</code></p>
 <p><br /></p>
 <h3>Запустить робота</h3>

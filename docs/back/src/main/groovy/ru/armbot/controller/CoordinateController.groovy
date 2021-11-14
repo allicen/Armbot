@@ -73,8 +73,13 @@ class CoordinateController {
                     message: "Координата с именем '${coordinate.name.toString()}' уже существует. ")
         }
 
+        item.name = coordinate.name
+        item.x = coordinate.x
+        item.y = coordinate.y
+        item.z = coordinate.z
+
         try {
-            coordinateRepository.update(coordinate)
+            coordinateRepository.update(item)
             return new ResponseDto(status: ResponseStatus.SUCCESS, message: 'Координата обновлена!')
         } catch (e) {
             println("Ошибка обновления координаты, ${e}")
