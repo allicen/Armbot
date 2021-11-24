@@ -4,6 +4,7 @@
 #include <pluginlib/class_loader.h>
 #include <armbot_move/SetPosition.h>
 #include <armbot_move/SavePosition.h>
+#include <rosserial_arduino/Test.h>
 #include <std_msgs/String.h>
 
 #include <tf/transform_listener.h>
@@ -191,6 +192,19 @@ void executeCommand(const std_msgs::String::ConstPtr& msg){
 }
 
 
+
+void testArduino (ros::ServiceClient client, rosserial_arduino::Test srv) {
+    srv.request.input = "INPUT!!!";
+
+    char log[255];
+    if (client.call(srv)) {
+        ROS_INFO("Result: %s", srv.response.output.c_str());
+    } else {
+        ROS_ERROR("Failed to call service arduino");
+    }
+}
+
+
 bool setPosition(armbot_move::SetPosition::Request &req, 
                 armbot_move::SetPosition::Response &res,
                 MoveOperationClass *move_group,
@@ -232,6 +246,14 @@ bool setPosition(armbot_move::SetPosition::Request &req,
 
         result = "SUCCESS. Position: " + req.position;
         logSimple("Command execution result: ", result.c_str());
+
+        ////////////
+        ros::NodeHandle nh;
+        ros::ServiceClient client = nh.serviceClient<rosserial_arduino::Test>("test_arduino");
+        rosserial_arduino::Test srv;
+        testArduino(client, srv);
+        //////////////
+
     }
 
     res.result = result;

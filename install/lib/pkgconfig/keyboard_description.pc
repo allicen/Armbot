@@ -1,0 +1,8 @@
+prefix=/workspace/install
+
+Name: keyboard_description
+Description: Description of keyboard_description
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

@@ -5,6 +5,7 @@
 #include <ros.h>
 #include <sensor_msgs/JointState.h>
 #include <std_msgs/String.h>
+#include <rosserial_arduino/Test.h>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -238,7 +239,21 @@ void motorControlSubscriberCallbackJointState(const sensor_msgs::JointState& msg
 }
 
 
-ros::Subscriber<sensor_msgs::JointState> motorControlSubscriberJointState("joint_states", &motorControlSubscriberCallbackJointState);
+//ros::Subscriber<sensor_msgs::JointState> motorControlSubscriberJointState("joint_states", &motorControlSubscriberCallbackJointState);
+
+void callback(const rosserial_arduino::Test::Request & req, rosserial_arduino::Test::Response & res){
+    nodeHandle.logwarn("!!!!!!!!!!!!!");
+  
+   res.output = "test";
+
+   nodeHandle.logwarn(res.output);
+}
+
+ros::ServiceServer<rosserial_arduino::Test::Request, rosserial_arduino::Test::Response> server("test_arduino",&callback);
+std_msgs::String arduinoTrigger;
+ros::Publisher chatterArduino("arduino_move_finish", &arduinoTrigger);
+
+char result[13] = "Finish!";
 
 
 void setup() {
@@ -259,14 +274,18 @@ void setup() {
   
     nodeHandle.getHardware()->setBaud(115200);
     nodeHandle.initNode();
-    nodeHandle.subscribe(motorControlSubscriberJointState);
-  
+    nodeHandle.advertiseService(server);
     nodeHandle.advertise(chatter);
+//    nodeHandle.subscribe(motorControlSubscriberJointState);
+  
+//    nodeHandle.advertise(chatter);
     
     nodeHandle.loginfo("Startup complete");
 }
 
-void loop() {  
+void loop() {
+  str_msg.data = result;
+  chatter.publish( &str_msg );  
   nodeHandle.spinOnce();
   delay(1);
 }
