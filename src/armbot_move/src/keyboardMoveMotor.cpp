@@ -1,6 +1,7 @@
 // Считывание нажатий клавиш на клавиатуре
 // rosrun armbot_move moveMotor
 #include <ros/ros.h>
+#include <std_msgs/String.h>
 
 #include <iostream>
 #include <string>
@@ -8,32 +9,42 @@
 #include <termios.h>
 #include <stdio.h>
 
-#define KB_UP 65
-#define KB_DOWN 66
-#define KB_LEFT 68
-#define KB_RIGHT 67
+#define FORWARD 65
+#define INVERSE 66
+#define RESET 48
+
+// Направление движения двигателя, отправляется на плате Arduino
+#define FORWARD_DIRECTION 0
+#define INVERSE_DIRECTION 1
 
 int getch() {
   static struct termios oldt, newt;
   tcgetattr(STDIN_FILENO, &oldt);           // save old settings
   newt = oldt;
   newt.c_lflag &= ~(ICANON);                 // disable buffering
-  tcsetattr( STDIN_FILENO, TCSANOW, &newt);  // apply new settings
+  tcsetattr(STDIN_FILENO, TCSANOW, &newt);  // apply new settings
 
   int c = getchar();  // read character (non-blocking)
 
-  tcsetattr( STDIN_FILENO, TCSANOW, &oldt);  // restore old settings
+  tcsetattr(STDIN_FILENO, TCSANOW, &oldt);  // restore old settings
   return c;
 }
 
 int main(int argc, char *argv[]) {
-    ros::init(argc, argv, "moveMotor");
+    ros::init(argc, argv, "move_motor");
+
+    ros::NodeHandle n;
+    ros::Publisher motorMovePub = n.advertise<std_msgs::String>("move_motor", 1000);
+
     int motorIndex = 0;
 
     ROS_INFO("Select the motor (click on the number): \n1) Bottom\n2) Left\n3) Right\n0) Reset (if motor has been selected)");
 
     while (ros::ok()) {
         int c = getch();   // call your non-blocking input function
+
+        std_msgs::String msg;
+        std::stringstream msgText;
 
         if (motorIndex == 0) {
             switch (c) {
@@ -56,19 +67,22 @@ int main(int argc, char *argv[]) {
                 ROS_INFO("Motor selected: %d", motorIndex);
             }
         } else {
-//            std::cout << '\n' << c << '\n';
             switch (c) {
-                case KB_LEFT:
-                    ROS_INFO("LEFT\t");
+                case FORWARD:
+                    ROS_INFO("FORWARD\t");
+                    msgText << motorIndex << ":" << FORWARD_DIRECTION;
+                    msg.data = msgText.str();
+                    motorMovePub.publish(msg);
                     break;
-                case KB_RIGHT:
-                    ROS_INFO("RIGHT\t");
+                case INVERSE:
+                    ROS_INFO("INVERSE\t");
+                    msgText << motorIndex << ":" << INVERSE_DIRECTION;
+                    msg.data = msgText.str();
+                    motorMovePub.publish(msg);
                     break;
-                case KB_UP:
-                    ROS_INFO("UP\t");
-                    break;
-                case KB_DOWN:
-                   ROS_INFO("DOWN\t");
+                case RESET:
+                   motorIndex = 0;
+                   ROS_INFO("Motor was reset.\nSelect the motor (click on the number): \n1) Bottom\n2) Left\n3) Right\n0) Reset (if motor has been selected)");
                    break;
             }
         }

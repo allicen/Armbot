@@ -5,6 +5,7 @@
 #include <ros.h>
 #include <sensor_msgs/JointState.h>
 #include <std_msgs/String.h>
+#include <std_msgs/Empty.h>
 #include <rosserial_arduino/Test.h>
 
 #include <stdlib.h>
@@ -66,6 +67,10 @@ boolean buttonOnPressed = false;
 Stepper stepper_x(X_STEP_PIN, X_DIR_PIN, X_ENABLE_PIN);
 Stepper stepper_y(Y_STEP_PIN, Y_DIR_PIN, Y_ENABLE_PIN);
 Stepper stepper_z(Z_STEP_PIN, Z_DIR_PIN, Z_ENABLE_PIN);
+
+AccelStepper stepperX = stepper_x.getStepper();
+AccelStepper stepperY = stepper_y.getStepper();
+AccelStepper stepperZ = stepper_z.getStepper();
 
 MultiStepper steppers;
 
@@ -240,6 +245,56 @@ void motorControlSubscriberCallbackJointState(const sensor_msgs::JointState& msg
 }
 
 
+
+void motorMove(const std_msgs::String& msg){
+  int motorNumber; // 1 - снизу, 2 - слева, 3 - справа
+  int motorDirection; // 0 - FORWARD или 1 - INVERSE
+
+  char data[strlen(msg.data)];
+  strcpy(data, msg.data);  
+
+  char *token;
+  token = strtok(data, ":");
+
+  if (token != NULL && strlen(msg.data) == 3) { // Формат данных: '0:1'
+    motorNumber = data[0] - '0';
+    motorDirection = data[2] - '0';
+  } else {
+    nodeHandle.logerror("Ошибка в данных запуска двигателя. Строка не соответствует формату!");
+  }
+  
+//  nodeHandle.logwarn("-----------------");
+//  nodeHandle.logwarn(String(motorNumber).c_str());
+//  nodeHandle.logwarn(String(motorDirection).c_str());
+
+  if (motorNumber == 1 && motorDirection == 0) {
+    nodeHandle.logwarn("1 двигатель - прямо");
+    
+  } else if (motorNumber == 1 && motorDirection == 1) {
+    nodeHandle.logwarn("1 двигатель - обратно");
+    
+  } else if (motorNumber == 2 && motorDirection == 0) {
+    nodeHandle.logwarn("2 двигатель - прямо");
+    
+  } else if (motorNumber == 2 && motorDirection == 1) {
+    nodeHandle.logwarn("2 двигатель - обратно");
+    
+  } else if (motorNumber == 3 && motorDirection == 0) {
+    nodeHandle.logwarn("3 двигатель - прямо");
+    
+  } else if (motorNumber == 3 && motorDirection == 1) {
+    nodeHandle.logwarn("1 двигатель - обратно");
+    
+  } else {
+    nodeHandle.logerror("Ошибка при запуске двигателя. Неверное значение двигателя или направления");
+  }
+}
+
+
+
+ros::Subscriber<std_msgs::String> motorMoveSubscriber("move_motor", &motorMove);
+
+
 //ros::Subscriber<sensor_msgs::JointState> motorControlSubscriberJointState("joint_states", &motorControlSubscriberCallbackJointState);
 
 void callback(const rosserial_arduino::Test::Request & req, rosserial_arduino::Test::Response & res){
@@ -258,9 +313,6 @@ char result[13] = "Finish!";
 
 
 void setup() {
-    AccelStepper stepperX = stepper_x.getStepper();
-    AccelStepper stepperY = stepper_y.getStepper();
-    AccelStepper stepperZ = stepper_z.getStepper();
 
     steppers.addStepper(stepperX);
     steppers.addStepper(stepperY);
@@ -277,6 +329,7 @@ void setup() {
     nodeHandle.initNode();
     nodeHandle.advertiseService(server);
     nodeHandle.advertise(chatter);
+    nodeHandle.subscribe(motorMoveSubscriber);
 //    nodeHandle.subscribe(motorControlSubscriberJointState);
   
 //    nodeHandle.advertise(chatter);
