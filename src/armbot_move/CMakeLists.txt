@@ -147,6 +147,7 @@ add_definitions(-DBOOST_ERROR_CODE_HEADER_ONLY)
 add_executable(joint_subscriber src/jointSubscriber.cpp)
 add_executable(move src/move.cpp)
 add_executable(position src/position.cpp)
+add_executable(moveMotor src/keyboardMoveMotor.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -167,6 +168,10 @@ target_link_libraries(move
 )
 
 target_link_libraries(position
+   ${catkin_LIBRARIES}
+)
+
+target_link_libraries(moveMotor
    ${catkin_LIBRARIES}
 )
 
