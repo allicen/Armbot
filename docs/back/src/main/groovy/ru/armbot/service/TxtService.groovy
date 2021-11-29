@@ -12,13 +12,17 @@ class TxtService {
     SystemFile coordinateTxtFile (List<Coordinate> coordinateList) {
 
         try {
-            File file = File.createTempFile('points', '.txt')
+            File file = File.createTempFile('command_description', '.txt')
 
             coordinateList.each {
-                file << "${it.name}:${it.x} ${it.y} ${it.z}\n"
+                file << "${it.name}:${it.x/1000} ${it.y/1000}" // перевод м в мм
+                if (it.z != 0) {
+                    file << " ${it.z/1000}"
+                }
+                file << "\n"
             }
 
-            return new SystemFile(file).attach("points.txt")
+            return new SystemFile(file).attach("command_description.txt")
         } catch (e) {
             println("TXT ERROR: " + e)
         }
@@ -30,13 +34,13 @@ class TxtService {
         fileRows.sort{it.sortOrder}
 
         try {
-            File file = File.createTempFile('launch-file', '.txt')
+            File file = File.createTempFile('commands', '.txt')
 
             fileRows.each {
                 file << "${it.coordinate.name} ${it.delay}\n"
             }
 
-            return new SystemFile(file).attach("launch-file.txt")
+            return new SystemFile(file).attach("commands.txt")
         } catch (e) {
             println("TXT ERROR: " + e)
         }
