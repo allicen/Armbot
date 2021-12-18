@@ -52,7 +52,7 @@
 </section>
 
 
-<div class="robot-area" #robotArea>
+<div class="robot-area" #robotArea (click)="saveCoordinate($event)">
   <div class="point" *ngFor="let item of dataSource;"
        (click)="copyCoordinate(item)"
        [style.width]="diameterPoint+'px'"
@@ -134,8 +134,7 @@
   <div class="image after-edit" *ngIf="!editingAllowed">
     <img [src]="image" alt="" #uploadImage
          [width]="imageWidthPx"
-         [style]="'margin-left: '+ dragImagePosition.x+'px; margin-top: '+ dragImagePosition.y+'px;'"
-         (click)="saveCoordinate($event)">
+         [style]="'margin-left: '+ dragImagePosition.x+'px; margin-top: '+ dragImagePosition.y+'px;'">
   </div>
 </div>
 
