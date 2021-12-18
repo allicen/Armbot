@@ -1,6 +1,7 @@
 package ru.armbot.controller
 
 import ru.armbot.domain.LaunchFileRow
+import ru.armbot.domain.LogStatus
 import ru.armbot.domain.SessionState
 import ru.armbot.domain.WorkOption
 import ru.armbot.dto.ResponseDto
@@ -22,6 +23,7 @@ import ru.armbot.repository.LaunchFileRowRepository
 import ru.armbot.repository.SessionStateRepository
 import ru.armbot.service.CoordinateExcelService
 import ru.armbot.service.CoordinateService
+import ru.armbot.service.LogService
 import ru.armbot.service.TxtService
 
 import java.nio.charset.StandardCharsets
@@ -40,6 +42,7 @@ class CoordinateController {
     @Inject TxtService txtService
     @Inject SessionStateRepository sessionStateRepository
     @Inject LaunchFileRowRepository launchFileRowRepository
+    @Inject LogService logService
 
     @Post(value = "/save")
     def save(@Body Coordinate coordinate) {
@@ -49,11 +52,11 @@ class CoordinateController {
 
         try {
             coordinateRepository.save(coordinate)
+            logService.writeLog(this, 'Команда успешно сохранена')
             return new ResponseDto(status: 'SUCCESS', details: [coordinate: coordinate])
-
         } catch (e) {
             def message = "Ошибка сохранения координаты ${coordinate.name}. ".toString()
-            println(message + e)
+            logService.writeLog(this, ("$message: $e").toString(), LogStatus.ERROR)
         }
 
         return HttpStatus.INTERNAL_SERVER_ERROR
@@ -80,10 +83,12 @@ class CoordinateController {
 
         try {
             coordinateRepository.update(item)
+            logService.writeLog(this, 'Команда успешно обновлена')
             return new ResponseDto(status: ResponseStatus.SUCCESS, message: 'Координата обновлена!')
         } catch (e) {
-            println("Ошибка обновления координаты, ${e}")
-            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'UPDATE_ERROR', message: 'Ошибка обновления координаты')
+            String mess = 'Ошибка обновления координаты'
+            logService.writeLog(this, ("$mess: $e").toString(), LogStatus.ERROR)
+            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'UPDATE_ERROR', message: mess)
         }
     }
 
@@ -92,10 +97,13 @@ class CoordinateController {
         try {
             launchFileRowRepository.deleteAll()
             coordinateRepository.deleteAll()
-            return new ResponseDto(status: ResponseStatus.SUCCESS, message: 'Координаты успешно удалены')
+            String mess = 'Команда успешно удалены'
+            logService.writeLog(this, mess)
+            return new ResponseDto(status: ResponseStatus.SUCCESS, message: mess)
         } catch (e) {
-            println("Ошибка удаления координат, ${e}")
-            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'DELETE_ERROR', message: 'Ошибка удаления координат')
+            String mess = 'Ошибка удаления координат'
+            logService.writeLog(this, ("$mess: $e"), LogStatus.ERROR)
+            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'DELETE_ERROR', message: mess)
         }
     }
 
@@ -112,10 +120,14 @@ class CoordinateController {
         try {
             launchFileRowRepository.delete(launchFileRow)
             coordinateRepository.delete(coordinate)
-            return new ResponseDto(status: ResponseStatus.SUCCESS, message: 'Координата удалена!')
+
+            String mess = 'Координата удалена!'
+            logService.writeLog(this, mess)
+            return new ResponseDto(status: ResponseStatus.SUCCESS, message: mess)
         } catch (e) {
-            println(e)
-            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'DELETE_ERROR', message: 'Ошибка удаления координаты')
+            String mess = 'Ошибка удаления координаты'
+            logService.writeLog(this, ("$mess: $e").toString(), LogStatus.ERROR)
+            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'DELETE_ERROR', message: mess)
         }
     }
 
@@ -151,9 +163,11 @@ class CoordinateController {
         SessionState sessionState = new SessionState(workOption: WorkOption.UPLOAD_COORDINATE_LIST)
         try {
             sessionStateRepository.save(sessionState)
+            logService.writeLog(this, 'Сессия успешно сохранена')
         } catch (e) {
-            println(e)
-            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'ERROR_CREATE_SESSION', message: 'При создании сессии произошла ошибка')
+            String mess = 'При создании сессии произошла ошибка'
+            logService.writeLog(this, ("$mess: $e"), LogStatus.ERROR)
+            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'ERROR_CREATE_SESSION', message: mess)
         }
 
         def result = [success: 0, savedCoordinates: [], errorDetails: []]
@@ -176,8 +190,9 @@ class CoordinateController {
                             coordinateRepository.save(coordinate)
                             result.savedCoordinates += coordinate
                         } catch (e) {
-                            result.errorDetails += "Строка ${index} - координата не была сохранена".toString()
-                            println(e)
+                            String mess = "Строка ${index} - координата не была сохранена".toString()
+                            result.errorDetails += mess
+                            logService.writeLog(this, ("$mess: $e").toString(), LogStatus.ERROR)
                         }
                     } else {
                         result.errorDetails += "Строка ${index} - содержит неверное количество координат".toString()

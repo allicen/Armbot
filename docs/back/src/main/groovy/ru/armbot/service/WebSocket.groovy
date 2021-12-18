@@ -19,6 +19,7 @@ import ru.armbot.utils.SizeUnitUtils
 class WebSocket {
     @Inject CoordinateRepository coordinateRepository
     @Inject CoordinateService coordinateService
+    @Inject LogService logService
 
     private WebSocketBroadcaster broadcaster
 
@@ -36,8 +37,9 @@ class WebSocket {
     Publisher<ResponseDto> onMessage(String message, WebSocketSession session) {
         List<String> messArr = message.split(' ')
         if (messArr.size() != 3) {
-            return broadcaster.broadcast(new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'INVALID_DATA',
-                                                         message: 'Ошибка в данных координат'))
+            String mess = 'Ошибка в данных координат'
+            logService.writeLog(this, mess, 'error')
+            return broadcaster.broadcast(new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'INVALID_DATA', message: mess))
         }
 
         try {
@@ -46,12 +48,15 @@ class WebSocket {
                                                    y: SizeUnitUtils.fromM(messArr[1]),
                                                    z: SizeUnitUtils.fromM(messArr[2]))
             coordinateRepository.save(coordinate)
+            String mess = 'Сохранена новая координата по вебсокету'
+            logService.writeLog(this, mess)
             return broadcaster.broadcast(new ResponseDto(status: ResponseStatus.SUCCESS,
-                                                         message: 'Сохранена новая координата по вебсокету', details: coordinate))
+                                                         message: mess, details: coordinate))
         } catch (e) {
             println(e)
-            return broadcaster.broadcast(new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'ERROR_SAVE',
-                    message: 'Ошибка сохранения координаты'))
+            String mess = 'Ошибка сохранения координаты'
+            logService.writeLog(this, "$mess: $e", 'error')
+            return broadcaster.broadcast(new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'ERROR_SAVE', message: mess))
         }
     }
 

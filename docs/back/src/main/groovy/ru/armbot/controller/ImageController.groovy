@@ -6,6 +6,7 @@ import io.micronaut.http.annotation.Part
 import io.micronaut.http.annotation.Post
 import jakarta.inject.Inject
 import ru.armbot.domain.Image
+import ru.armbot.domain.LogStatus
 import ru.armbot.domain.ResponseStatus
 import ru.armbot.domain.SessionState
 import ru.armbot.domain.WorkOption
@@ -16,6 +17,7 @@ import ru.armbot.repository.ImageRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import ru.armbot.repository.SessionStateRepository
+import ru.armbot.service.LogService
 import ru.armbot.service.SessionService
 
 
@@ -30,6 +32,7 @@ class ImageController {
     @Inject CoordinateRepository coordinateRepository
     @Inject SessionStateRepository sessionStateRepository
     @Inject SessionService sessionService
+    @Inject LogService logService
 
     ImageController() {}
 
@@ -49,9 +52,11 @@ class ImageController {
 
         try {
             sessionStateRepository.save(sessionState)
+            logService.writeLog(this, 'Сессия успешно сохранена')
         } catch (e) {
-            println(e)
-            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'SESSION_NOT_SAVE', message: 'Сессия не создана')
+            String mess = 'Сессия не создана'
+            logService.writeLog(this, ("$mess: $e").toString(), LogStatus.ERROR)
+            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'SESSION_NOT_SAVE', message: mess)
         }
 
         // Может быть загружена только 1 картинка
@@ -63,10 +68,13 @@ class ImageController {
 
         try {
             imageRepository.save(image)
-            return new ResponseDto(status: ResponseStatus.SUCCESS, message: 'Изображение успешно загружено')
+            String mess = 'Изображение успешно загружено'
+            logService.writeLog(this, mess)
+            return new ResponseDto(status: ResponseStatus.SUCCESS, message: mess)
         } catch (e) {
-            println(e)
-            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'ERROR_SAVE_IMAGE', message: 'При сохранении изображения произошла ошибка')
+            String mess = 'При сохранении изображения произошла ошибка'
+            logService.writeLog(this, ("$mess: $e").toString(), LogStatus.ERROR)
+            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'ERROR_SAVE_IMAGE', message: mess)
         }
     }
 
@@ -87,10 +95,12 @@ class ImageController {
 
         try {
             imageRepository.update(image)
+            logService.writeLog(this, 'Изображение успешно обновлено')
             return new ResponseDto(status: ResponseStatus.SUCCESS)
         } catch (e) {
-            println(e)
-            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'IMAGE_NOT_UPDATE', message: 'Картинка не обновлена')
+            String mess = 'Картинка не обновлена'
+            logService.writeLog(this, ("$mess: $e").toString(), LogStatus.ERROR)
+            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'IMAGE_NOT_UPDATE', message: mess)
         }
     }
 }
