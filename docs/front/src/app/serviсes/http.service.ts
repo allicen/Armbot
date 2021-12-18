@@ -266,4 +266,18 @@ export class HttpService {
             })
         );
     }
+
+  /**
+   * Сохранить размер точки
+   * */
+  setCursorPoint(size: number): Observable<any> {
+    return this.http.post(`${this.config.httpUrl}/session/setCursorSize`, {cursorSize: size}).pipe(
+      catchError((error: HttpErrorResponse) => {
+        return throwError(error);
+      }),
+      map(res => {
+        return res;
+      }),
+    );
+  }
 }

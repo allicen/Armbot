@@ -27,7 +27,7 @@ class Settings {
 
     // Радиус вокруг точки
     @Nullable
-    Integer cursorArea
+    Integer cursorArea = 6
 
     @ManyToOne(optional=false, fetch = FetchType.EAGER)
     SessionState sessionState

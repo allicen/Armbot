@@ -1,12 +1,12 @@
 package ru.armbot.controller
 
 import io.micronaut.http.MediaType
+import io.micronaut.http.annotation.Part
 import io.micronaut.http.annotation.Post
 import ru.armbot.domain.Coordinate
 import ru.armbot.domain.Image
 import ru.armbot.domain.LaunchFileRow
 import ru.armbot.domain.Settings
-import ru.armbot.domain.SizeUnit
 import ru.armbot.domain.WorkOption
 import ru.armbot.dto.CoordinateDto
 import ru.armbot.dto.FileRowDto
@@ -209,5 +209,42 @@ class SessionController {
                 settings: settingsRepository.list()?.getAt(0),
                 coordinateList: coordinateList,
                 launchFileRowList: fileRows)
+    }
+
+
+    @Post(value = "/setCursorSize", consumes = MediaType.APPLICATION_JSON)
+    def setCursorSize(@Part Integer cursorSize) {
+        List<Settings> settingsList = settingsRepository.list()
+        List<SessionState> sessionList = sessionStateRepository.list()
+
+        if (sessionList.isEmpty()) {
+            return new ResponseDto(status: ResponseStatus.NO_SESSION)
+        }
+
+        Settings settings
+        boolean update = false
+        if (settingsList.isEmpty()) {
+            settings = new Settings(sessionState: sessionList[0])
+        } else {
+            settings = settingsList[0]
+            update = true
+        }
+        settings.cursorArea = cursorSize
+
+        return saveCursorSize(settings, update)
+    }
+
+    def saveCursorSize(Settings settings, boolean update = false) {
+        try {
+            if (update) {
+                settingsRepository.update(settings)
+            } else {
+                settingsRepository.save(settings)
+            }
+            return new ResponseDto(status: ResponseStatus.SUCCESS, message: 'Размер курсора успешно сохранен')
+        } catch (e) {
+            println(e)
+            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'CURSOR_AREA_SAVE_ERROR', message: 'Размер курсора не сохранен')
+        }
     }
 }

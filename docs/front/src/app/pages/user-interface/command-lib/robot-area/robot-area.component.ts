@@ -208,7 +208,16 @@ export class RobotAreaComponent implements OnInit {
     }
 
     changeRadiusPoint(value: string) {
-      this.sessionService.setDiameterPoint(Number(value));
+      const size: number = Number(value);
+      this.sessionService.setDiameterPoint(size);
+      this.httpService.setCursorPoint(size).pipe(untilDestroyed(this)).subscribe(data => {
+        console.log('data = ', data);
+
+        if (!data) {
+          return;
+        }
+        this.diameterPoint = size;
+      });
     }
 
     copyCoordinate(clickCoordinate: Coordinate) {

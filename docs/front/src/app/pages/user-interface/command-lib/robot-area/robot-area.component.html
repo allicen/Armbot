@@ -74,8 +74,8 @@
        [style.width]="diameterPoint+'px'"
        [style.height]="diameterPoint+'px'"
        [style.borderRadius]="diameterPoint+'px'"
-       [style.left]="getPosition(item).x+'px'"
-       [style.top]="getPosition(item).y+'px'"
+       [style.left]="getPosition(item).x - diameterPoint /2 +'px'"
+       [style.top]="getPosition(item).y - diameterPoint / 2 +'px'"
        [style.cursor]="autoGenerateFileOn ? 'pointer' : 'default'"
        [style.background]="(clickCoordinate && clickCoordinate.x === item.x && clickCoordinate.y === item.y ? 'yellow' : 'red')"></div>
 

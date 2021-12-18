@@ -80,6 +80,16 @@ export class SessionService {
         if (data.status === 'SUCCESS' && data.details.launchFileRowList) {
             this.addFileRows(data.details.launchFileRowList);
         }
+
+        if (data.status === 'SUCCESS' && data.details.settings) {
+            this.addSettings(data.details.settings);
+        }
+    }
+
+    addSettings(settings: any) {
+        if (settings.cursorArea) {
+            this.setDiameterPoint(settings.cursorArea);
+        }
     }
 
     addImageDetails(image: any) {

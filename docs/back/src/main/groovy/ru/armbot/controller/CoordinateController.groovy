@@ -14,7 +14,7 @@ import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Post
 import io.micronaut.http.annotation.Produces
 import jakarta.inject.Inject
-import org.slf4j.Logger;
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import ru.armbot.domain.Coordinate
 import ru.armbot.repository.CoordinateRepository
