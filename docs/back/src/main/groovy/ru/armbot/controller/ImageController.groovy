@@ -23,9 +23,6 @@ import ru.armbot.service.SessionService
 
 @Controller("/image")
 class ImageController {
-
-    private final Logger logger = LoggerFactory.getLogger(this.getClass())
-
     private List<String> accessMimeType = ['image/jpeg', 'image/gif', 'image/png', 'image/svg+xml', 'image/tiff']
 
     @Inject ImageRepository imageRepository

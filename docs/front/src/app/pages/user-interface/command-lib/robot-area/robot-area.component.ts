@@ -106,6 +106,11 @@ export class RobotAreaComponent implements OnInit {
     }
 
     saveCoordinate($event: MouseEvent) {
+        // в режиме редактирования координаты не записываем
+        if (this.editingAllowed) {
+            return;
+        }
+
         const image = this.uploadImage?.nativeElement;
         const robotAreaElem = this.robotArea?.nativeElement;
 

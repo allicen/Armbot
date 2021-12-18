@@ -30,7 +30,6 @@ import java.nio.charset.StandardCharsets
 
 @Controller("/coordinate")
 class CoordinateController {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass())
 
     private List<String> accessMimeType = ['text/plain']
 

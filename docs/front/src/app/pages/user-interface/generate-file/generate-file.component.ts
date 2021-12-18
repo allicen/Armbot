@@ -5,7 +5,10 @@ import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 import {SessionService} from "../../../serviсes/session.service";
 import {HttpService} from "../../../serviсes/http.service";
 import {StorageService} from "../../../serviсes/storage.service";
-import {RosLibService} from "../../../serviсes/roslib.service";
+import {WebsocketService} from "../../../serviсes/websocket.service";
+import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
+import {Config} from "../../../config/config";
+import * as ROSLIB from 'roslib';
 
 @UntilDestroy()
 @Component({
@@ -27,13 +30,19 @@ export class GenerateFileComponent implements OnInit {
 
     _showSmileMessage: boolean = false;
 
+    webSocket: WebSocketSubject<any> = webSocket(this.config.webSocketRosUrl);
+    ros: any;
+    ex_publisher:any;
+
     @ViewChild('coordinateInput') coordinateInput: ElementRef<HTMLInputElement> | undefined;
     @ViewChild("commandList") commandList: ElementRef | undefined;
     @ViewChild("exportTxt") exportTxt: ElementRef | undefined;
 
     constructor(private sessionService: SessionService,
                 private httpService: HttpService,
-                private storageService: StorageService) { }
+                private storageService: StorageService,
+                private wsService: WebsocketService,
+                private config: Config) { }
 
     ngOnInit(): void {
         this.exportTxtUrl = this.httpService.exportLaunchFileTxt();
@@ -49,6 +58,10 @@ export class GenerateFileComponent implements OnInit {
             }
             this.storageService.setCoordinateDelete(-1);
         });
+
+      this.ros = new ROSLIB.Ros({
+        url : this.config.webSocketRosUrl
+      });
     }
 
     choice(id: number): void {
@@ -122,6 +135,16 @@ export class GenerateFileComponent implements OnInit {
     }
 
     armbotStart() {
+        // this.webSocket.asObservable().subscribe((data) => {
+        //     console.log("Subscriber got data >>>>> "+ data);
+        // });
+        //
+        // this.webSocket.next({command: 'run armbot'});
+
+        // this.ros = new ROSLIB.Ros({
+        //   url : this.config.webSocketRosUrl
+        // });
+
         this._showSmileMessage = true;
         setTimeout(() => {
           this._showSmileMessage = false;

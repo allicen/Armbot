@@ -267,17 +267,28 @@ export class HttpService {
         );
     }
 
-  /**
-   * Сохранить размер точки
-   * */
-  setCursorPoint(size: number): Observable<any> {
-    return this.http.post(`${this.config.httpUrl}/session/setCursorSize`, {cursorSize: size}).pipe(
-      catchError((error: HttpErrorResponse) => {
-        return throwError(error);
-      }),
-      map(res => {
-        return res;
-      }),
-    );
-  }
+    /**
+     * Сохранить размер точки
+     * */
+    setCursorPoint(size: number): Observable<any> {
+        return this.http.post(`${this.config.httpUrl}/session/setCursorSize`, {cursorSize: size}).pipe(
+            catchError((error: HttpErrorResponse) => {
+                return throwError(error);
+            }),
+            map(res => {
+                return res;
+            }),
+        );
+    }
+
+    // /**
+    //  * Запустить робота (через shell)
+    //  * */
+    // runRobot(): Observable<any> {
+    //     return this.http.get(`${this.config.httpUrl}/robot/run`).pipe(
+    //         map(res => {
+    //             return res;
+    //         })
+    //     );
+    // }
 }
