@@ -52,9 +52,9 @@ class ImageController {
 
         try {
             sessionStateRepository.save(sessionState)
-            logService.writeLog(this, 'Сессия успешно сохранена')
+            logService.writeLog(this, 'Сеанс успешно сохранена')
         } catch (e) {
-            String mess = 'Сессия не создана'
+            String mess = 'Сеанс не создана'
             logService.writeLog(this, ("$mess: $e").toString(), LogStatus.ERROR)
             return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'SESSION_NOT_SAVE', message: mess)
         }

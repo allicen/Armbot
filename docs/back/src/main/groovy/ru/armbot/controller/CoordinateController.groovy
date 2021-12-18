@@ -55,7 +55,7 @@ class CoordinateController {
             logService.writeLog(this, 'Команда успешно сохранена')
             return new ResponseDto(status: 'SUCCESS', details: [coordinate: coordinate])
         } catch (e) {
-            def message = "Ошибка сохранения координаты ${coordinate.name}. ".toString()
+            def message = "Ошибка сохранения команды ${coordinate.name}. ".toString()
             logService.writeLog(this, ("$message: $e").toString(), LogStatus.ERROR)
         }
 
@@ -86,7 +86,7 @@ class CoordinateController {
             logService.writeLog(this, 'Команда успешно обновлена')
             return new ResponseDto(status: ResponseStatus.SUCCESS, message: 'Координата обновлена!')
         } catch (e) {
-            String mess = 'Ошибка обновления координаты'
+            String mess = 'Ошибка обновления команды'
             logService.writeLog(this, ("$mess: $e").toString(), LogStatus.ERROR)
             return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'UPDATE_ERROR', message: mess)
         }
@@ -125,7 +125,7 @@ class CoordinateController {
             logService.writeLog(this, mess)
             return new ResponseDto(status: ResponseStatus.SUCCESS, message: mess)
         } catch (e) {
-            String mess = 'Ошибка удаления координаты'
+            String mess = 'Ошибка удаления команды'
             logService.writeLog(this, ("$mess: $e").toString(), LogStatus.ERROR)
             return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'DELETE_ERROR', message: mess)
         }
@@ -163,7 +163,7 @@ class CoordinateController {
         SessionState sessionState = new SessionState(workOption: WorkOption.UPLOAD_COORDINATE_LIST)
         try {
             sessionStateRepository.save(sessionState)
-            logService.writeLog(this, 'Сессия успешно сохранена')
+            logService.writeLog(this, 'Сеанс успешно сохранен')
         } catch (e) {
             String mess = 'При создании сессии произошла ошибка'
             logService.writeLog(this, ("$mess: $e"), LogStatus.ERROR)
@@ -206,11 +206,11 @@ class CoordinateController {
         if (result.errorDetails.size() > 0) {
             return new ResponseDto(status: ResponseStatus.ERROR,
                     errorCode: 'IMPORT_ERROR',
-                    message: 'Координаты загружены с ошибками',
+                    message: 'Команды загружены с ошибками',
                     details: result)
         }
 
-        return new ResponseDto(status: ResponseStatus.SUCCESS, message: 'Координаты успешно загружены', details: result)
+        return new ResponseDto(status: ResponseStatus.SUCCESS, message: 'Команды успешно загружены', details: result)
     }
 
 }

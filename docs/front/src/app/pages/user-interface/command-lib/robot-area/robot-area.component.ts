@@ -137,7 +137,7 @@ export class RobotAreaComponent implements OnInit {
             this.sessionService.addCoordinateInList(res.details.coordinate);
             this.saveLaunchFileRow(res.details.coordinate);
 
-            this.snackBar.open(`Точка сохранена с координатами x=${coordinate.x}, y=${coordinate.y}`, 'X', {
+            this.snackBar.open(`Команда сохранена с координатами x=${coordinate.x}, y=${coordinate.y}`, 'X', {
                 duration: 2000
             });
         });

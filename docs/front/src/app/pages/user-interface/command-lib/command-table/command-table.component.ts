@@ -149,7 +149,7 @@ export class CommandTableComponent implements OnInit {
 
     removeCoordinate(id: number) {
         this.dialog.open(OpenDialogComponent, {
-            data: { id: id, title: 'Удалить строку?', text: 'Будут удалены команды из файла запуска с этой координатой.', type: 'delete_coordinate' }
+            data: { id: id, title: 'Удалить строку?', text: 'Будут удалены строки из файла запуска с этой командой.', type: 'delete_coordinate' }
         });
     }
 
@@ -166,7 +166,7 @@ export class CommandTableComponent implements OnInit {
 
     removeAllPoint() {
         this.dialog.open(OpenDialogComponent, {
-            data: {title: 'Удалить все координаты?',
+            data: {title: 'Удалить все команды?',
               text: 'Будут удалены все команды из файла запуска.',
               type: 'remove_all_coordinates'}
         });

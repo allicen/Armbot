@@ -49,7 +49,7 @@ export class UserInterfaceComponent implements OnInit {
   removeSession() {
     this.dialog.open(OpenDialogComponent, {
       data: {title: 'Завершить сеанс?',
-        text: 'Будут удалены все координаты и загруженное изображение. Действие отменить нельзя.',
+        text: 'Будут удалены все команды и загруженное изображение. Действие отменить нельзя.',
         type: 'remove_session'}
     });
   }

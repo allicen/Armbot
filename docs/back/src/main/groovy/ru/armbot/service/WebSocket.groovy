@@ -1,5 +1,6 @@
 package ru.armbot.service
 
+import ru.armbot.domain.LogStatus
 import ru.armbot.dto.ResponseDto
 import ru.armbot.domain.ResponseStatus
 import io.micronaut.core.annotation.Creator
@@ -38,7 +39,7 @@ class WebSocket {
         List<String> messArr = message.split(' ')
         if (messArr.size() != 3) {
             String mess = 'Ошибка в данных координат'
-            logService.writeLog(this, mess, 'error')
+            logService.writeLog(this, mess, LogStatus.ERROR)
             return broadcaster.broadcast(new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'INVALID_DATA', message: mess))
         }
 
@@ -54,8 +55,8 @@ class WebSocket {
                                                          message: mess, details: coordinate))
         } catch (e) {
             println(e)
-            String mess = 'Ошибка сохранения координаты'
-            logService.writeLog(this, "$mess: $e", 'error')
+            String mess = 'Ошибка сохранения команды'
+            logService.writeLog(this, "$mess: $e", LogStatus.ERROR)
             return broadcaster.broadcast(new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'ERROR_SAVE', message: mess))
         }
     }

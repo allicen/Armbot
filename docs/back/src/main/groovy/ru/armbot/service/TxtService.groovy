@@ -7,6 +7,7 @@ import jakarta.inject.Inject
 import jakarta.inject.Singleton
 import ru.armbot.domain.Coordinate
 import ru.armbot.domain.LaunchFileRow
+import ru.armbot.domain.LogStatus
 
 @Singleton
 class TxtService {
@@ -27,7 +28,7 @@ class TxtService {
 
             return new SystemFile(file).attach("command_description.txt")
         } catch (e) {
-            logService.writeLog(this, "TXT export error: $e".toString(), 'error')
+            logService.writeLog(this, "TXT export error: $e".toString(), LogStatus.ERROR)
         }
         throw new HttpStatusException(HttpStatus.SERVICE_UNAVAILABLE, "error generating txt file")
     }
@@ -45,7 +46,7 @@ class TxtService {
 
             return new SystemFile(file).attach("commands.txt")
         } catch (e) {
-            logService.writeLog(this, "TXT export error: $e".toString(), 'error')
+            logService.writeLog(this, "TXT export error: $e".toString(), LogStatus.ERROR)
         }
         throw new HttpStatusException(HttpStatus.SERVICE_UNAVAILABLE, "error generating txt file")
     }

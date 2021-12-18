@@ -1,6 +1,5 @@
 package ru.armbot.controller
 
-import groovy.util.logging.Log
 import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.Part
 import io.micronaut.http.annotation.Post
@@ -103,7 +102,7 @@ class SessionController {
         SessionState sessionState = new SessionState(workOption: EnumService.getValue(WorkOption, session.workOption))
         try {
             sessionStateRepository.save(sessionState)
-            logService.writeLog(this, 'Сессия успешно сохранена')
+            logService.writeLog(this, 'Сеанс успешно сохранен')
         } catch (e) {
             String mess = 'При сохранениии сессии возникли ошибки'
             logService.writeLog(this, ("$mess: $e"), LogStatus.ERROR)
@@ -151,7 +150,7 @@ class SessionController {
                     coordinateRepository.save(coordinate)
                     logService.writeLog(this, 'Команда успешно сохранена')
                 } catch (e) {
-                    String mess = "При загрузке координаты с ID=${item.id} (${item.name} возникли ошибки)".toString()
+                    String mess = "При загрузке команды с ID=${item.id} (${item.name} возникли ошибки)".toString()
                     logService.writeLog(this, ("$mess: $e").toString(), LogStatus.ERROR)
                     errors.push(mess)
                 }

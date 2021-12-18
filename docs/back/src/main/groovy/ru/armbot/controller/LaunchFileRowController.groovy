@@ -46,8 +46,8 @@ class LaunchFileRowController {
             logService.writeLog(this, "Строка name=${coordinate.name} delay=${delay.toString()} успешно добавлена".toString())
             return new ResponseDto(status: ResponseStatus.SUCCESS, message: 'Строка успешно добавлена')
         } catch (e) {
-            logService.writeLog(this, ("Ошибка при сохранении координаты name=${coordinate.name}: $e").toString(), LogStatus.ERROR)
-            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'COORDINATE_NOT_SAVE', message: 'Ошибка при сохранении координаты')
+            logService.writeLog(this, ("Ошибка при сохранении команды name=${coordinate.name}: $e").toString(), LogStatus.ERROR)
+            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'COORDINATE_NOT_SAVE', message: 'Ошибка при сохранении команды')
         }
     }
 

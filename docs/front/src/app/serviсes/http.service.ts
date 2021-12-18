@@ -31,7 +31,7 @@ export class HttpService {
 
 
     /**
-     * Импорт координат из файла
+     * Импорт команд из файла
      * */
     importCoordinates(file: File): Observable<any> {
 
@@ -52,7 +52,7 @@ export class HttpService {
 
 
     /**
-     * Удалить сессию
+     * Удалить сеанс
      * */
     removeSession(): Observable<any> {
         return this.http.get(`${this.config.httpUrl}/session/remove/`).pipe(
@@ -64,7 +64,7 @@ export class HttpService {
 
 
     /**
-     * Обновить координату
+     * Обновить команду
      * */
     saveCoordinate(coordinate: Coordinate): Observable<any> {
         return this.http.post(`${this.config.httpUrl}/coordinate/save`, coordinate).pipe(
@@ -79,7 +79,7 @@ export class HttpService {
 
 
     /**
-     * Обновить координату
+     * Обновить команду
      * */
     updateCoordinate(coordinate: Coordinate): Observable<any> {
         return this.http.post(`${this.config.httpUrl}/coordinate/update`, coordinate).pipe(
@@ -94,7 +94,7 @@ export class HttpService {
 
 
     /**
-     * Удалить все координаты
+     * Удалить все команды
      * */
     removeAllCoordinates(): Observable<any> {
         return this.http.get(`${this.config.httpUrl}/coordinate/removeAll`).pipe(
@@ -106,7 +106,7 @@ export class HttpService {
 
 
     /**
-     * Удалить координату
+     * Удалить команду
      * */
     removeCoordinate(id: number) {
         return this.http.get(`${this.config.httpUrl}/coordinate/remove/${id}`).pipe(
@@ -158,7 +158,7 @@ export class HttpService {
 
 
     /**
-     * Получить сессию
+     * Получить сеанс
      * */
     getSession(): Observable<any> {
         return this.http.get(`${this.config.httpUrl}/session/get`).pipe(
@@ -249,7 +249,7 @@ export class HttpService {
 
 
     /**
-     * Экспорт сессии в json
+     * Экспорт сеанса в json
      * */
     exportSessionJson(): string {
         return `${this.config.httpUrl}/session/export`;
@@ -257,7 +257,7 @@ export class HttpService {
 
 
     /**
-     * Импорт сессии из json
+     * Импорт сеанса из json
      * */
     importSessionJson(file: File): Observable<any> {
         return this.http.post(`${this.config.httpUrl}/session/import`, file).pipe(

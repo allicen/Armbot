@@ -5,7 +5,7 @@ package ru.armbot.domain
  * */
 
 enum LogStatus {
-    ERROR('success', 'Ошибка'),
+    ERROR('error', 'Ошибка'),
     INFO('info', 'Успех')
 
     private LogStatus(String id, String name) {
