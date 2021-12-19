@@ -9,6 +9,7 @@ import {WebsocketService} from "../../../serviсes/websocket.service";
 import {Config} from "../../../config/config";
 import {RosArmbotService} from "../../../serviсes/roslib.service";
 import {ArmbotService} from "../../../serviсes/armbot.service";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @UntilDestroy()
 @Component({
@@ -38,7 +39,8 @@ export class GenerateFileComponent implements OnInit {
     constructor(private sessionService: SessionService,
                 private httpService: HttpService,
                 private storageService: StorageService,
-                private armbotService: ArmbotService) { }
+                private armbotService: ArmbotService,
+                private snackBar: MatSnackBar) { }
 
     ngOnInit(): void {
         this.exportTxtUrl = this.httpService.exportLaunchFileTxt();
@@ -56,7 +58,12 @@ export class GenerateFileComponent implements OnInit {
         });
         this.armbotService.getArmbotStatus().pipe(untilDestroyed(this)).subscribe(data => this.armbotStatus = data);
         this.armbotService.getArmbotMessage().pipe(untilDestroyed(this)).subscribe(data => this.armbotMessage = data);
-        this.armbotService.getArmbotButtonDisabled().pipe(untilDestroyed(this)).subscribe(data => this.armbotButtonDisabled = data);
+        this.armbotService.getArmbotButtonDisabled().pipe(untilDestroyed(this)).subscribe(data => {
+            this.armbotButtonDisabled = data;
+            if (!this.armbotButtonDisabled) {
+                this.snackBar.dismiss();
+            }
+        });
     }
 
     choice(id: number): void {

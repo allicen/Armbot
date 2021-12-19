@@ -14,6 +14,7 @@ import {MatButtonModule} from "@angular/material/button";
 import {MatInputModule} from "@angular/material/input";
 import {WebsocketService} from "../../../serviсes/websocket.service";
 import {NgxRoslibService, RosService} from "ngx-roslib";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @NgModule({
   declarations: [
@@ -37,7 +38,7 @@ import {NgxRoslibService, RosService} from "ngx-roslib";
         MatInputModule,
     ],
   exports: [GenerateFileComponent],
-  providers: [WebsocketService, NgxRoslibService],
+  providers: [WebsocketService, NgxRoslibService, MatSnackBar],
   bootstrap: [GenerateFileComponent]
 })
 export class GenerateFileModule { }

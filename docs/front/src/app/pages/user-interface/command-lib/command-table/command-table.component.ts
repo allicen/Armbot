@@ -217,7 +217,7 @@ export class CommandTableComponent implements OnInit {
         }
 
         this.armbotCommandActive = id;
-        this.snackBar.open(`Запущен робот для проверки команды '${coordinate.name}'`);
+        this.snackBar.open(`Запущен робот для проверки команды '${coordinate.name}'`, 'X');
         this.armbotService.runArmbotCommand(coordinate);
     }
 }
