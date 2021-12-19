@@ -8,6 +8,7 @@ import {StorageService} from "../../../serviсes/storage.service";
 import {WebsocketService} from "../../../serviсes/websocket.service";
 import {Config} from "../../../config/config";
 import {RosArmbotService} from "../../../serviсes/roslib.service";
+import {ArmbotService} from "../../../serviсes/armbot.service";
 
 @UntilDestroy()
 @Component({
@@ -25,9 +26,7 @@ export class GenerateFileComponent implements OnInit {
     prevDelay: number = 0;
     maxId: number = 0;
     exportTxtUrl: string = '';
-    coordinateDelete: number = -1;
 
-    // essage: boolean = false;
     armbotMessage: string = '';
     armbotStatus: string = '';
     armbotButtonDisabled: boolean = true;
@@ -39,9 +38,7 @@ export class GenerateFileComponent implements OnInit {
     constructor(private sessionService: SessionService,
                 private httpService: HttpService,
                 private storageService: StorageService,
-                private wsService: WebsocketService,
-                private config: Config,
-                public rosArmbotService: RosArmbotService) { }
+                private armbotService: ArmbotService) { }
 
     ngOnInit(): void {
         this.exportTxtUrl = this.httpService.exportLaunchFileTxt();
@@ -57,18 +54,9 @@ export class GenerateFileComponent implements OnInit {
             }
             this.storageService.setCoordinateDelete(-1);
         });
-
-        this.rosArmbotService.getArmbotStatus().pipe(untilDestroyed(this)).subscribe(status => {
-            this.armbotStatus = status;
-            this.armbotButtonDisabled = status === this.config.robotStatus.disconnect || status === this.config.robotStatus.busy;
-            if (status === this.config.robotStatus.disconnect) {
-                this.armbotMessage = 'Робот отключен';
-            } else if (status === this.config.robotStatus.busy) {
-                this.armbotMessage = 'Робот занят';
-            } else if (status === this.config.robotStatus.ready) {
-                this.armbotMessage = 'Робот свободен';
-            }
-        });
+        this.armbotService.getArmbotStatus().pipe(untilDestroyed(this)).subscribe(data => this.armbotStatus = data);
+        this.armbotService.getArmbotMessage().pipe(untilDestroyed(this)).subscribe(data => this.armbotMessage = data);
+        this.armbotService.getArmbotButtonDisabled().pipe(untilDestroyed(this)).subscribe(data => this.armbotButtonDisabled = data);
     }
 
     choice(id: number): void {
@@ -145,6 +133,7 @@ export class GenerateFileComponent implements OnInit {
         this.httpService.runRobot().pipe(untilDestroyed(this)).subscribe(data =>
           console.log(data)
         );
-        this.rosArmbotService.runArmbot();
+
+        // this.armbotService.runArmbot();
     }
 }

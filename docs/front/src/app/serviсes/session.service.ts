@@ -242,7 +242,7 @@ export class SessionService {
                 if (data.status !== 'SUCCESS') {
                     this.setLaunchFileRow(fileRows);
                 }
-        });
+            });
     }
 
     getNextFileRowId(): Observable<number> {

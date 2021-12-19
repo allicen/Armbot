@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {NgxRoslibService, Rosbridge, RosService} from 'ngx-roslib';
 import {BehaviorSubject, Observable} from "rxjs";
 import {Config} from "../config/config";
+import {Coordinate} from "../model/models";
 
 @Injectable({
   providedIn: 'root',
@@ -42,7 +43,7 @@ export class RosArmbotService {
         this.armbotStatus$.next(value);
     }
 
-    runArmbot(): void {
+    runArmbotCommand(coordinate: Coordinate): void {
         if (!this.armbotIsConnected) {
            return;
         }
@@ -54,7 +55,10 @@ export class RosArmbotService {
             serviceType: 'armbot_move/SetPosition',
         });
 
-        service.call({position: 'TEST_123', x: 0.203389, y: -0.129121}, (msg) => {
+        service.call({position: coordinate.name,
+                          x: coordinate.x/1000, // в ROS расстояния в метрах
+                          y: coordinate.y/1000,
+                          z: coordinate.z/1000}, (msg) => {
             console.log(`ROS FINISH. RESULT`);
             this.setArmbotStatus(this.config.robotStatus.ready);
         });

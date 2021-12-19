@@ -20,6 +20,7 @@ import {ImportImageComponent} from "./import-image/import-image.component";
 import {RobotAreaComponent} from "./robot-area/robot-area.component";
 import {CommandTableComponent} from "./command-table/command-table.component";
 import {MatExpansionModule} from "@angular/material/expansion";
+import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 
 @NgModule({
   declarations: [
@@ -29,24 +30,25 @@ import {MatExpansionModule} from "@angular/material/expansion";
     RobotAreaComponent,
     CommandTableComponent
   ],
-    imports: [
-        RouterModule.forChild([{
-            path: '',
-            component: CommandLibComponent
-        }]),
-        CommonModule,
-        MatButtonModule,
-        MatInputModule,
-        DragDropModule,
-        MatTableModule,
-        MatIconModule,
-        MatDialogModule,
-        MatCheckboxModule,
-        MatRadioModule,
-        FormsModule,
-        ReactiveFormsModule,
-        MatExpansionModule
-    ],
+  imports: [
+    RouterModule.forChild([{
+      path: '',
+      component: CommandLibComponent
+    }]),
+    CommonModule,
+    MatButtonModule,
+    MatInputModule,
+    DragDropModule,
+    MatTableModule,
+    MatIconModule,
+    MatDialogModule,
+    MatCheckboxModule,
+    MatRadioModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatExpansionModule,
+    MatProgressSpinnerModule
+  ],
   providers: [HttpClient, MatDialog, MatSnackBar, WebsocketService],
   exports: [
     CommandLibComponent

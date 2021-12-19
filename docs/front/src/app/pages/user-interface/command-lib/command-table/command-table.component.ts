@@ -10,6 +10,8 @@ import {MatDialog} from "@angular/material/dialog";
 import {MessageService} from "../../../../serviсes/message.service";
 import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 import {SessionService} from "../../../../serviсes/session.service";
+import {ArmbotService} from "../../../../serviсes/armbot.service";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @UntilDestroy()
 @Component({
@@ -24,7 +26,9 @@ export class CommandTableComponent implements OnInit {
                 private config: Config,
                 private dialog: MatDialog,
                 private messageService: MessageService,
-                private sessionService: SessionService) {}
+                private sessionService: SessionService,
+                public armbotService: ArmbotService,
+                private snackBar: MatSnackBar) {}
 
     coordinateList: Coordinate[] = [];
 
@@ -41,6 +45,11 @@ export class CommandTableComponent implements OnInit {
 
     exportCoordinateUrl: string = '';
     exportTxtCoordinateUrl: string = '';
+
+    armbotMessage: string = '';
+    armbotStatus: string = '';
+    armbotButtonDisabled: boolean = true;
+    armbotCommandActive: number = 0;
 
     @ViewChild(MatTable) table: MatTable<Coordinate> | undefined;
     @ViewChild("exportExcel") exportExcel: ElementRef | undefined;
@@ -97,6 +106,15 @@ export class CommandTableComponent implements OnInit {
             this.hideMessage();
         });
         this.messageService.getMessageImportErrors().pipe(untilDestroyed(this)).subscribe(data => { this.messageImportErrors = data });
+
+        this.armbotService.getArmbotStatus().pipe(untilDestroyed(this)).subscribe(data => this.armbotStatus = data);
+        this.armbotService.getArmbotMessage().pipe(untilDestroyed(this)).subscribe(data => this.armbotMessage = data);
+        this.armbotService.getArmbotButtonDisabled().pipe(untilDestroyed(this)).subscribe(data => {
+            this.armbotButtonDisabled = data;
+            if (!this.armbotButtonDisabled) {
+                this.snackBar.dismiss();
+            }
+        });
     }
 
     changeCoordinateRow(value: any, type: string, id: number) {
@@ -190,5 +208,16 @@ export class CommandTableComponent implements OnInit {
                 this.messageImport = '';
             }, 3000);
         }
+    }
+
+    armbotRun(id: number) {
+        const coordinate = this.coordinateList.filter(c => c.id === id).shift();
+        if (!coordinate) {
+            return;
+        }
+
+        this.armbotCommandActive = id;
+        this.snackBar.open(`Запущен робот для проверки команды '${coordinate.name}'`);
+        this.armbotService.runArmbotCommand(coordinate);
     }
 }
