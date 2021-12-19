@@ -65,6 +65,7 @@ add_service_files(
    FILES
    SetPosition.srv
    SavePosition.srv
+   RunArmbot.srv
 )
 
 ## Generate actions in the 'action' folder

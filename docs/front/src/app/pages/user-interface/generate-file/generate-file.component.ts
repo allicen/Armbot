@@ -5,9 +5,6 @@ import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 import {SessionService} from "../../../serviсes/session.service";
 import {HttpService} from "../../../serviсes/http.service";
 import {StorageService} from "../../../serviсes/storage.service";
-import {WebsocketService} from "../../../serviсes/websocket.service";
-import {Config} from "../../../config/config";
-import {RosArmbotService} from "../../../serviсes/roslib.service";
 import {ArmbotService} from "../../../serviсes/armbot.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
 
@@ -137,10 +134,10 @@ export class GenerateFileComponent implements OnInit {
     }
 
     armbotStart() {
-        this.httpService.runRobot().pipe(untilDestroyed(this)).subscribe(data =>
-          console.log(data)
-        );
-
-        // this.armbotService.runArmbot();
+        // this.httpService.runRobot().pipe(untilDestroyed(this)).subscribe(data =>
+        //   console.log(data)
+        // );
+      
+        this.armbotService.runArmbotLaunch();
     }
 }

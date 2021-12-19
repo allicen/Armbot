@@ -54,4 +54,8 @@ export class ArmbotService {
     runArmbotCommand(coordinate: Coordinate): void {
         this.rosArmbotService.runArmbotCommand(coordinate);
     }
+
+    runArmbotLaunch(): void {
+        this.rosArmbotService.runArmbotLaunch();
+    }
 }
