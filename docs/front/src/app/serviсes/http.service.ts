@@ -281,14 +281,14 @@ export class HttpService {
         );
     }
 
-    // /**
-    //  * Запустить робота (через shell)
-    //  * */
-    // runRobot(): Observable<any> {
-    //     return this.http.get(`${this.config.httpUrl}/robot/run`).pipe(
-    //         map(res => {
-    //             return res;
-    //         })
-    //     );
-    // }
+    /**
+     * Получить данные для запуска робота
+     * */
+    runRobot(): Observable<any> {
+        return this.http.get(`${this.config.httpUrl}/robot/run`).pipe(
+            map(res => {
+                return res;
+            })
+        );
+    }
 }

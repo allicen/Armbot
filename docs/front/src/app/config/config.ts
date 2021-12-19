@@ -14,4 +14,9 @@ export class Config {
     {key: 'uploadCoordinateList', value: 'Загрузить команды'}
   ];
   coordinateDefault: Coordinate = {x: 0, y: 0, z: 0, name: '', id: -1};
+  robotStatus: any = {
+    disconnect: 'disconnect', // Робот отключен
+    busy: 'busy', // Робот занят
+    ready: 'ready' // Робот готов
+  };
 }

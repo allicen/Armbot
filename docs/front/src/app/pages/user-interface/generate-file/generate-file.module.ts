@@ -13,6 +13,7 @@ import {DragDropModule} from "@angular/cdk/drag-drop";
 import {MatButtonModule} from "@angular/material/button";
 import {MatInputModule} from "@angular/material/input";
 import {WebsocketService} from "../../../serviсes/websocket.service";
+import {NgxRoslibService, RosService} from "ngx-roslib";
 
 @NgModule({
   declarations: [
@@ -36,7 +37,7 @@ import {WebsocketService} from "../../../serviсes/websocket.service";
         MatInputModule,
     ],
   exports: [GenerateFileComponent],
-  providers: [WebsocketService],
+  providers: [WebsocketService, NgxRoslibService],
   bootstrap: [GenerateFileComponent]
 })
 export class GenerateFileModule { }

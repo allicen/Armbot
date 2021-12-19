@@ -6,9 +6,8 @@ import {SessionService} from "../../../serviсes/session.service";
 import {HttpService} from "../../../serviсes/http.service";
 import {StorageService} from "../../../serviсes/storage.service";
 import {WebsocketService} from "../../../serviсes/websocket.service";
-import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
 import {Config} from "../../../config/config";
-import * as ROSLIB from 'roslib';
+import {RosArmbotService} from "../../../serviсes/roslib.service";
 
 @UntilDestroy()
 @Component({
@@ -28,11 +27,10 @@ export class GenerateFileComponent implements OnInit {
     exportTxtUrl: string = '';
     coordinateDelete: number = -1;
 
-    _showSmileMessage: boolean = false;
-
-    webSocket: WebSocketSubject<any> = webSocket(this.config.webSocketRosUrl);
-    ros: any;
-    ex_publisher:any;
+    // essage: boolean = false;
+    armbotMessage: string = '';
+    armbotStatus: string = '';
+    armbotButtonDisabled: boolean = true;
 
     @ViewChild('coordinateInput') coordinateInput: ElementRef<HTMLInputElement> | undefined;
     @ViewChild("commandList") commandList: ElementRef | undefined;
@@ -42,7 +40,8 @@ export class GenerateFileComponent implements OnInit {
                 private httpService: HttpService,
                 private storageService: StorageService,
                 private wsService: WebsocketService,
-                private config: Config) { }
+                private config: Config,
+                public rosArmbotService: RosArmbotService) { }
 
     ngOnInit(): void {
         this.exportTxtUrl = this.httpService.exportLaunchFileTxt();
@@ -59,9 +58,17 @@ export class GenerateFileComponent implements OnInit {
             this.storageService.setCoordinateDelete(-1);
         });
 
-      this.ros = new ROSLIB.Ros({
-        url : this.config.webSocketRosUrl
-      });
+        this.rosArmbotService.getArmbotStatus().pipe(untilDestroyed(this)).subscribe(status => {
+            this.armbotStatus = status;
+            this.armbotButtonDisabled = status === this.config.robotStatus.disconnect || status === this.config.robotStatus.busy;
+            if (status === this.config.robotStatus.disconnect) {
+                this.armbotMessage = 'Робот отключен';
+            } else if (status === this.config.robotStatus.busy) {
+                this.armbotMessage = 'Робот занят';
+            } else if (status === this.config.robotStatus.ready) {
+                this.armbotMessage = 'Робот свободен';
+            }
+        });
     }
 
     choice(id: number): void {
@@ -73,7 +80,7 @@ export class GenerateFileComponent implements OnInit {
     }
 
     remove(index: number): void {
-        this.httpService.removeLaunchFileRow(index).pipe().subscribe(data => {
+        this.httpService.removeLaunchFileRow(index).pipe(untilDestroyed(this)).subscribe(data => {
             if (data.status === 'SUCCESS') {
                 const cIndex = this.commands.findIndex(c => c.id === index);
                 this.commands.splice(cIndex, 1);
@@ -135,19 +142,9 @@ export class GenerateFileComponent implements OnInit {
     }
 
     armbotStart() {
-        // this.webSocket.asObservable().subscribe((data) => {
-        //     console.log("Subscriber got data >>>>> "+ data);
-        // });
-        //
-        // this.webSocket.next({command: 'run armbot'});
-
-        // this.ros = new ROSLIB.Ros({
-        //   url : this.config.webSocketRosUrl
-        // });
-
-        this._showSmileMessage = true;
-        setTimeout(() => {
-          this._showSmileMessage = false;
-        }, 3000);
+        this.httpService.runRobot().pipe(untilDestroyed(this)).subscribe(data =>
+          console.log(data)
+        );
+        this.rosArmbotService.runArmbot();
     }
 }
