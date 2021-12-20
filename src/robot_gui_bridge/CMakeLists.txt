@@ -1,28 +1,18 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(armbot_move)
+project(robot_gui_bridge)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-add_compile_options(-std=c++11)
+# add_compile_options(-std=c++11)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-    roscpp
-    # rospy
-    sensor_msgs
-    std_msgs
-    urdf
-    message_generation
-    moveit_core 
-    moveit_ros_planning 
-    moveit_ros_planning_interface 
-    # moveit_visual_tools
+  rosbridge_server
 )
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
-find_package(Eigen3 REQUIRED)
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -57,16 +47,16 @@ find_package(Eigen3 REQUIRED)
 ## Generate messages in the 'msg' folder
 # add_message_files(
 #   FILES
-#   move_position.msg
-#)
+#   Message1.msg
+#   Message2.msg
+# )
 
 ## Generate services in the 'srv' folder
-add_service_files(
-   FILES
-   SetPosition.srv
-   SavePosition.srv
-   RunArmbot.srv
-)
+# add_service_files(
+#   FILES
+#   Service1.srv
+#   Service2.srv
+# )
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -76,10 +66,10 @@ add_service_files(
 # )
 
 ## Generate added messages and services with any dependencies listed here
-generate_messages(
-   DEPENDENCIES
-   std_msgs  # Or other packages containing msgs
-)
+# generate_messages(
+#   DEPENDENCIES
+#   std_msgs  # Or other packages containing msgs
+# )
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -111,10 +101,9 @@ generate_messages(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-   CATKIN_DEPENDS message_runtime
 #  INCLUDE_DIRS include
-#  LIBRARIES armbot_move
-#  CATKIN_DEPENDS roscpp
+#  LIBRARIES robot_gui_bridge
+#  CATKIN_DEPENDS rosbridge_server
 #  DEPENDS system_lib
 )
 
@@ -127,14 +116,11 @@ catkin_package(
 include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
-  SYSTEM ${EIGEN3_INCLUDE_DIRS}
 )
-
-add_definitions(-DBOOST_ERROR_CODE_HEADER_ONLY)
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/armbot_move.cpp
+#   src/${PROJECT_NAME}/robot_gui_bridge.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -145,10 +131,7 @@ add_definitions(-DBOOST_ERROR_CODE_HEADER_ONLY)
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(joint_subscriber src/jointSubscriber.cpp)
-add_executable(move src/move.cpp)
-add_executable(position src/position.cpp)
-add_executable(moveMotor src/keyboardMoveMotor.cpp)
+# add_executable(${PROJECT_NAME}_node src/robot_gui_bridge_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -161,20 +144,9 @@ add_executable(moveMotor src/keyboardMoveMotor.cpp)
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(joint_subscriber
-   ${catkin_LIBRARIES}
-)
-target_link_libraries(move
-   ${catkin_LIBRARIES}
-)
-
-target_link_libraries(position
-   ${catkin_LIBRARIES}
-)
-
-target_link_libraries(moveMotor
-   ${catkin_LIBRARIES}
-)
+# target_link_libraries(${PROJECT_NAME}_node
+#   ${catkin_LIBRARIES}
+# )
 
 #############
 ## Install ##
@@ -218,18 +190,12 @@ target_link_libraries(moveMotor
 #   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 # )
 
-install(DIRECTORY 
-   launch 
-   DESTINATION 
-   ${CATKIN_PACKAGE_SHARE_DESTINATION}
-)
-
 #############
 ## Testing ##
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_armbot_move.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_robot_gui_bridge.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

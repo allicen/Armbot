@@ -9,11 +9,13 @@ import io.micronaut.http.annotation.Post
 import jakarta.inject.Inject
 import ru.armbot.domain.Coordinate
 import ru.armbot.domain.LaunchFileRow
+import ru.armbot.domain.LogStatus
 import ru.armbot.domain.ResponseStatus
 import ru.armbot.dto.ResponseDto
 import ru.armbot.repository.CoordinateRepository
 import ru.armbot.repository.LaunchFileRowRepository
 import ru.armbot.repository.SessionStateRepository
+import ru.armbot.service.LogService
 import ru.armbot.service.TxtService
 
 @Controller("/file")
@@ -23,6 +25,7 @@ class LaunchFileRowController {
     @Inject CoordinateRepository coordinateRepository
     @Inject SessionStateRepository sessionStateRepository
     @Inject TxtService txtService
+    @Inject LogService logService
 
     LaunchFileRowController() {}
 
@@ -32,6 +35,7 @@ class LaunchFileRowController {
         Coordinate coordinate = coordinateRepository.list().find {it.id == coordinateId }
 
         if (!coordinate) {
+            logService.writeLog(this, "Координата name=${coordinate.name} не найдена".toString(), LogStatus.ERROR)
             return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'COORDINATE_NOT_FOUND', message: 'Координата не найдена')
         }
         LaunchFileRow fileRow = new LaunchFileRow(coordinate: coordinate, delay: delay, sortOrder: launchFileRowRepository.list().size())
@@ -39,10 +43,11 @@ class LaunchFileRowController {
 
         try {
             launchFileRowRepository.save(fileRow)
+            logService.writeLog(this, "Строка name=${coordinate.name} delay=${delay.toString()} успешно добавлена".toString())
             return new ResponseDto(status: ResponseStatus.SUCCESS, message: 'Строка успешно добавлена')
         } catch (e) {
-            println(e)
-            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'COORDINATE_NOT_SAVE', message: 'Ошибка при сохранении координаты')
+            logService.writeLog(this, ("Ошибка при сохранении команды name=${coordinate.name}: $e").toString(), LogStatus.ERROR)
+            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'COORDINATE_NOT_SAVE', message: 'Ошибка при сохранении команды')
         }
     }
 
@@ -56,10 +61,13 @@ class LaunchFileRowController {
 
         try {
             launchFileRowRepository.delete(fileRow)
-            return new ResponseDto(status: ResponseStatus.SUCCESS, message: 'Строка успешно удалена')
+
+            String mess = 'Строка успешно удалена'
+            logService.writeLog(this, mess)
+            return new ResponseDto(status: ResponseStatus.SUCCESS, message: mess)
 
         } catch (e) {
-            println(e)
+            logService.writeLog(this, ("При удалении строки name=${fileRow.coordinate.name} delay=${fileRow.delay.toString()} возникла ошибка: $e").toString(), LogStatus.ERROR)
             return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'ERROR_REMOVE_FILE_ROW', message: 'При удалении строки возникла ошибка')
         }
     }
@@ -79,12 +87,15 @@ class LaunchFileRowController {
 
         try {
             launchFileRowRepository.update(fileRow)
-            return new ResponseDto(status: ResponseStatus.SUCCESS, message: 'Строка успешно обновлена')
+
+            String message = 'Строка успешно обновлена'
+            logService.writeLog(this, message)
+            return new ResponseDto(status: ResponseStatus.SUCCESS, message: message)
 
         } catch (e) {
-            println(e)
-            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'ERROR_UPDATE_FILE_ROW',
-                    message: 'При обновлении строки врзникла ошибка')
+            String message = 'При обновлении строки возникла ошибка'
+            logService.writeLog(this, ("$message: $e").toString())
+            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'ERROR_UPDATE_FILE_ROW', message: message)
         }
     }
 
@@ -99,9 +110,11 @@ class LaunchFileRowController {
                 fileRow.sortOrder = i
                 try {
                     launchFileRowRepository.update(fileRow)
+                    logService.writeLog(this, 'Строка успешно обновлена')
                 } catch (e) {
-                    println(e)
-                    errors.push("При сохранении строки с ID=${fileRow.id} возникли ошибки".toString())
+                    String mess = "При сохранении строки с ID=${fileRow.id} возникли ошибки".toString()
+                    logService.writeLog(this, ("$mess: $e").toString(), LogStatus.ERROR)
+                    errors.push(mess)
                 }
             } else {
                 errors.push("Строка с ID=${id} не найдена".toString())

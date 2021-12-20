@@ -54,9 +54,15 @@
     <ng-container matColumnDef="action" class="action">
       <th mat-header-cell *matHeaderCellDef>Действия</th>
       <td mat-cell *matCellDef="let element;" class="field">
-        <button mat-icon-button color="warn" (click)="removeCoordinate(element.id)">
-          <mat-icon>close icon</mat-icon>
-        </button>
+        <div class="action-buttons">
+          <button mat-icon-button color="warn" (click)="removeCoordinate(element.id)">
+            <mat-icon>close icon</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="armbotRun(element.id)" [disabled]="armbotButtonDisabled">
+            <mat-icon>play_circle_filled</mat-icon>
+          </button>
+          <mat-spinner diameter="20" *ngIf="armbotButtonDisabled && element.id === armbotCommandActive"></mat-spinner>
+        </div>
         <mat-error *ngIf="fieldIdError === element.id" class="hide">1</mat-error>
       </td>
     </ng-container>
@@ -67,9 +73,9 @@
     <button mat-raised-button color="primary" (click)="exportFileTxt()">Экспорт в .txt
       <a [href]="exportTxtCoordinateUrl" style="display: none" #exportTxt></a>
     </button>
-    <button mat-raised-button color="warn" (click)="exportFile()">Экспортировать в Excel
-      <a [href]="exportCoordinateUrl" style="display: none" #exportExcel></a>
-    </button>
+<!--    <button mat-raised-button color="warn" (click)="exportFile()">Экспортировать в Excel-->
+<!--      <a [href]="exportCoordinateUrl" style="display: none" #exportExcel></a>-->
+<!--    </button>-->
   </div>
 </div>
 

@@ -8,7 +8,8 @@ table {
   width: 100%;
 
   .mat-column-action {
-    width: 5%;
+    width: 10%;
+    min-width: 130px;
   }
 
   .mat-column-name {
@@ -110,4 +111,14 @@ table {
 ::ng-deep .field .mat-form-field-appearance-fill .mat-form-field-flex {
   margin-top: 10px;
   padding: 5px 10px;
+}
+
+.action-buttons {
+  display: flex;
+  margin-right: 20px;
+  align-items: center;
+}
+
+mat-spinner {
+  margin-left: 10px;
 }

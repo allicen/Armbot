@@ -5,7 +5,8 @@ import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 import {SessionService} from "../../../serviсes/session.service";
 import {HttpService} from "../../../serviсes/http.service";
 import {StorageService} from "../../../serviсes/storage.service";
-import {RosLibService} from "../../../serviсes/roslib.service";
+import {ArmbotService} from "../../../serviсes/armbot.service";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @UntilDestroy()
 @Component({
@@ -23,9 +24,10 @@ export class GenerateFileComponent implements OnInit {
     prevDelay: number = 0;
     maxId: number = 0;
     exportTxtUrl: string = '';
-    coordinateDelete: number = -1;
 
-    _showSmileMessage: boolean = false;
+    armbotMessage: string = '';
+    armbotStatus: string = '';
+    armbotButtonDisabled: boolean = true;
 
     @ViewChild('coordinateInput') coordinateInput: ElementRef<HTMLInputElement> | undefined;
     @ViewChild("commandList") commandList: ElementRef | undefined;
@@ -33,7 +35,9 @@ export class GenerateFileComponent implements OnInit {
 
     constructor(private sessionService: SessionService,
                 private httpService: HttpService,
-                private storageService: StorageService) { }
+                private storageService: StorageService,
+                private armbotService: ArmbotService,
+                private snackBar: MatSnackBar) { }
 
     ngOnInit(): void {
         this.exportTxtUrl = this.httpService.exportLaunchFileTxt();
@@ -49,6 +53,14 @@ export class GenerateFileComponent implements OnInit {
             }
             this.storageService.setCoordinateDelete(-1);
         });
+        this.armbotService.getArmbotStatus().pipe(untilDestroyed(this)).subscribe(data => this.armbotStatus = data);
+        this.armbotService.getArmbotMessage().pipe(untilDestroyed(this)).subscribe(data => this.armbotMessage = data);
+        this.armbotService.getArmbotButtonDisabled().pipe(untilDestroyed(this)).subscribe(data => {
+            this.armbotButtonDisabled = data;
+            if (!this.armbotButtonDisabled) {
+                this.snackBar.dismiss();
+            }
+        });
     }
 
     choice(id: number): void {
@@ -60,7 +72,7 @@ export class GenerateFileComponent implements OnInit {
     }
 
     remove(index: number): void {
-        this.httpService.removeLaunchFileRow(index).pipe().subscribe(data => {
+        this.httpService.removeLaunchFileRow(index).pipe(untilDestroyed(this)).subscribe(data => {
             if (data.status === 'SUCCESS') {
                 const cIndex = this.commands.findIndex(c => c.id === index);
                 this.commands.splice(cIndex, 1);
@@ -122,9 +134,10 @@ export class GenerateFileComponent implements OnInit {
     }
 
     armbotStart() {
-        this._showSmileMessage = true;
-        setTimeout(() => {
-          this._showSmileMessage = false;
-        }, 3000);
+        // this.httpService.runRobot().pipe(untilDestroyed(this)).subscribe(data =>
+        //   console.log(data)
+        // );
+      
+        this.armbotService.runArmbotLaunch();
     }
 }

@@ -8,4 +8,5 @@
     <arg name="use_gui" value="true"/>
   </include>
   <node name="joint_subscriber" pkg="armbot_move" type="joint_subscriber" />
+  <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
 </launch>

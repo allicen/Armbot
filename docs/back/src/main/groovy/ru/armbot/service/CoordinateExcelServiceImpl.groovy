@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 @DefaultImplementation(CoordinateExcelService.class)
 interface CoordinateExcelServiceImpl {
     String SHEET_NAME = "Coordinates"
-    String HEADER_NAME = "Название координаты"
+    String HEADER_NAME = "Название команды"
     String HEADER_X = "Координата X"
     String HEADER_Y = "Координата Y"
     String HEADER_Z = "Координата Z"

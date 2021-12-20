@@ -8,7 +8,12 @@
     <button mat-icon-button color="primary" [disabled]="!autoGenerateFileOn" (click)="autoGenerateFileStop()">
       <mat-icon>stop</mat-icon>
     </button>
-    <span class="info" *ngIf="autoGenerateFileOn">Запись включена!</span>
+    <div class="info">
+      <span *ngIf="autoGenerateFileOn">Запись включена!</span>
+    </div>
+    <div class="grid-inline">
+      <ng-container *ngTemplateOutlet="grid"></ng-container>
+    </div>
   </div>
   <div class="field">
     <span>Размеры точки:</span>
@@ -39,47 +44,26 @@
              [maxLength]="maxWidthLen">
       <mat-hint align="end">{{width.value.length}} / {{maxWidthLen}}</mat-hint>
     </mat-form-field>
-
-    <div class="grid-on">
-      <mat-checkbox [checked]="gridOn" (change)="setVisibleGrid($event.checked)" color="warn">Включить сетку</mat-checkbox>
-      <mat-form-field appearance="fill" *ngIf="gridOn">
-        <mat-label>Шаг (мм):</mat-label>
-        <input matInput #gridChangeStep
-               oninput = "if (this.value > 340) this.value = 340;"
-               [valueAsNumber] = "gridStepMm"
-               (change) = "changeGreedStep(gridChangeStep.value)"
-               type = "number"
-               min="1"
-               max="340">
-      </mat-form-field>
-    </div>
-
-    <div class="grid-color" *ngIf="gridOn">
-      <label>Цвет сетки:</label>
-      <mat-radio-group [(ngModel)]="gridColorValue">
-        <mat-radio-button [class]="color" *ngFor="let color of gridColors" [value]="color"></mat-radio-button>
-      </mat-radio-group>
-    </div>
-
+    <ng-container *ngTemplateOutlet="grid"></ng-container>
   </div>
-  <div>
+  <div *ngIf="editingAllowed">
     <button mat-raised-button color="warn" (click)="setEditingCompleted()" [disabled]="imageWidthPx === 0 || !imageWidthPx">Отметить точки</button>
   </div>
 </section>
 
 
-<div class="robot-area" #robotArea>
+<div class="robot-area" #robotArea (click)="saveCoordinate($event)">
   <div class="point" *ngFor="let item of dataSource;"
        (click)="copyCoordinate(item)"
        [style.width]="diameterPoint+'px'"
        [style.height]="diameterPoint+'px'"
        [style.borderRadius]="diameterPoint+'px'"
-       [style.left]="getPosition(item).x+'px'"
-       [style.top]="getPosition(item).y+'px'"
+       [style.left]="getPosition(item).x - diameterPoint /2 +'px'"
+       [style.top]="getPosition(item).y - diameterPoint / 2 +'px'"
        [style.cursor]="autoGenerateFileOn ? 'pointer' : 'default'"
        [style.background]="(clickCoordinate && clickCoordinate.x === item.x && clickCoordinate.y === item.y ? 'yellow' : 'red')"></div>
 
-  <ng-container *ngIf="gridOn && editingAllowed">
+  <ng-container *ngIf="gridOn">
     <div class="axis">
       <div class="y" [style.top]="(robotArea.clientHeight + gridHorizontalOffset) / 2 - 24 +'px'"><span>←</span> Y</div>
       <div class="x" [style.left]="(robotArea.clientWidth) / 2 + 10 +'px'"><span>↑</span> X</div>
@@ -150,7 +134,30 @@
   <div class="image after-edit" *ngIf="!editingAllowed">
     <img [src]="image" alt="" #uploadImage
          [width]="imageWidthPx"
-         [style]="'margin-left: '+ dragImagePosition.x+'px; margin-top: '+ dragImagePosition.y+'px;'"
-         (click)="saveCoordinate($event)">
+         [style]="'margin-left: '+ dragImagePosition.x+'px; margin-top: '+ dragImagePosition.y+'px;'">
   </div>
 </div>
+
+
+<ng-template #grid>
+  <div class="grid-on">
+    <mat-checkbox [checked]="gridOn" (change)="setVisibleGrid($event.checked)" color="warn">Включить сетку</mat-checkbox>
+    <mat-form-field appearance="fill" *ngIf="gridOn">
+      <mat-label>Шаг (мм):</mat-label>
+      <input matInput #gridChangeStep
+             oninput = "if (this.value > 340) this.value = 340;"
+             [valueAsNumber] = "gridStepMm"
+             (change) = "changeGreedStep(gridChangeStep.value)"
+             type = "number"
+             min="1"
+             max="340">
+    </mat-form-field>
+  </div>
+
+  <div class="grid-color" *ngIf="gridOn">
+    <label>Цвет сетки:</label>
+    <mat-radio-group [(ngModel)]="gridColorValue">
+      <mat-radio-button [class]="color" *ngFor="let color of gridColors" [value]="color"></mat-radio-button>
+    </mat-radio-group>
+  </div>
+</ng-template>

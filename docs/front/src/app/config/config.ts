@@ -10,8 +10,13 @@ export class Config {
   imageMaxSize: number = 104857600; // 100Mb
   workOptions: WorkOption[] = [
     {key: 'uploadImage', value: 'Загрузить изображение клавиатуры'},
-    {key: 'uploadSession', value: 'Загрузить сессию'},
-    {key: 'uploadCoordinateList', value: 'Загрузить координаты'}
+    {key: 'uploadSession', value: 'Загрузить сеанс'},
+    {key: 'uploadCoordinateList', value: 'Загрузить команды'}
   ];
   coordinateDefault: Coordinate = {x: 0, y: 0, z: 0, name: '', id: -1};
+  robotStatus: any = {
+    disconnect: 'disconnect', // Робот отключен
+    busy: 'busy', // Робот занят
+    ready: 'ready' // Робот готов
+  };
 }

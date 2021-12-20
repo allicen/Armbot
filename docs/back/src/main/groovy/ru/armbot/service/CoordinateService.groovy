@@ -4,7 +4,7 @@ import jakarta.inject.Inject
 import ru.armbot.repository.CoordinateRepository
 
 class CoordinateService {
-    private final String PREFIX = 'coordinate'
+    private final String PREFIX = 'command'
 
     @Inject CoordinateRepository coordinateRepository
 

@@ -4,6 +4,7 @@
 #include <pluginlib/class_loader.h>
 #include <armbot_move/SetPosition.h>
 #include <armbot_move/SavePosition.h>
+#include <armbot_move/RunArmbot.h>
 #include <rosserial_arduino/Test.h>
 #include <std_msgs/String.h>
 
@@ -192,6 +193,11 @@ void executeCommand(const std_msgs::String::ConstPtr& msg){
 }
 
 
+bool runArmbot(armbot_move::RunArmbot::Request  &req, armbot_move::RunArmbot::Response  &res) {
+    system ("$ARMBOT_PATH/scripts/armbot.sh start false");
+    res.result = "FINISH in ROS";
+    return true;
+}
 
 void testArduino (ros::ServiceClient client, rosserial_arduino::Test srv) {
     srv.request.input = "INPUT!!!";
@@ -306,6 +312,8 @@ int main(int argc, char *argv[]) {
 
     ros::ServiceServer setPositionService = n.advertiseService<armbot_move::SetPosition::Request, armbot_move::SetPosition::Response>
                                 ("set_position", boost::bind(setPosition, _1, _2, move_group, start_state, joint_model_group));
+
+    ros::ServiceServer armbotRunService = n.advertiseService("armbot_run", runArmbot);
 
     ros::Subscriber savePositionSubscriber = n.subscribe("save_position", 1000, executeCommand);
 

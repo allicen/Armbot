@@ -106,6 +106,11 @@ export class RobotAreaComponent implements OnInit {
     }
 
     saveCoordinate($event: MouseEvent) {
+        // в режиме редактирования координаты не записываем
+        if (this.editingAllowed) {
+            return;
+        }
+
         const image = this.uploadImage?.nativeElement;
         const robotAreaElem = this.robotArea?.nativeElement;
 
@@ -137,7 +142,7 @@ export class RobotAreaComponent implements OnInit {
             this.sessionService.addCoordinateInList(res.details.coordinate);
             this.saveLaunchFileRow(res.details.coordinate);
 
-            this.snackBar.open(`Точка сохранена с координатами x=${coordinate.x}, y=${coordinate.y}`, 'X', {
+            this.snackBar.open(`Команда сохранена с координатами x=${coordinate.x}, y=${coordinate.y}`, 'X', {
                 duration: 2000
             });
         });
@@ -208,7 +213,16 @@ export class RobotAreaComponent implements OnInit {
     }
 
     changeRadiusPoint(value: string) {
-      this.sessionService.setDiameterPoint(Number(value));
+      const size: number = Number(value);
+      this.sessionService.setDiameterPoint(size);
+      this.httpService.setCursorPoint(size).pipe(untilDestroyed(this)).subscribe(data => {
+        console.log('data = ', data);
+
+        if (!data) {
+          return;
+        }
+        this.diameterPoint = size;
+      });
     }
 
     copyCoordinate(clickCoordinate: Coordinate) {

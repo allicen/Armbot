@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launch>
     <include file="$(find armbot_description)/launch/armbot.rviz.launch" />
-    <include file="$(find keyboard_description)/launch/keyboard.launch" />
+<!--    <include file="$(find keyboard_description)/launch/keyboard.launch" />-->
 </launch>

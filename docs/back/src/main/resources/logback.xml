@@ -1,4 +1,6 @@
 <configuration>
+    <timestamp key="day" datePattern="yyyy-MM-dd"/>
+    <property scope="context" name="logfolder" value="${user.home}" />
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <withJansi>true</withJansi>
@@ -6,12 +8,25 @@
              ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
         <encoder>
             <charset>UTF-8</charset>
-            <pattern>%cyan(%d{HH:mm:ss.SSS}) %gray([%thread]) %highlight(%-5level) %magenta(%logger{36}) - %msg%n
-            </pattern>
+            <pattern>%cyan(%d{HH:mm:ss.SSS}) %gray([%thread]) %highlight(%-5level) %magenta(%logger{36}) - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>${logfolder}/armbot-logs/ui-app-${day}.log</file>
+        <append>true</append>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%d{HH:mm:ss.SSS} -- %-4relative [%-5level] -- %logger{35} - %msg%n</pattern>
         </encoder>
     </appender>
 
     <root level="info">
         <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE"/>
     </root>
+    <!-- <root level="debug">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE"/>
+    </root> -->
 </configuration>

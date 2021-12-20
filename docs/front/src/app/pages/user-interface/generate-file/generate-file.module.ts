@@ -12,6 +12,9 @@ import {ReactiveFormsModule} from "@angular/forms";
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {MatButtonModule} from "@angular/material/button";
 import {MatInputModule} from "@angular/material/input";
+import {WebsocketService} from "../../../serviсes/websocket.service";
+import {NgxRoslibService, RosService} from "ngx-roslib";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @NgModule({
   declarations: [
@@ -35,7 +38,7 @@ import {MatInputModule} from "@angular/material/input";
         MatInputModule,
     ],
   exports: [GenerateFileComponent],
-  providers: [],
+  providers: [WebsocketService, NgxRoslibService, MatSnackBar],
   bootstrap: [GenerateFileComponent]
 })
 export class GenerateFileModule { }
