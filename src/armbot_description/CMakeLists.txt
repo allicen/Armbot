@@ -118,28 +118,6 @@ CATKIN_DEPENDS roscpp rospy std_msgs message_runtime geometry_msgs
 ## Your package locations should be listed before other locations
 # include_directories(include)
 
-if (CMAKE_SIZEOF_VOID_P EQUAL 4)
-    include_directories(
-      ${catkin_INCLUDE_DIRS}
-      src/DobotDll_x86
-    )
-
-    link_directories(
-      src/DobotDll_x86
-    )
-else()
-    include_directories(
-      ${catkin_INCLUDE_DIRS}
-      src/DobotDll_x64
-    )
-
-    link_directories(
-      src/DobotDll_x64
-    )
-endif()
-
-
-
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
 #   src/${PROJECT_NAME}/dobot.cpp

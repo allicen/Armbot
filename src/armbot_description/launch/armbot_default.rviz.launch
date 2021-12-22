@@ -4,8 +4,8 @@
 
   <param name="use_gui" value="$(arg gui)" />
 
-  <param name="robot_description" textfile="$(find armbot_description)/urdf/dobot.urdf" />
-  <param name="file" type="str" value="$(find armbot_description)/urdf/dobot.urdf" />
+  <param name="robot_description" textfile="$(find armbot_description)/urdf/model_default/dobot.urdf" />
+  <param name="file" type="str" value="$(find armbot_description)/urdf/model_default/dobot.urdf" />
 
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find armbot_description)/config/armbot.rviz"/>
 

@@ -25,14 +25,14 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 3.14159265"/>
             <geometry>
-                <mesh filename="package://armbot_description/meshes/base_link.STL"/>
+                <mesh filename="package://armbot_description/meshes/model_default/base_link.STL"/>
             </geometry>
             <material name="White"/>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://armbot_description/meshes/base_link.STL"/>
+                <mesh filename="package://armbot_description/meshes/model_default/base_link.STL"/>
             </geometry>
         </collision>
     </link>
@@ -49,14 +49,14 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://armbot_description/meshes/link_1.dae"/>
+                <mesh filename="package://armbot_description/meshes/model_default/link_1.dae"/>
             </geometry>
             <!--material name="White"/-->
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://armbot_description/meshes/link_1.STL"/>
+                <mesh filename="package://armbot_description/meshes/model_default/link_1.STL"/>
             </geometry>
         </collision>
     </link>
@@ -74,14 +74,14 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://armbot_description/meshes/link_2.dae"/>
+                <mesh filename="package://armbot_description/meshes/model_default/link_2.dae"/>
             </geometry>
             <!--material name="Black"/-->
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://armbot_description/meshes/link_2.STL"/>
+                <mesh filename="package://armbot_description/meshes/model_default/link_2.STL"/>
             </geometry>
         </collision>
     </link>
@@ -98,14 +98,14 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://armbot_description/meshes/link_3.dae"/>
+                <mesh filename="package://armbot_description/meshes/model_default/link_3.dae"/>
             </geometry>
             <!-- material name="White"/-->
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://armbot_description/meshes/link_3.dae"/>
+                <mesh filename="package://armbot_description/meshes/model_default/link_3.dae"/>
             </geometry>
         </collision>
     </link>
@@ -114,7 +114,7 @@
         <origin xyz="0.07431 -0.12684 0.0" rpy="0 3.14159265 0"/>
         <parent link="link_3"/>
         <child link="link_4"/>
-        <axis xyz="0 0 1"/>
+        <axis xyz="0 1 0"/>
         <limit effort="150.0" lower="-3.14159265" upper="3.14159265" velocity="3.15"/>
 
     </joint>
@@ -123,14 +123,14 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://armbot_description/meshes/link_4.STL"/>
+                <mesh filename="package://armbot_description/meshes/model_default/link_4.STL"/>
             </geometry>
             <material name="Grey"/>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://armbot_description/meshes/link_4.STL"/>
+                <mesh filename="package://armbot_description/meshes/model_default/link_4.STL"/>
             </geometry>
         </collision>
     </link>
@@ -148,14 +148,14 @@
         <visual>
             <origin xyz="-0.01 0 -0.045" rpy="1.570796325 0 0"/>
             <geometry>
-                <mesh filename="package://armbot_description/meshes/link_end.STL"/>
+                <mesh filename="package://armbot_description/meshes/model_default/link_end.STL"/>
             </geometry>
             <material name="Black"/>
         </visual>
         <collision>
             <origin xyz="-0.01 0 -0.045" rpy="1.570796325 0 0"/>
             <geometry>
-                <mesh filename="package://armbot_description/meshes/link_end.STL"/>
+                <mesh filename="package://armbot_description/meshes/model_default/link_end.STL"/>
             </geometry>
         </collision>
     </link>
@@ -172,14 +172,14 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://armbot_description/meshes/link_grip.STL"/>
+                <mesh filename="package://armbot_description/meshes/model_default/link_grip.STL"/>
             </geometry>
             <material name="Black"/>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://armbot_description/meshes/link_grip.STL"/>
+                <mesh filename="package://armbot_description/meshes/model_default/link_grip.STL"/>
             </geometry>
         </collision>
     </link>
