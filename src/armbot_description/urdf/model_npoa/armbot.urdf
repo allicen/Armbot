@@ -2,164 +2,323 @@
 <!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
      Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
      For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+
 <robot name="armbot">
 
-    <!-- Defining the colors used in this robot -->
-    <material name="Black">
-        <color rgba="0 0 0 1"/>
-    </material>
+  <material name="Black">
+      <color rgba="0 0 0 1"/>
+  </material>
 
-    <material name="White">
-        <color rgba="1 1 1 1"/>
-    </material>
+  <material name="White">
+      <color rgba="1 1 1 1"/>
+  </material>
 
-    <material name="Grey">
-        <color rgba="0.5 0.5 0.5 1"/>
-    </material>
+  <material name="Grey">
+      <color rgba="0.5 0.5 0.5 1"/>
+  </material>
+
+  <material name="Blue">
+      <color rgba="0.03 0.53 0.64 1"/>
+  </material>
+
+  <material name="BlueLight">
+      <color rgba="0.24 0.69 0.74 1"/>
+  </material>
+
+  <material name="Yellow">
+      <color rgba="0.42 0.40 0.15 1"/>
+  </material>
 
   <link name="world"/>
 
   <joint name="joint1_world" type="fixed" >
       <parent link="world"/>
-      <child link="base_link"/> 
-  </joint>
+      <child link="base_link"/> </joint>
 
-  <link name="base_link">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="0.0211202900240581 0.00380052135150775 -2.59775843964422E-11"
+        rpy="0 0 0" />
+      <mass
+        value="0.271570047216607" />
+      <inertia
+        ixx="0.000442541459178714"
+        ixy="-5.27773157069645E-07"
+        ixz="7.61202511651307E-12"
+        iyy="0.000997118891006556"
+        iyz="-5.63318709348997E-15"
+        izz="0.00055589246259821" />
+    </inertial>
     <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 3.14" />
       <geometry>
-        <mesh filename="package://armbot_description/meshes/model_npoa/base_link.STL" />
+        <mesh
+          filename="package://armbot_description/meshes/model_npoa/base_link.STL" />
       </geometry>
-      <material name="White" />
-    </visual>
-    <collision>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://armbot_description/meshes/model_npoa/base_link.STL" />
-      </geometry>
-    </collision>
-  </link>
-
-  <link name="link_1">
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://armbot_description/meshes/model_npoa/link_1.STL" />
-      </geometry>
-      <material name="White" />
-    </visual>
-    <collision>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://armbot_description/meshes/model_npoa/link_1.STL" />
-      </geometry>
-    </collision>
-  </link>
-
-  <joint name="joint_1" type="revolute">
-    <origin xyz="0 0 0.003" rpy="-1.5708 0 0.014721" />
-    <parent link="base_link" />
-    <child link="link_1" />
-    <axis xyz="0 1 0" />
-    <limit effort="150.0" lower="-2.25" upper="2.25" velocity="3.15"/>
-  </joint>
-
-  <link name="link_2">
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://armbot_description/meshes/model_npoa/link_2.STL" />
-      </geometry>
-      <material name="Grey" />
+      <material name="Yellow"/>
     </visual>
     <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://armbot_description/meshes/model_npoa/link_2.STL" />
+        <mesh
+          filename="package://armbot_description/meshes/model_npoa/base_link.STL" />
       </geometry>
     </collision>
   </link>
 
-  <joint name="joint_2" type="revolute">
+  <link
+    name="link_1">
+    <inertial>
+      <origin
+        xyz="0.0028091073054831 -0.000129480260192862 0.0587093323368623"
+        rpy="0 0 0" />
+      <mass
+        value="0.596914732803133" />
+      <inertia
+        ixx="0.000456795238751758"
+        ixy="1.13131061687692E-07"
+        ixz="3.16702244680394E-06"
+        iyy="0.000511867461808136"
+        iyz="1.37277774280917E-06"
+        izz="0.000497006887585271" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 3.14" />
+      <geometry>
+        <mesh
+          filename="package://armbot_description/meshes/model_npoa/link_1.STL" />
+      </geometry>
+      <material name="Blue"/>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://armbot_description/meshes/model_npoa/link_1.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint
+    name="joint_1"
+    type="revolute">
     <origin
-      xyz="0 -0.086784 0"
-      rpy="-3.1416 0 0.44762" />
-    <parent link="link_1" />
-    <child link="link_2" />
-    <axis xyz="0 0 1"/>
-    <!-- axis xyz="0.43282 -0.90148 0" /-->
-    <limit effort="150.0" lower="0" upper="1.570796325" velocity="3.15"/>
+      xyz="0.003 0 0.0155"
+      rpy="0 0 0.0047017" />
+    <parent
+      link="base_link" />
+    <child
+      link="link_1" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-2.25"
+      upper="2.25"
+      effort="150"
+      velocity="3.15" />
   </joint>
 
-  <link name="link_3">
+  <link
+    name="link_2">
+    <inertial>
+      <origin
+        xyz="0.0883892856558016 0.008726162903557 0.0152502295089785"
+        rpy="0 0 0" />
+      <mass
+        value="0.100204717897998" />
+      <inertia
+        ixx="2.47387251971704E-05"
+        ixy="1.98941471708263E-05"
+        ixz="1.09773349002274E-11"
+        iyy="0.000205389451630636"
+        iyz="-9.34995736886751E-13"
+        izz="0.000226109263194873" />
+    </inertial>
     <visual>
       <origin
-        xyz="0 0 0"
+        xyz="0 -0.005 0"
         rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://armbot_description/meshes/model_npoa/link_3.STL" />
+        <mesh
+          filename="package://armbot_description/meshes/model_npoa/link_2.STL" />
       </geometry>
-      <material name="White" />
+      <material name="Grey"/>
     </visual>
     <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://armbot_description/meshes/model_npoa/link_3.STL" />
+        <mesh
+          filename="package://armbot_description/meshes/model_npoa/link_2.STL" />
       </geometry>
     </collision>
   </link>
 
-  <joint name="joint_3" type="revolute">
+  <joint
+    name="joint_2"
+    type="revolute">
     <origin
-      xyz="-0.14546 0.11597 -6.7308E-05"
-      rpy="0 0 -1.7541" />
-    <parent link="link_2" />
-    <child link="link_3" />
-    <axis xyz="0 0 1" />
-    <limit effort="150.0" lower="0" upper="1.570796325" velocity="3.15"/>
+      xyz="-0.0027435 0.0155 0.095011"
+      rpy="1.5708 -1.5708 0" />
+    <parent
+      link="link_1" />
+    <child
+      link="link_2" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="0"
+      upper="1.5708"
+      effort="150"
+      velocity="3.15" />
   </joint>
 
-  <link name="link_4">
+  <link
+    name="link_3">
+    <inertial>
+      <origin
+        xyz="0.0734943680573212 -0.0250475761764449 -0.0102416448451324"
+        rpy="0 0 0" />
+      <mass
+        value="0.0817197840637802" />
+      <inertia
+        ixx="1.84638437164918E-05"
+        ixy="1.75227012566081E-05"
+        ixz="-3.12692223717831E-12"
+        iyy="0.000223025691778274"
+        iyz="3.2689498604139E-13"
+        izz="0.00024012860464369" />
+    </inertial>
     <visual>
       <origin
-        xyz="-0.21 0.025  0"
-        rpy="0 0 1.57" />
+        xyz="0 0 0"
+        rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://armbot_description/meshes/model_npoa/link_4.STL" />
+        <mesh
+          filename="package://armbot_description/meshes/model_npoa/link_3.STL" />
       </geometry>
-      <material name="Grey" />
+      <material name="Grey"/>
     </visual>
     <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://armbot_description/meshes/model_npoa/link_4.STL" />
+        <mesh
+          filename="package://armbot_description/meshes/model_npoa/link_3.STL" />
       </geometry>
     </collision>
   </link>
 
-  <joint name="joint_4" type="revolute">
+  <joint
+    name="joint_3"
+    type="revolute">
     <origin
-      xyz="0.165 0 0"
-      rpy="0 0 0" />
-    <parent link="link_3" />
-    <child link="link_4" />
-    <axis xyz="0 0 1"/>
-    <limit effort="150.0" lower="-3.14159265" upper="3.14159265" velocity="3.15"/>
+      xyz="0.13752 -0.011528 0.0061346"
+      rpy="3.1416 0 -2.8478" />
+    <parent
+      link="link_2" />
+    <child
+      link="link_3" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="0"
+      upper="1.5708"
+      effort="150"
+      velocity="3.15" />
   </joint>
 
-  <link name="link_end">
+  <link
+    name="link_4">
+    <inertial>
+      <origin
+        xyz="0.0170469110005535 0.0440175529393801 0.00746993885600066"
+        rpy="0 0 0" />
+      <mass
+        value="0.0816655051489231" />
+      <inertia
+        ixx="9.23899164255327E-06"
+        ixy="1.41731480337586E-06"
+        ixz="-1.29407482238578E-09"
+        iyy="6.5400027194987E-06"
+        iyz="-1.65939501474868E-10"
+        izz="1.30537636801615E-05" />
+    </inertial>
     <visual>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://armbot_description/meshes/model_npoa/link_end.STL" />
+        <mesh
+          filename="package://armbot_description/meshes/model_npoa/link_4.STL" />
+      </geometry>
+      <material name="BlueLight"/>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://armbot_description/meshes/model_npoa/link_4.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint
+    name="joint_4"
+    type="revolute">
+    <origin
+      xyz="0.15964 -0.010744 -0.017433"
+      rpy="0 0 -2.825" />
+    <parent
+      link="link_3" />
+    <child
+      link="link_4" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.14159265"
+      upper="3.14159265"
+      effort="150"
+      velocity="3.15" />
+  </joint>
+
+  <link
+    name="link_grip">
+    <inertial>
+      <origin
+        xyz="0.00183824769782567 0.0121314953561579 -0.0386575624131076"
+        rpy="0 0 0" />
+      <mass
+        value="0.14549649198173" />
+      <inertia
+        ixx="1.23357733228575E-05"
+        ixy="3.17923626350858E-07"
+        ixz="-4.75413900057824E-07"
+        iyy="1.83240921212973E-05"
+        iyz="-5.21727005744191E-07"
+        izz="1.4756041173339E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://armbot_description/meshes/model_npoa/link_grip.STL" />
       </geometry>
       <material name="Black"/>
     </visual>
@@ -168,45 +327,28 @@
         xyz="0 0 0"
         rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://armbot_description/meshes/model_npoa/link_end.STL" />
+        <mesh
+          filename="package://armbot_description/meshes/model_npoa/link_grip.STL" />
       </geometry>
     </collision>
   </link>
 
-  <joint name="joint_end" type="fixed">
+  <joint
+    name="joint_grip"
+    type="revolute">
     <origin
-      xyz="0 0 0"
-      rpy="0 0 0" />
-    <parent link="link_4" />
-    <child link="link_end" />
-  </joint>
-  <link name="link_grip">
-    <visual>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://armbot_description/meshes/model_npoa/link_grip.STL" />
-      </geometry>
-      <material name="Black"/>
-    </visual>
-    <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://armbot_description/meshes/model_npoa/link_grip.STL" />
-      </geometry>
-    </collision>
-  </link>
-
-  <joint name="joint_grip" type="revolute">
-    <origin
-      xyz="0.035 -0.034 -0.0055"
-      rpy="0 1.6 1.55" />
-    <parent link="link_end" />
-    <child link="link_grip" />
-    <axis xyz="0 1 0"/>
-    <limit effort="150.0" lower="-1.570796325" upper="1.570796325" velocity="3.15"/>
+      xyz="0.0060861 0.052412 0.0075"
+      rpy="1.5708 0 1.548" />
+    <parent
+      link="link_4" />
+    <child
+      link="link_grip" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-1.570796325"
+      upper="1.570796325"
+      effort="150"
+      velocity="3.15" />
   </joint>
 </robot>
