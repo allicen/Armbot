@@ -86,11 +86,11 @@ int main(int argc, char**argv) {
     // Goal position
     result = startMoveToPosition(client, srv, params[0].c_str(), params);
 
-    // Button pressed
-    result = startMoveToPosition(client, srv, "button-pressed", params);
+    // // Button pressed
+    // result = startMoveToPosition(client, srv, "button-pressed", params);
 
-    // Button up
-    result = startMoveToPosition(client, srv, params[0].c_str(), params);
+    // // Button up
+    // result = startMoveToPosition(client, srv, params[0].c_str(), params);
 
     ros::Duration(delay).sleep();
     ros::spinOnce();

@@ -1,7 +1,7 @@
 moveit_setup_assistant_config:
   URDF:
     package: armbot_description
-    relative_path: urdf/dobot.urdf
+    relative_path: urdf/model_default/dobot.urdf
     xacro_args: ""
   SRDF:
     relative_path: config/dobot.srdf

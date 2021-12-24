@@ -125,13 +125,23 @@ void saveCommand() {
     try{
          listener.waitForTransform("/link_grip","/base_link", ros::Time(), ros::Duration(5.0));
          listener.lookupTransform("/link_grip", "/base_link", ros::Time(), transform);
-         auto x = boost::lexical_cast<std::string>(transform.getOrigin().x() * 1000);
-         auto y = boost::lexical_cast<std::string>(-transform.getOrigin().y() * 1000); // Почему-то записывает с другим знаком
-         auto z = boost::lexical_cast<std::string>(transform.getOrigin().z() * 1000);
+
+         float x = transform.getOrigin().x();
+         float y = -transform.getOrigin().y(); // Почему-то записывает с другим знаком
+         float z = transform.getOrigin().z();
 
          if (saveWebSocket) {
             // отправляем вебсокет
-            std::string commandForWebsocket = x + " " + y + " " + z;
+            // переводим м в мм (в UI используются мм)
+            x *= 1000;
+            y *= 1000;
+            z *= 1000;
+
+            auto x_str = boost::lexical_cast<std::string>(x);
+            auto y_str = boost::lexical_cast<std::string>(y);
+            auto z_str = boost::lexical_cast<std::string>(z);
+
+            std::string commandForWebsocket = x_str + " " + y_str + " " + z_str;
             webSocket(commandForWebsocket);
          }
 
@@ -146,20 +156,25 @@ void saveCommand() {
              if (file.bad() == true) {
                 logs.writeLog("File is not exist", FILENAME);
              } else {
-                 std::ofstream out;
-                 out.open(commandDescriptionFile, std::ios::app);
-                 std::string command = commandName + ":" + x + " " + y + " " + z;
 
-                 // Если файл не пустой, делаем перенос строки
-                 std::ifstream file(commandDescriptionFile);
-                 if (!isEmpty(file)) {
-                     out << std::endl;
-                 }
+                auto x_str = boost::lexical_cast<std::string>(x);
+                auto y_str = boost::lexical_cast<std::string>(y);
+                auto z_str = boost::lexical_cast<std::string>(z);
 
-                 out << command;
-                 out.close();
+                std::ofstream out;
+                out.open(commandDescriptionFile, std::ios::app);
+                std::string command = commandName + ":" + x_str + " " + y_str + " " + z_str;
 
-                 logSimple("Point coordinates saved:  ", command.c_str());
+                // Если файл не пустой, делаем перенос строки
+                std::ifstream file(commandDescriptionFile);
+                if (!isEmpty(file)) {
+                    out << std::endl;
+                }
+
+                out << command;
+                out.close();
+
+                logSimple("Point coordinates saved:  ", command.c_str());
              }
         }
     } catch (tf::TransformException ex){
@@ -174,6 +189,18 @@ void stopCommand() {
 }
 
 
+void startCommand() {
+    system ("$ARMBOT_PATH/scripts/armbot.sh start false");
+}
+
+
+bool writeJointsFromArduino(const std::string &command) {
+    ROS_ERROR("TEST_CONNECT!!!");
+    ROS_INFO("get: %s",  command.c_str());
+    return 0;
+}
+
+
 void executeCommand(const std_msgs::String::ConstPtr& msg){
 
     char command[50];
@@ -184,10 +211,15 @@ void executeCommand(const std_msgs::String::ConstPtr& msg){
     if (strcmp("save", command) == 0) {
         saveCommand();
         return;
-    }
-
-    if (strcmp("stop", command) == 0) {
+    } else if (strcmp("stop", command) == 0) {
         stopCommand();
+        return;
+    } else if (strcmp("start", command) == 0) {
+        startCommand();
+        return;
+    } else {
+
+        writeJointsFromArduino(command);
         return;
     }
 }
@@ -199,15 +231,36 @@ bool runArmbot(armbot_move::RunArmbot::Request  &req, armbot_move::RunArmbot::Re
     return true;
 }
 
-void testArduino (ros::ServiceClient client, rosserial_arduino::Test srv) {
-    srv.request.input = "INPUT!!!";
 
-    char log[255];
-    if (client.call(srv)) {
-        ROS_INFO("Result: %s", srv.response.output.c_str());
+bool writeJointsToArduino(ros::ServiceClient arduinoClient, rosserial_arduino::Test srv, const std::vector<double> joints) {
+
+    char joints_str[500];
+    strcpy(joints_str, boost::lexical_cast<std::string>(joints.at(0)).c_str());
+    strcat(joints_str, ":");
+    strcat(joints_str, boost::lexical_cast<std::string>(joints.at(1)).c_str());
+    strcat(joints_str, ":");
+    strcat(joints_str, boost::lexical_cast<std::string>(joints.at(2)).c_str());
+    strcat(joints_str, ":");
+    strcat(joints_str, boost::lexical_cast<std::string>(joints.at(3)).c_str());
+    strcat(joints_str, ":");
+    strcat(joints_str, boost::lexical_cast<std::string>(joints.at(4)).c_str());
+
+    srv.request.input = joints_str;
+
+    // ROS_INFO("!!!!!!!!!!!!!!!!!!!!!!!!!!123");
+    // ROS_INFO(boost::lexical_cast<std::string>(joints_str).c_str());
+
+    if (arduinoClient.call(srv)) {
+        ROS_INFO("ARDUINO SUCCESS: ");
+        logSimple("Result send command to Arduino: ", "");
+
     } else {
-        ROS_ERROR("Failed to call service arduino");
+        ROS_ERROR("Failed to call service set_joints_arduino");
+        logSimple("Failed to call service set_joints_arduino: ", "");
+        return 1;
     }
+
+    return 0;
 }
 
 
@@ -248,18 +301,19 @@ bool setPosition(armbot_move::SetPosition::Request &req,
         start_state.setFromIK(joint_model_group, pose);
         move_group->move->setStartState(start_state);
 
-        logPrintJoints(move_group->move->getCurrentJointValues());
+        std::vector<double> joints = move_group->move->getCurrentJointValues();
+        logPrintJoints(joints);
+
 
         result = "SUCCESS. Position: " + req.position;
         logSimple("Command execution result: ", result.c_str());
 
-        ////////////
-        ros::NodeHandle nh;
-        ros::ServiceClient client = nh.serviceClient<rosserial_arduino::Test>("test_arduino");
-        rosserial_arduino::Test srv;
-        testArduino(client, srv);
-        //////////////
 
+	    // Отправляет значения joints на Arduino
+        ros::NodeHandle nh;
+        ros::ServiceClient arduinoClient = nh.serviceClient<rosserial_arduino::Test>("set_joints_arduino");
+        rosserial_arduino::Test srv;
+        writeJointsToArduino(arduinoClient, srv, joints);
     }
 
     res.result = result;
@@ -307,14 +361,19 @@ int main(int argc, char *argv[]) {
     move_group->move->setPlanningTime(60*5);
     move_group->move->setGoalTolerance(.0001);
 
-    // Получает позицию
     ros::NodeHandle n;
 
+    // Получает позицию из position
     ros::ServiceServer setPositionService = n.advertiseService<armbot_move::SetPosition::Request, armbot_move::SetPosition::Response>
                                 ("set_position", boost::bind(setPosition, _1, _2, move_group, start_state, joint_model_group));
 
-    ros::ServiceServer armbotRunService = n.advertiseService("armbot_run", runArmbot);
+    ros::ServiceServer armbotRunService = n.advertiseService("armbot_run", runArmbot);	
 
+    // // Получает значение joint из Arduino
+    // ros::ServiceServer setJointsService = n.advertiseService<rosserial_arduino::Test::Request, rosserial_arduino::Test::Response>
+    //                                       ("set_joints_model", boost::bind(writeJointsFromArduino, _1, _2));
+
+    // Сохраняет позицию из Arduino
     ros::Subscriber savePositionSubscriber = n.subscribe("save_position", 1000, executeCommand);
 
     ros::Duration(1).sleep();

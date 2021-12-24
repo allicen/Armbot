@@ -1,12 +1,38 @@
+<!-- Запуск движений робота НПОА: roslaunch armbot_move move.rviz.launch -->
+<!-- Запуск движений робота (модель по-умолчанию): roslaunch armbot_move move.rviz.launch model:=default -->
+
+
 <launch>
-  <node name="move" pkg="armbot_move" type="move" respawn="false" output="screen">
+
+  <arg name="model" default="npoa" />
+  <!-- Модель по умолчанию (Добот) -->
+  <node name="move" pkg="armbot_move" type="move" respawn="false" output="screen" if="$(eval model=='default')">
     <rosparam command="load" file="$(find armbot_moveit_config)/config/kinematics.yaml"/>
     <param name="planning_plugin" value="ompl_interface/OMPLPlanner"/>
     <rosparam command="load" file="$(find armbot_moveit_config)/config/ompl_planning.yaml"/>
   </node>
-  <include file="$(find armbot_moveit_config)/launch/demo.launch">
+
+  <include file="$(find armbot_moveit_config)/launch/demo.launch" if="$(eval model=='default')">
     <arg name="use_gui" value="true"/>
   </include>
-  <node name="joint_subscriber" pkg="armbot_move" type="joint_subscriber" />
+
+
+  <!-- Модель НПОА -->
+  <node name="move" pkg="armbot_move" type="move" respawn="false" output="screen" if="$(eval model=='npoa')">
+    <rosparam command="load" file="$(find armbot_npoa_moveit_config)/config/kinematics.yaml"/>
+    <param name="planning_plugin" value="ompl_interface/OMPLPlanner"/>
+    <rosparam command="load" file="$(find armbot_npoa_moveit_config)/config/ompl_planning.yaml"/>
+  </node>
+  <include file="$(find armbot_npoa_moveit_config)/launch/demo.launch" if="$(eval model=='npoa')">
+    <arg name="use_gui" value="true"/>
+  </include>
+
+
+  <!-- Подключение  joint_subscriber -->
+  <node name="joint_subscriber" pkg="armbot_move" type="joint_subscriber"/>
+
+
+  <!-- Подключение Webserver rosbridge -->
   <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
+
 </launch>

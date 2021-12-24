@@ -1,5 +1,5 @@
 // Считывание нажатий клавиш на клавиатуре
-// rosrun armbot_move moveMotor
+//=====rosrun armbot_move moveMotor
 #include <ros/ros.h>
 #include <std_msgs/String.h>
 
@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
 
     int motorIndex = 0;
 
-    ROS_INFO("Select the motor (click on the number): \n1) Bottom\n2) Left\n3) Right\n0) Reset (if motor has been selected)");
+    ROS_INFO("Select the motor (click on the number): \n1) Bottom\n2) Left\n3) Right\n4) Servo top\n5) Servo bottom\n0) Reset (if motor has been selected)");
 
     while (ros::ok()) {
         int c = getch();   // call your non-blocking input function
@@ -57,6 +57,12 @@ int main(int argc, char *argv[]) {
                 case '3':
                     motorIndex = 3;
                     break;
+                case '4':
+                    motorIndex = 4;
+                    break;
+                case '5':
+                    motorIndex = 5;
+                    break;    
                 default:
                     ROS_ERROR("Invalid button pressed. Please click 1, 2 or 3");
             }
@@ -69,20 +75,20 @@ int main(int argc, char *argv[]) {
         } else {
             switch (c) {
                 case FORWARD:
-                    ROS_INFO("FORWARD\t");
+                    ROS_INFO("%d MOTOR -- FORWARD", motorIndex);
                     msgText << motorIndex << ":" << FORWARD_DIRECTION;
                     msg.data = msgText.str();
                     motorMovePub.publish(msg);
                     break;
                 case INVERSE:
-                    ROS_INFO("INVERSE\t");
+                    ROS_INFO("%d MOTOR -- INVERSE", motorIndex);
                     msgText << motorIndex << ":" << INVERSE_DIRECTION;
                     msg.data = msgText.str();
                     motorMovePub.publish(msg);
                     break;
                 case RESET:
                    motorIndex = 0;
-                   ROS_INFO("Motor was reset.\nSelect the motor (click on the number): \n1) Bottom\n2) Left\n3) Right\n0) Reset (if motor has been selected)");
+                   ROS_INFO("Motor was reset.\nSelect the motor (click on the number): \n1) Bottom\n2) Left\n3) Right\n4) Servo top\n5) Servo bottom\n0) Reset (if motor has been selected)");
                    break;
             }
         }
