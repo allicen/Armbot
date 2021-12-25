@@ -313,7 +313,7 @@
     </inertial>
     <visual>
       <origin
-        xyz="0 0 0"
+        xyz="0.096 0.2375 -0.0075"
         rpy="0 0 0" />
       <geometry>
         <mesh
@@ -340,7 +340,7 @@
     name="joint_end"
     type="fixed">
     <origin
-      xyz="0.21371 0.14219 0.0075"
+      xyz="0 0 0"
       rpy="-3.1416 0 1.7749" />
     <parent
       link="link_4" />
@@ -371,8 +371,8 @@
         xyz="0 0 0"
         rpy="0 0 0" />
       <geometry>
-        <mesh
-          filename="package://armbot_description/meshes/model_npoa/link_grip.STL" />
+        <cylinder length="0.10" radius="0.0025"/>
+        <!-- <mesh filename="package://armbot_description/meshes/model_npoa/link_grip.STL" /> -->
       </geometry>
       <material name="Black"/>
     </visual>
@@ -381,8 +381,8 @@
         xyz="0 0 0"
         rpy="0 0 0" />
       <geometry>
-        <mesh
-          filename="package://armbot_description/meshes/model_npoa/link_grip.STL" />
+        <cylinder length="0.10" radius="0.0025"/>
+        <!-- <mesh filename="package://armbot_description/meshes/model_npoa/link_grip.STL" /> -->
       </geometry>
     </collision>
   </link>
@@ -391,7 +391,7 @@
     name="joint_grip"
     type="revolute">
     <origin
-      xyz="-0.043378 -0.23321 0"
+      xyz="0.0525 -0.083 -0.0075"
       rpy="1.5708 0 0" />
     <parent
       link="link_end" />

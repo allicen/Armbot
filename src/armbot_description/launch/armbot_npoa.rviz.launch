@@ -16,4 +16,5 @@
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 
   <include file="$(find keyboard_description)/launch/keyboard.launch" if="$(arg keyboard)" />
+  <!--<node pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" name="joint_state_publisher_gui" output="screen" />-->
 </launch>
