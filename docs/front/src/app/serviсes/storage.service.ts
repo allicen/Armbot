@@ -72,7 +72,9 @@ export class StorageService {
                 message = res.message;
             }
 
-            this.coordinateDeleteMessage$.next(message);
+            if (res.status === 'SUCCESS') {
+                this.coordinateDeleteMessage$.next(message);
+            }
         })
     }
 

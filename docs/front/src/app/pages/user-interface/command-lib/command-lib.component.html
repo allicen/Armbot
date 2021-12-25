@@ -58,10 +58,10 @@
     </section>
   </mat-expansion-panel>
 
-  <div [ngClass]="messageImportErrors.length > 0 ? 'error' : 'message'" *ngIf="messageImport">{{messageImport}}</div>
-  <ul *ngIf="messageImportErrors" class="error">
-    <li *ngFor="let error of messageImportErrors">{{error}}</li>
-  </ul>
+  <ng-container *ngIf="!choiceFileCommand">
+    <ng-container *ngTemplateOutlet="fileErrors"></ng-container>
+  </ng-container>
+
   <button mat-raised-button color="primary" (click)="openDialogSessionFile()">
     Выбрать файл для импорта
     <input type="file" style="display: none;" #inputFileSession (change)="changeFileSession($event)" />
@@ -95,6 +95,11 @@ second:1 2 3
 third:123 547 0</code></pre>
     </section>
   </mat-expansion-panel>
+
+  <ng-container *ngIf="choiceFileCommand">
+    <ng-container *ngTemplateOutlet="fileErrors"></ng-container>
+  </ng-container>
+
   <button mat-raised-button color="primary" (click)="openDialogPointsFile()">
     Выбрать файл для импорта
     <input type="file" style="display: none;" #inputFilePoints (change)="changeFilePoints($event)" />
@@ -103,3 +108,10 @@ third:123 547 0</code></pre>
 
 <div [class]="coordinateMessage && coordinateMessageError ? 'error' : 'message'" [class.info]="coordinateMessage">{{coordinateMessage}}</div>
 <app-command-table></app-command-table>
+
+<ng-template #fileErrors>
+  <div [ngClass]="messageImportErrors.length > 0 ? 'error' : 'message'" *ngIf="messageImport">{{messageImport}}</div>
+  <ul *ngIf="messageImportErrors" class="error">
+    <li *ngFor="let error of messageImportErrors">{{error}}</li>
+  </ul>
+</ng-template>

@@ -265,7 +265,6 @@ export class SessionService {
             } else {
                 this.messageService.setMessageImportErrors(res.details || []);
             }
-
             this.messageService.setMessageImport(res.message);
         });
     }

@@ -48,6 +48,7 @@ export class CommandLibComponent implements OnInit {
   messageImportErrors: string[] = [];
 
   jsonInfo: string = '';
+  choiceFileCommand: boolean = true; // Выбран файл с командами (иначе - с сеансом)
 
   @ViewChild("inputFilePoints") inputFilePoints: ElementRef | undefined;
   @ViewChild("inputFileSession") inputFileSession: ElementRef | undefined;
@@ -109,6 +110,8 @@ export class CommandLibComponent implements OnInit {
       return;
     }
 
+    this.choiceFileCommand = true;
+
     this.httpService.importCoordinates(element.files[0]).pipe(untilDestroyed(this)).subscribe(res => {
       this.messageService.setMessageImport(res.message);
       if (res.status === 'SUCCESS' || !res.details?.errorDetails) {
@@ -138,6 +141,8 @@ export class CommandLibComponent implements OnInit {
     if (!element.files) {
       return;
     }
+
+    this.choiceFileCommand = false;
 
     this.sessionService.importSession(element.files[0]);
   }
