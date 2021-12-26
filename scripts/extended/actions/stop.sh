@@ -16,7 +16,7 @@ function killProcess {
     fi
 
     # Убить процесс и всех потомков
-    pkill -P "$procPid"
+    pkill -P -9 "$procPid"
 
     # удалить файл, где записан PID
     rm "$pidFile"

@@ -376,7 +376,7 @@ int main(int argc, char *argv[]) {
     ros::ServiceServer setPositionService = n.advertiseService<armbot_move::SetPosition::Request, armbot_move::SetPosition::Response>
                                 ("set_position", boost::bind(setPosition, _1, _2, move_group, start_state, joint_model_group));
 
-    ros::ServiceServer armbotRunService = n.advertiseService<armbot_move::RunArmbot::Request, armbot_move::RunArmbot::Response>("armbot_run", runArmbot);
+    ros::ServiceServer armbotRunService = n.advertiseService("armbot_run", runArmbot);
 
     // // Получает значение joint из Arduino
     // ros::ServiceServer setJointsService = n.advertiseService<rosserial_arduino::Test::Request, rosserial_arduino::Test::Response>
