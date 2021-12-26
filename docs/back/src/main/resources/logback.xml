@@ -13,7 +13,7 @@
     </appender>
 
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <file>${logfolder}/armbot-logs/ui-app-${day}.log</file>
+        <file>${logfolder}/armbot-info/logs/ui-app-${day}.log</file>
         <append>true</append>
         <encoder>
             <charset>UTF-8</charset>

@@ -2,6 +2,7 @@
 <p *ngIf="coordinateList.length === 0">
   Список доступных команд пуст. Сначала добавьте команды.
 </p>
+<p *ngIf="errorMessage.length > 0">{{errorMessage}}</p>
 <ng-container *ngIf="coordinateList.length > 0">
   <p>Кликайте на команды, чтобы добавить команду в список.</p>
   <p><strong>Доступные команды:</strong></p>

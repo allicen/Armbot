@@ -7,6 +7,7 @@ import {HttpService} from "../../../serviсes/http.service";
 import {StorageService} from "../../../serviсes/storage.service";
 import {ArmbotService} from "../../../serviсes/armbot.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {MessageService} from "../../../serviсes/message.service";
 
 @UntilDestroy()
 @Component({
@@ -29,6 +30,8 @@ export class GenerateFileComponent implements OnInit {
     armbotStatus: string = '';
     armbotButtonDisabled: boolean = true;
 
+    errorMessage: string = '';
+
     @ViewChild('coordinateInput') coordinateInput: ElementRef<HTMLInputElement> | undefined;
     @ViewChild("commandList") commandList: ElementRef | undefined;
     @ViewChild("exportTxt") exportTxt: ElementRef | undefined;
@@ -37,7 +40,8 @@ export class GenerateFileComponent implements OnInit {
                 private httpService: HttpService,
                 private storageService: StorageService,
                 private armbotService: ArmbotService,
-                private snackBar: MatSnackBar) { }
+                private snackBar: MatSnackBar,
+                private messageService: MessageService) { }
 
     ngOnInit(): void {
         this.exportTxtUrl = this.httpService.exportLaunchFileTxt();
@@ -134,10 +138,12 @@ export class GenerateFileComponent implements OnInit {
     }
 
     armbotStart() {
-        // this.httpService.runRobot().pipe(untilDestroyed(this)).subscribe(data =>
-        //   console.log(data)
-        // );
-      
-        this.armbotService.runArmbotLaunch();
+        this.httpService.runRobot().pipe(untilDestroyed(this)).subscribe(data => {
+            if (data && data.status === 'SUCCESS') {
+              this.armbotService.runArmbotLaunch(data.details);
+            } else {
+                this.errorMessage = data?.message || "Ошибка при формировании файлов";
+            }
+        });
     }
 }

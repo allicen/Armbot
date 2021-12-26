@@ -9,6 +9,7 @@ docker run  -it --rm \
         -e ARMBOT_PATH='/workspace' \
         -v /dev:/dev \
         -v "$(pwd)":/workspace \
+        -v ~:/home \
        --net=host \
        --privileged \
        --name armbot armbot-img

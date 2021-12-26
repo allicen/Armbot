@@ -232,8 +232,6 @@ export class RobotAreaComponent implements OnInit {
       const size: number = Number(value);
       this.sessionService.setDiameterPoint(size);
       this.httpService.setCursorPoint(size).pipe(untilDestroyed(this)).subscribe(data => {
-        console.log('data = ', data);
-
         if (!data) {
           return;
         }

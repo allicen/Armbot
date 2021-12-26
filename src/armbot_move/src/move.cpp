@@ -225,8 +225,17 @@ void executeCommand(const std_msgs::String::ConstPtr& msg){
 }
 
 
-bool runArmbot(armbot_move::RunArmbot::Request  &req, armbot_move::RunArmbot::Response  &res) {
-    system ("$ARMBOT_PATH/scripts/armbot.sh start false");
+bool runArmbot(armbot_move::RunArmbot::Request &req, armbot_move::RunArmbot::Response &res) {
+    char command[500];
+    strcpy(command, "$ARMBOT_PATH/scripts/armbot.sh start false");
+    strcat(command, " description=");
+    strcat(command, req.command_description.c_str());
+    strcat(command, " commands=");
+    strcat(command, req.commands.c_str());
+
+    ROS_INFO("COMM=%s", command);
+
+    system (command);
     res.result = "FINISH in ROS";
     return true;
 }
@@ -367,7 +376,7 @@ int main(int argc, char *argv[]) {
     ros::ServiceServer setPositionService = n.advertiseService<armbot_move::SetPosition::Request, armbot_move::SetPosition::Response>
                                 ("set_position", boost::bind(setPosition, _1, _2, move_group, start_state, joint_model_group));
 
-    ros::ServiceServer armbotRunService = n.advertiseService("armbot_run", runArmbot);	
+    ros::ServiceServer armbotRunService = n.advertiseService<armbot_move::RunArmbot::Request, armbot_move::RunArmbot::Response>("armbot_run", runArmbot);
 
     // // Получает значение joint из Arduino
     // ros::ServiceServer setJointsService = n.advertiseService<rosserial_arduino::Test::Request, rosserial_arduino::Test::Response>

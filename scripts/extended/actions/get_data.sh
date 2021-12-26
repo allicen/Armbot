@@ -62,13 +62,23 @@ do
 	key=$(echo "$command" | cut -d " " -f 1)
 	delay=$(echo "$command" | cut -d " " -f 2)
 
-	source devel/setup.bash
-	rosrun armbot_move position _param:="$key ${commandsMap[$key]} $delay"
+    # если текущий каталог = /root/.ros, то мы уже зашли в docker
+    if [ $(pwd) != '/root/.ros' ]; then
+        sudo docker exec --tty armbot bash -c "cd workspace && sudo chmod +x scripts/*sh &&
+                                            source devel/setup.bash && rosrun armbot_move position _param:=$key ${commandsMap[$key]} $delay"
+    else
+       rosrun armbot_move position _param:="$key ${commandsMap[$key]} $delay"
+    fi
 
 done < "$commandsFile"
   
   # Возврат в исходную точку
-  rosrun armbot_move position _param:="return_default_position"
+    if [ $(pwd) != '/root/.ros' ]; then
+       sudo docker exec --tty armbot bash -c "cd workspace && sudo chmod +x scripts/*sh &&
+                                              source devel/setup.bash && rosrun armbot_move position _param:=return_default_position"
+    else
+       rosrun armbot_move position _param:="return_default_position"
+    fi
 
 printLog "Заканчиваю работу..."
 

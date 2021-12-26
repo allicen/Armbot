@@ -49,7 +49,7 @@ class CoordinateController {
 
         try {
             coordinateRepository.save(coordinate)
-            logService.writeLog(this, 'Команда успешно сохранена')
+            logService.writeLog(this, "Команда name=${coordinate.name} x=${coordinate.x} y=${coordinate.y} z=${coordinate.z} успешно сохранена".toString())
             return new ResponseDto(status: 'SUCCESS', details: [coordinate: coordinate])
         } catch (e) {
             def message = "Ошибка сохранения команды ${coordinate.name}. ".toString()
