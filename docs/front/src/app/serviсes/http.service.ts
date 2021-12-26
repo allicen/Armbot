@@ -307,4 +307,15 @@ export class HttpService {
             })
         );
     }
+
+    /**
+     * Скачать файл запуска
+     * */
+    getLaunchFile(): Observable<any> {
+        return this.http.get(this.exportLaunchFileTxt()).pipe(
+            map(res => {
+                return res;
+            })
+        );
+    }
 }

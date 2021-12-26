@@ -1,5 +1,8 @@
 package ru.armbot.dto
 
+import io.micronaut.core.annotation.Introspected
+
+@Introspected
 class FileRowDto {
     // ID строки файла запуска
     long id

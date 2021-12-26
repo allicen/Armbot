@@ -8,6 +8,7 @@ import {StorageService} from "../../../serviсes/storage.service";
 import {ArmbotService} from "../../../serviсes/armbot.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {MessageService} from "../../../serviсes/message.service";
+import {map} from "rxjs/operators";
 
 @UntilDestroy()
 @Component({
@@ -40,8 +41,7 @@ export class GenerateFileComponent implements OnInit {
                 private httpService: HttpService,
                 private storageService: StorageService,
                 private armbotService: ArmbotService,
-                private snackBar: MatSnackBar,
-                private messageService: MessageService) { }
+                private snackBar: MatSnackBar, private http: HttpService) { }
 
     ngOnInit(): void {
         this.exportTxtUrl = this.httpService.exportLaunchFileTxt();
@@ -134,6 +134,8 @@ export class GenerateFileComponent implements OnInit {
     }
 
     exportFileTxt() {
+        const salt = (new Date()).getTime();
+        this.exportTxt?.nativeElement.setAttribute('href', `${this.exportTxtUrl}?${salt}`);
         this.exportTxt?.nativeElement.click();
     }
 

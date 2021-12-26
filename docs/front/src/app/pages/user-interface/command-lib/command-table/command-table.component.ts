@@ -199,6 +199,8 @@ export class CommandTableComponent implements OnInit {
     }
 
     exportFileTxt() {
+        const salt = (new Date()).getTime();
+        this.exportTxt?.nativeElement.setAttribute('href', `${this.exportTxtCoordinateUrl}?${salt}`);
         this.exportTxt?.nativeElement.click();
     }
 

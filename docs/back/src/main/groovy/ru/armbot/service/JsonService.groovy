@@ -16,7 +16,7 @@ class JsonService {
     SystemFile sessionJsonFile (SessionStateDto sessionStateDto) {
 
         try {
-            File file = File.createTempFile('armbot-session', '.json')
+            File file = new File('armbot-session.json')
 
             def coordinateList = []
             def launchFileRows = []
