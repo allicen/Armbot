@@ -6,6 +6,7 @@ package ru.armbot.domain
 
 enum WorkOption {
     UPLOAD_IMAGE('uploadImage', 'Загрузить изображение клавиатуры'),
+    UPLOAD_NO_IMAGE('uploadNoImage', 'Продолжить без загрузки клавиатуры'),
     UPLOAD_SESSION('uploadSession', 'Загрузить сессию'),
     UPLOAD_COORDINATE_LIST('uploadCoordinateList', 'Загрузить команды'),
 

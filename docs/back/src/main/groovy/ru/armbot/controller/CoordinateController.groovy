@@ -15,8 +15,6 @@ import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Post
 import io.micronaut.http.annotation.Produces
 import jakarta.inject.Inject
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import ru.armbot.domain.Coordinate
 import ru.armbot.repository.CoordinateRepository
 import ru.armbot.repository.LaunchFileRowRepository
@@ -51,7 +49,7 @@ class CoordinateController {
 
         try {
             coordinateRepository.save(coordinate)
-            logService.writeLog(this, 'Команда успешно сохранена')
+            logService.writeLog(this, "Команда name=${coordinate.name} x=${coordinate.x} y=${coordinate.y} z=${coordinate.z} успешно сохранена".toString())
             return new ResponseDto(status: 'SUCCESS', details: [coordinate: coordinate])
         } catch (e) {
             def message = "Ошибка сохранения команды ${coordinate.name}. ".toString()
@@ -117,10 +115,13 @@ class CoordinateController {
         LaunchFileRow launchFileRow = launchFileRowRepository.list().find {it.coordinate.id == id}
 
         try {
-            launchFileRowRepository.delete(launchFileRow)
+            if (launchFileRow) {
+                launchFileRowRepository.delete(launchFileRow)
+            }
+
             coordinateRepository.delete(coordinate)
 
-            String mess = 'Координата удалена!'
+            String mess = 'Команда удалена!'
             logService.writeLog(this, mess)
             return new ResponseDto(status: ResponseStatus.SUCCESS, message: mess)
         } catch (e) {
@@ -179,12 +180,18 @@ class CoordinateController {
                     result.errorDetails += "Строка ${index} - название '${rowData[0].toString()}' уже существует".toString()
                 } else {
                     def coordinates = rowData[1].split(' ')
+
+                    // Координату Z ставим 0 по умолчанию
+                    if (coordinates.size() == 2) {
+                        coordinates += '0'
+                    }
+
                     if (coordinates.size() == 3) {
                         try {
                             Coordinate coordinate = new Coordinate(name: rowData[0].toString(),
-                                    x: Double.parseDouble(coordinates[0]),
-                                    y: Double.parseDouble(coordinates[1]),
-                                    z: Double.parseDouble(coordinates[2]),
+                                    x: Double.parseDouble(coordinates[0]) * 1000,
+                                    y: Double.parseDouble(coordinates[1]) * 1000,
+                                    z: Double.parseDouble(coordinates[2]) * 1000,
                                     sessionState: sessionState)
                             coordinateRepository.save(coordinate)
                             result.savedCoordinates += coordinate

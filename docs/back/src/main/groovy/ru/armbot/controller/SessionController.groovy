@@ -55,6 +55,20 @@ class SessionController {
         return new ResponseDto(status: ResponseStatus.SUCCESS, details: sessionStateDto)
     }
 
+    @Get(value = '/create')
+    def create() {
+        SessionState sessionState = new SessionState(workOption: WorkOption.UPLOAD_NO_IMAGE)
+
+        try {
+            sessionStateRepository.save(sessionState)
+            logService.writeLog(this, 'Сеанс успешно сохранен')
+            return new ResponseDto(status: ResponseStatus.SUCCESS, message: 'Сеанс успешно создан', details: sessionState)
+        } catch (e) {
+            String mess = 'Сеанс не создан'
+            logService.writeLog(this, ("$mess: $e").toString(), LogStatus.ERROR)
+            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'SESSION_NOT_SAVE', message: mess)
+        }
+    }
 
     @Get(value = "/remove")
     def remove() {
@@ -87,11 +101,6 @@ class SessionController {
 
     @Post(value = "/import")
     def importFile(SessionStateDto session) {
-
-        if (!session.image || !session.coordinateList) {
-            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'REQUIRED_FIELDS_NOT_FOUND',
-                    message: 'Не найдены обязательные поля. В файле обязательно должна быть картинка или список координат.')
-        }
 
         // Очищаем незавершенные сессии (если такие есть)
         // Может быть только 1 сессия
@@ -205,7 +214,10 @@ class SessionController {
         fileRows.sort { it.sortOrder }
 
         Image image = imageRepository.list()?.getAt(0)
-        ImageDto imageDto = new ImageDto(
+        ImageDto imageDto = null
+
+        if (image) {
+            imageDto = new ImageDto(
                 name: image?.name,
                 contentType: image?.contentType,
                 imageByte: image?.imageByte,
@@ -213,7 +225,8 @@ class SessionController {
                 imageWidthPx: image?.imageWidthPx,
                 imagePositionX: image?.imagePositionX,
                 imagePositionY: image?.imagePositionY
-        )
+            )
+        }
 
         List<CoordinateDto> coordinateList = []
         coordinateRepository.list()?.each {
@@ -223,7 +236,7 @@ class SessionController {
         SessionState session = sessionStateRepository.list()[0]
         return new SessionStateDto(sessionId: session.id,
                 workOption: session.workOption.id,
-                image: imageDto.imageByte.size() > 0 ? imageDto : null,
+                image: imageDto?.imageByte?.size() > 0 ? imageDto : null,
                 settings: settingsRepository.list()?.getAt(0),
                 coordinateList: coordinateList,
                 launchFileRowList: fileRows)

@@ -5,12 +5,13 @@ import {FileHandle} from "../pages/user-interface/command-lib/import-image/dragD
 import {Config} from "../config/config";
 import {catchError, map} from "rxjs/operators";
 import {Coordinate, Position} from "../model/models";
+import {MessageService} from "./message.service";
 
 
 @Injectable({ providedIn: 'root' })
 export class HttpService {
 
-    constructor(private http: HttpClient, private config: Config){ }
+    constructor(private http: HttpClient, private config: Config, private messageService: MessageService){ }
 
     /**
      * Загрузка изображения клавиатуры
@@ -261,6 +262,10 @@ export class HttpService {
      * */
     importSessionJson(file: File): Observable<any> {
         return this.http.post(`${this.config.httpUrl}/session/import`, file).pipe(
+          catchError((error: HttpErrorResponse) => {
+            this.messageService.setMessageImport('Ошибка импорта. Убедитесь, что выбради файл в формате .json');
+            return throwError(error);
+          }),
             map(res => {
                 return res;
             })
@@ -286,6 +291,28 @@ export class HttpService {
      * */
     runRobot(): Observable<any> {
         return this.http.get(`${this.config.httpUrl}/robot/run`).pipe(
+            map(res => {
+                return res;
+            })
+        );
+    }
+
+    /**
+     * Создать пустую сессию
+     * */
+    sessionCreate(): Observable<any> {
+        return this.http.get(`${this.config.httpUrl}/session/create`).pipe(
+            map(res => {
+                return res;
+            })
+        );
+    }
+
+    /**
+     * Скачать файл запуска
+     * */
+    getLaunchFile(): Observable<any> {
+        return this.http.get(this.exportLaunchFileTxt()).pipe(
             map(res => {
                 return res;
             })

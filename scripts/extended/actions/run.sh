@@ -17,7 +17,7 @@ case "$1" in
        else
            echo $$ > "$pidFile"
            sudo chmod +x ./scripts/*sh
-           "$ARMBOT_PATH/scripts/extended/actions/get_data.sh" "$2" "$3"
+           "$ARMBOT_PATH/scripts/extended/actions/get_data.sh" "$3" "$4"
        fi
    ;;
 

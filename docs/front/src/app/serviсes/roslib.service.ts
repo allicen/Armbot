@@ -64,7 +64,7 @@ export class RosArmbotService {
         });
     }
 
-    runArmbotLaunch(): void {
+    runArmbotLaunch(filesPath: any): void {
         this.setArmbotStatus(this.config.robotStatus.busy);
         const service = new RosService<{},{ topics: string[]; types: string[]; }>({
             ros: this.rbServer,
@@ -72,7 +72,7 @@ export class RosArmbotService {
             serviceType: 'armbot_move/RunArmbot',
         });
 
-        service.call({}, (msg) => {
+        service.call({'command_description': filesPath.command_description || '', 'commands': filesPath.commands || ''}, (msg) => {
             console.log(`ROS LAUNCH FINISH. RESULT`);
             this.setArmbotStatus(this.config.robotStatus.ready);
         });

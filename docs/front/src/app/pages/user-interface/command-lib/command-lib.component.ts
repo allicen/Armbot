@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnInit, Output, ViewChild} from '@angular/core';
 import {FileHandle} from "./import-image/dragDrop.directive";
 import {Coordinate, WorkOption} from "../../../model/models";
 import {Subject} from "rxjs";
@@ -42,12 +42,13 @@ export class CommandLibComponent implements OnInit {
   aboutImportOpen: boolean = false;
 
   workOptions: WorkOption[] = this.config.workOptions
-  workOptionChecked: string = this.workOptions[0].key;
+  @Output() workOptionChecked: string = this.workOptions[0].key;
 
   messageImport: string = '';
   messageImportErrors: string[] = [];
 
   jsonInfo: string = '';
+  choiceFileCommand: boolean = true; // Выбран файл с командами (иначе - с сеансом)
 
   @ViewChild("inputFilePoints") inputFilePoints: ElementRef | undefined;
   @ViewChild("inputFileSession") inputFileSession: ElementRef | undefined;
@@ -109,6 +110,8 @@ export class CommandLibComponent implements OnInit {
       return;
     }
 
+    this.choiceFileCommand = true;
+
     this.httpService.importCoordinates(element.files[0]).pipe(untilDestroyed(this)).subscribe(res => {
       this.messageService.setMessageImport(res.message);
       if (res.status === 'SUCCESS' || !res.details?.errorDetails) {
@@ -138,6 +141,8 @@ export class CommandLibComponent implements OnInit {
     if (!element.files) {
       return;
     }
+
+    this.choiceFileCommand = false;
 
     this.sessionService.importSession(element.files[0]);
   }

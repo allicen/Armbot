@@ -59,16 +59,27 @@ done < "$commandsDescriptionFile"
 
 while IFS="" read -r command || [ -n "$command" ]
 do
-	key=$(echo "$command" | cut -d " " -f 1)
-	delay=$(echo "$command" | cut -d " " -f 2)
+    key=$(echo "$command" | cut -d " " -f 1)
+    delay=$(echo "$command" | cut -d " " -f 2)
 
-	source devel/setup.bash
-	rosrun armbot_move position _param:="$key ${commandsMap[$key]} $delay"
+    # если текущий каталог = /root/.ros, то мы уже зашли в docker
+    # если переданы пути файлов, то надо зайти повторно
+    if [ $(pwd) != '/root/.ros' ]; then
+        source devel/setup.bash
+        rosrun armbot_move position _param:="$key ${commandsMap[$key]} $delay"
+    else
+        rosrun armbot_move position _param:="$key ${commandsMap[$key]} $delay"
+    fi
 
 done < "$commandsFile"
   
-  # Возврат в исходную точку
-  rosrun armbot_move position _param:="return_default_position"
+    # Возврат в исходную точку
+    if [ $(pwd) != '/root/.ros' ]; then
+        source devel/setup.bash
+        rosrun armbot_move position _param:="return_default_position"
+    else
+        rosrun armbot_move position _param:="return_default_position"
+    fi
 
 printLog "Заканчиваю работу..."
 

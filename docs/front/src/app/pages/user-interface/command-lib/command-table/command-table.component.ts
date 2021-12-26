@@ -115,6 +115,10 @@ export class CommandTableComponent implements OnInit {
                 this.snackBar.dismiss();
             }
         });
+        this.storageService.getClickCoordinate().pipe(untilDestroyed(this)).subscribe(data => {
+            this.clickCoordinate = data;
+            this.selectedPointIndex = this.coordinateList.findIndex(c => c.name === this.clickCoordinate?.name) || 0;
+        });
     }
 
     changeCoordinateRow(value: any, type: string, id: number) {
@@ -195,6 +199,8 @@ export class CommandTableComponent implements OnInit {
     }
 
     exportFileTxt() {
+        const salt = (new Date()).getTime();
+        this.exportTxt?.nativeElement.setAttribute('href', `${this.exportTxtCoordinateUrl}?${salt}`);
         this.exportTxt?.nativeElement.click();
     }
 
