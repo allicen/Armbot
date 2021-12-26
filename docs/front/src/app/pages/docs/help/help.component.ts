@@ -2,12 +2,12 @@ import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {ViewService} from "../../../serviсes/view.service";
 
 @Component({
-  selector: 'app-errors',
-  templateUrl: './errors.component.html',
-  styleUrls: ['./errors.component.less'],
+  selector: 'app-help',
+  templateUrl: './help.component.html',
+  styleUrls: ['./help.component.less',  '../../../layout/main/main.component.less'],
   encapsulation: ViewEncapsulation.None
 })
-export class ErrorsComponent implements OnInit {
+export class HelpComponent implements OnInit {
   constructor(private viewService: ViewService) {}
 
   ngOnInit(): void {

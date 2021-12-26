@@ -4,7 +4,7 @@ import {ViewService} from "../../../serviсes/view.service";
 @Component({
   selector: 'app-general',
   templateUrl: './general.component.html',
-  styleUrls: ['./general.component.less', '../../../layout/main/main.component.less'],
+  styleUrls: ['./general.component.less'],
   encapsulation: ViewEncapsulation.None
 })
 export class GeneralComponent implements OnInit {

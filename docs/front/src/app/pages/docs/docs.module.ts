@@ -8,18 +8,10 @@ import {MatButtonToggleModule} from "@angular/material/button-toggle";;
 const routes: Routes = [
     { path: '', component: DocsComponent,
         children: [
-            { path: '', loadChildren: () => import('../../pages/docs/general/general.module').then(m => m.GeneralModule) },
-            { path: 'ros', loadChildren: () => import('../../pages/docs/ros/ros.module').then(m => m.RosModule) },
-            { path: 'launch', loadChildren: () => import('../../pages/docs/launch/launch.module').then(m => m.LaunchModule) },
-            { path: 'gazebo', loadChildren: () => import('../../pages/docs/gazebo/gazebo.module').then(m => m.GazeboModule) },
-            { path: 'docker', loadChildren: () => import('../../pages/docs/docker/docker.module').then(m => m.DockerModule) },
-            { path: 'shell', loadChildren: () => import('../../pages/docs/shell/shell.module').then(m => m.ShellModule) },
-            { path: 'moveit', loadChildren: () => import('../../pages/docs/moveit/moveit.module').then(m => m.MoveitModule) },
-            { path: 'arduino', loadChildren: () => import('../../pages/docs/arduino/arduino.module').then(m => m.ArduinoModule) },
-            { path: 'tf', loadChildren: () => import('../../pages/docs/tf/tf.module').then(m => m.TfModule) },
-            { path: 'more', loadChildren: () => import('../../pages/docs/more/more.module').then(m => m.MoreModule) },
-            { path: 'linux', loadChildren: () => import('../../pages/docs/linux/linux.module').then(m => m.LinuxModule) },
-            { path: 'errors', loadChildren: () => import('../../pages/docs/errors/errors.module').then(m => m.ErrorsModule) },
+            { path: '', loadChildren: () => import('./general/general.module').then(m => m.GeneralModule) },
+            { path: 'help', loadChildren: () => import('./help/help.module').then(m => m.HelpModule) },
+            { path: 'help', loadChildren: () => import('./help/help.module').then(m => m.HelpModule)},
+            { path: 'errors', loadChildren: () => import('./errors/errors.module').then(m => m.ErrorsModule) },
             { path: '**', loadChildren: () => import('../../components/not-found/not-found.module').then(m => m.NotFoundModule) }
         ]}
 ];
@@ -33,7 +25,7 @@ const routes: Routes = [
     MatButtonToggleModule,
     CommonModule
   ],
-  exports: [RouterModule],
+  exports: [RouterModule, DocsComponent],
   providers: [],
   bootstrap: [DocsComponent]
 })
