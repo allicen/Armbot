@@ -101,4 +101,8 @@ export class ImportImageComponent implements OnInit {
         this.message = '';
         this.messageIsError = false;
     }
+
+    downloadImageSkip() {
+        this.sessionService.createEmptySession();
+    }
 }

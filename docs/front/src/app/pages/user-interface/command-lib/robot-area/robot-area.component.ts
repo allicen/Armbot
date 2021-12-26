@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {Coordinate, LaunchFileRow, Position} from "../../../../model/models";
 import {SizeService} from "../../../../serviсes/size.service";
 import {HttpService} from "../../../../serviсes/http.service";
@@ -24,7 +24,7 @@ export class RobotAreaComponent implements OnInit {
     gridStepPx: number = 100;
     gridStepMm: number = 10;
     dragImagePosition: Position = {x: 0, y: 0};
-    editingAllowed: boolean = true;
+    @Input() editingAllowed: boolean = true;
     imageWidthPx: number | undefined;
     imageWidthMm: number | undefined;
     maxWidthLen: number = 4; // Макс количество символов для задания ширины
@@ -46,6 +46,10 @@ export class RobotAreaComponent implements OnInit {
     maxId: number = 0;
     diameterPoint: number = 6;
 
+    createNewCommand: boolean = true;
+
+    @Input() workOptionChecked: string = '';
+
     @ViewChild("uploadImage") uploadImage: ElementRef | undefined;
     @ViewChild("robotArea") robotArea: ElementRef | undefined;
 
@@ -58,7 +62,11 @@ export class RobotAreaComponent implements OnInit {
 
     ngOnInit(): void {
 
-        // this.sessionService.getImage().pipe(untilDestroyed(this)).subscribe(data => this.image = data);
+        // Работа без загрузки изображения
+        if (this.workOptionChecked === 'uploadNoImage') {
+            this.sessionService.setImageEditAllowed(false);
+        }
+
         this.sessionService.getImagePosition().pipe(untilDestroyed(this)).subscribe(data => this.dragImagePosition = data);
 
         this.sessionService.getCoordinateList().pipe(untilDestroyed(this)).subscribe(data => {
@@ -106,6 +114,13 @@ export class RobotAreaComponent implements OnInit {
     }
 
     saveCoordinate($event: MouseEvent) {
+
+        // При клике по существующей точке новую не создает
+        if (!this.createNewCommand) {
+            this.createNewCommand = true;
+            return;
+        }
+
         // в режиме редактирования координаты не записываем
         if (this.editingAllowed) {
             return;
@@ -164,6 +179,7 @@ export class RobotAreaComponent implements OnInit {
 
     setVisibleGrid(completed: boolean) {
         this.gridOn = completed;
+        this.getGridCount();
     }
 
     changeGreedStep(value: string) {
@@ -226,7 +242,9 @@ export class RobotAreaComponent implements OnInit {
     }
 
     copyCoordinate(clickCoordinate: Coordinate) {
+        this.createNewCommand = false;
         this.saveLaunchFileRow(clickCoordinate);
+        this.storage.setClickCoordinate(clickCoordinate);
     }
 
     saveLaunchFileRow(coordinate: Coordinate) {

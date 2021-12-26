@@ -10,6 +10,7 @@
         <button mat-raised-button color="primary" (click)="openDialogChangeFile()">Выбрать файл
           <input type="file" style="display: none;" #inputFile (change)="changeFile($event)" />
         </button>
+        <button mat-raised-button color="warn" (click)="downloadImageSkip()">Пропустить загрузку файла</button>
       </div>
     </div>
   </div>

@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnInit, Output, ViewChild} from '@angular/core';
 import {FileHandle} from "./import-image/dragDrop.directive";
 import {Coordinate, WorkOption} from "../../../model/models";
 import {Subject} from "rxjs";
@@ -42,7 +42,7 @@ export class CommandLibComponent implements OnInit {
   aboutImportOpen: boolean = false;
 
   workOptions: WorkOption[] = this.config.workOptions
-  workOptionChecked: string = this.workOptions[0].key;
+  @Output() workOptionChecked: string = this.workOptions[0].key;
 
   messageImport: string = '';
   messageImportErrors: string[] = [];

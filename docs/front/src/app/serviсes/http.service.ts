@@ -296,4 +296,15 @@ export class HttpService {
             })
         );
     }
+
+    /**
+     * Создать пустую сессию
+     * */
+    sessionCreate(): Observable<any> {
+        return this.http.get(`${this.config.httpUrl}/session/create`).pipe(
+            map(res => {
+                return res;
+            })
+        );
+    }
 }

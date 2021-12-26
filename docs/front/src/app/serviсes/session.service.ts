@@ -57,6 +57,16 @@ export class SessionService {
         });
     }
 
+    createEmptySession() {
+        this.httpService.sessionCreate().pipe().subscribe(data => {
+            if (data.status === 'SUCCESS') {
+                this.fillFieldsSession(data.details);
+                this.setSession(true);
+                this.uploadSession();
+            }
+        });
+    }
+
     fillFieldsSession(data: any) {
 
         if (data.status === 'NO_SESSION') {

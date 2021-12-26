@@ -36,8 +36,9 @@
 
 <app-import-image *ngIf="!sessionExists && !imageUploaded && workOptionChecked === 'uploadImage'"></app-import-image>
 
-<div *ngIf="sessionExists && imageUploaded && workOptionChecked === 'uploadImage'" class="image-block">
-  <app-robot-area></app-robot-area>
+<div *ngIf="sessionExists && imageUploaded && workOptionChecked === 'uploadImage' ||
+                             sessionExists && workOptionChecked === 'uploadNoImage'" class="image-block">
+  <app-robot-area [workOptionChecked] = workOptionChecked [editingAllowed]="workOptionChecked === 'uploadImage'"></app-robot-area>
 </div>
 
 <div class="session" *ngIf="workOptionChecked === 'uploadSession'">

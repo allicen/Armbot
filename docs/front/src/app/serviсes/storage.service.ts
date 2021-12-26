@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {BehaviorSubject, config, Observable} from "rxjs";
+import {BehaviorSubject, Observable} from "rxjs";
 import { Router } from "@angular/router";
 import {HttpService} from "./http.service";
 import {Coordinate} from "../model/models";
