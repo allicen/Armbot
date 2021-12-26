@@ -102,11 +102,6 @@ class SessionController {
     @Post(value = "/import")
     def importFile(SessionStateDto session) {
 
-        if (!session.image || !session.coordinateList) {
-            return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'REQUIRED_FIELDS_NOT_FOUND',
-                    message: 'Не найдены обязательные поля. В файле обязательно должна быть картинка или список координат.')
-        }
-
         // Очищаем незавершенные сессии (если такие есть)
         // Может быть только 1 сессия
         if (!sessionStateRepository.list().isEmpty()) {
