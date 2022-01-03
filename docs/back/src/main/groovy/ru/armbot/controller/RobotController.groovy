@@ -29,18 +29,26 @@ class RobotController {
 
         String homePath = System.getProperty('user.home')
         String robotLaunchPathShort = "armbot-info/launch/${fileSuffix}"
-        String robotLaunchPath = "${homePath}/${robotLaunchPathShort}"
+        String robotLaunchDir = "${homePath}/armbot-info/launch" // Директория для хранения всех файлов запуска
+        String robotLaunchPath = "${homePath}/${robotLaunchPathShort}" // Директория для хранения файлов для конкретного запуска
 
-        File launchDirectory = new File(robotLaunchPath)
-        if (!launchDirectory.exists()) {
-            launchDirectory.mkdir()
+        // Создаем корневую директорию для записи файлов
+        def createDirRes = createNewDirectory(robotLaunchDir)
+        if (!createDirRes) {
+            return createDirRes
+        }
+
+        // Создаем директорию для конкретного запуска
+        createDirRes = createNewDirectory(robotLaunchPath)
+        if (!createDirRes) {
+            return createDirRes
         }
 
         String fileCommandsDescriptionName = "command_description.txt"
         String fileCommandsName = "commands.txt"
 
-        String fileCommandsDescriptionPath = "${launchDirectory}/${fileCommandsDescriptionName}".toString()
-        String fileCommandsPath = "${launchDirectory}/${fileCommandsName}".toString()
+        String fileCommandsDescriptionPath = "${robotLaunchPath}/${fileCommandsDescriptionName}".toString()
+        String fileCommandsPath = "${robotLaunchPath}/${fileCommandsName}".toString()
 
         File fileCommandsDescription = txtService.getCoordinateTxtFile(coordinateRepository.list(), "${fileCommandsDescriptionPath}", false)
         File fileCommands = txtService.getFileRowTxtFile(launchFileRowRepository.list(), "${fileCommandsPath}", false)
@@ -63,5 +71,24 @@ class RobotController {
         }
 
         return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'SAVE_FILES_ERROR', message: mess)
+    }
+
+
+    def createNewDirectory(String dir) {
+        File launchDirectory = new File(dir)
+        if (!launchDirectory.exists()) {
+            launchDirectory.mkdir()
+
+            if (!launchDirectory.exists()) {
+                String mess = "Не создана директория ${dir}".toString()
+                logService.writeLog(this, mess, LogStatus.ERROR)
+                return new ResponseDto(status: ResponseStatus.ERROR, errorCode: 'CREATE_DIRECTORY_ERROR', message: mess)
+            }
+
+            String mess = "Создана директория ${dir}".toString()
+            logService.writeLog(this, mess, LogStatus.INFO)
+        }
+
+        return true
     }
 }
