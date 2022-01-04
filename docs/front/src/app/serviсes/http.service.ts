@@ -329,4 +329,15 @@ export class HttpService {
             })
         );
     }
+
+    /**
+     * Получить конфиги робота
+     * */
+    getArmbotConfigs(): Observable<any> {
+        return this.http.get(`${this.config.httpUrl}/robot/config`).pipe(
+            map(res => {
+                return res;
+            })
+        );
+    }
 }

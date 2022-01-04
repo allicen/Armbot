@@ -33,6 +33,7 @@
 
 char FILENAME[20] = "move.cpp";
 LogClass logs;
+SettingsClass settingsConfig;
 using easywsclient::WebSocket;
 static WebSocket::pointer ws = NULL;
 
@@ -328,6 +329,10 @@ int main(int argc, char *argv[]) {
 
     ros::NodeHandle n;
 
+    logs.writeVersionLog(FILENAME);
+
+    settingsConfig.update();
+
     // Получает позицию из position
     ros::ServiceServer setPositionService = n.advertiseService<armbot_move::SetPosition::Request, armbot_move::SetPosition::Response>
                                 ("set_position", boost::bind(setPosition, _1, _2, move_group, start_state, joint_model_group));
@@ -340,8 +345,6 @@ int main(int argc, char *argv[]) {
 
     // Сохраняет позицию из Arduino
     ros::Subscriber savePositionSubscriber = n.subscribe("execute_command", 1000, executeCommand);
-
-    logs.writeVersionLog(FILENAME);
 
     ros::Duration(1).sleep();
     ros::waitForShutdown();

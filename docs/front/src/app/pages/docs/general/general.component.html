@@ -134,3 +134,33 @@ left 4
   <li>В проекте: <strong>Armbot/version</strong> (выводится в логи при запуске move, выводится в UI при запуске UI из проекта)</li>
   <li>В UI: <strong>Armbot/docs/back/src/main/resources</strong> (выводится в UI только если не может найти файл $ARMBOT_PATH/version)</li>
 </ul>
+
+<p><br /></p>
+<h2>8. Конфиги робота</h2>
+<p>В папке /home/armbot-info создайте файл Armbot.txt и укажите в нем нужные конфиги для робота. Содержимое этого файла можно поменять через пользовательский интерфейс.</p>
+<p>Если не будет конфигов в файле Armbot.txt, то они будут браться по умолчанию из Armbot/src/armbot_move/src/settings.hpp</p>
+<p>Пример файла с поддерживаемыми конфигами:</p>
+<pre><code># Положение по оси Z
+zPositionDefault = 0.06
+zPositionDefaultDown = 0.012
+
+# Ориентация по умолчанию
+Orientation.x = 0.999973
+Orientation.y = 0.00734455
+Orientation.z = -3.69362e-05
+Orientation.w = -2.76376e-06
+
+# Позиция по умолчанию
+DefaultPosition.x = 0.15731
+DefaultPosition.y = 0.00169707
+DefaultPosition.z = 0.119355
+
+# Сохранять координаты по вебсокету
+saveWebSocket = true
+
+# Сохранять координаты в файл
+saveToFile = false
+</code></pre>
+
+
+

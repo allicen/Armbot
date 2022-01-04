@@ -91,4 +91,35 @@ class RobotController {
 
         return true
     }
+
+    @Get(value = '/config')
+    def getConfig() {
+        String homePath = System.getProperty('user.home')
+        String armbotConfigFile = "${homePath}/armbot-info/Armbot.txt"
+        File configFile = new File(armbotConfigFile)
+
+        if (configFile.exists()) {
+
+            ArrayList<Map<String, String>> data = new ArrayList()
+
+            configFile.eachLine {line ->
+                String[] lineArr = line.split('=')
+                if (line.length() > 0 && line[0] != '#' && line.indexOf('=') > -1 && lineArr.length == 2) {
+                    String key = lineArr[0].trim()
+                    String value = lineArr[1].trim()
+
+                    Map<String, String> lineConfig = new HashMap<>()
+                    lineConfig.put("key", key)
+                    lineConfig.put("value", value)
+                    data.add(lineConfig)
+                }
+            }
+
+            logService.writeLog(this, "Файл с конфигами найден и обработан".toString(), LogStatus.INFO)
+            return new ResponseDto(status: ResponseStatus.SUCCESS, message: "Файл с конфигами найден и обработан", details: data)
+        }
+
+        logService.writeLog(this, "Файла с конфигами ${armbotConfigFile} не существует".toString(), LogStatus.ERROR)
+        return new ResponseDto(status: ResponseStatus.SUCCESS, message: "Файла с конфигами ${armbotConfigFile} не существует".toString())
+    }
 }
