@@ -35,27 +35,20 @@
 // Сервоприводы
 #define JOINT_GRIP_PIN 11 // Поворот захвата
 #define JOINT_GRIP_END_PIN 6 // Захват
-#define JOINT_GRIP_END_INIT_ANG 30 // Корректировка угла сервопривода захвата (сервопривод не может поворачиваться на 180 град.)
+#define JOINT_GRIP_END_INIT_ANG 30 // Корректировка угла сервопривода захвата при старте скетча (сервопривод не может поворачиваться на 180 град.)
 
-#define JOINT_COUNT 5
+// Количество шаговых двигателей
 #define JOINT_STEP_COUNT 3
+
+// Количество сервоприводов
 #define SERVO_COUNT 2
 
-#define SPEED 12000
-#define ACCELERATION 1000
-#define M_PI 3.14159265358979323846
+// Градусов в радиане 
 #define RADIAN 57.3
 
 // 1 градус = 46 шагов
 // 200 шагов * 5,18 передаточное отношение * 16 микрошаг / 360 градусов
 #define STEP_IN_ANGLE 46
-
-// Поправочные коэффициенты для двигателей при пересчете joints в шаги (подгонка под модель)
-#define MOTOR_Y_RATIO -0.548491 //-0.91827253
-#define MOTOR_Z_RATIO -0.2661934 //-0.48330122
-
-// Корректировка 2joint
-#define JOINT_2_CORRECTION 0.10
 
 std_msgs::String savePointMessage;
 ros::NodeHandle nodeHandle;
@@ -96,52 +89,19 @@ MultiStepper steppers;
 
 Servo robotServos[SERVO_COUNT];
 
-
-//////////// для отладки
-float joint_1_rem;
-float joint_2_rem;
-float joint_3_rem;
-float joint_4_rem;
-float joint_grip_rem;
-
-float stepper_1_rem;
-float stepper_2_rem;
-float stepper_3_rem;
-
-
-
-//////////////// start
-
 int servo_pins[SERVO_COUNT] = {JOINT_GRIP_PIN, JOINT_GRIP_END_PIN}; // Servo Pins
-
-// int motorCurrentPositions[JOINT_COUNT] = {0, 0, 0, 0, 0};
-// float targetJointPositions[JOINT_COUNT] = {0, 0, 0, 0, 0};
 long stepperPositions[JOINT_STEP_COUNT] = {0, 0, 0}; /// 3 двигателя
 int servoPositions[SERVO_COUNT] = {0, 0};
-
-
-/////////// end
-
 
 std_msgs::String str_msg;
 ros::Publisher chatter("save_position", &str_msg);
 
-
 // Возврат мотора в исходное положение
 void robotReturnStartPosition () {
-  nodeHandle.logwarn("============== Начальные значения для моторов ==============");
-  nodeHandle.logwarn(String(stepperPositions[0]).c_str());
-  nodeHandle.logwarn(String(stepperPositions[1]).c_str());
-  nodeHandle.logwarn(String(stepperPositions[2]).c_str());
   
   for (int i = 0; i < JOINT_STEP_COUNT; i++) {
      stepperPositions[i] = 0;
   }
-
-  nodeHandle.logwarn("============== Конечные значения для моторов ==============");
-  nodeHandle.logwarn(String(stepperPositions[0]).c_str());
-  nodeHandle.logwarn(String(stepperPositions[1]).c_str());
-  nodeHandle.logwarn(String(stepperPositions[2]).c_str());
     
   steppers.moveTo(stepperPositions);
   steppers.runSpeedToPosition();
@@ -167,22 +127,13 @@ void motorMove(const std_msgs::String& msg){
   } else {
     nodeHandle.logerror("Ошибка в данных запуска двигателя. Строка не соответствует формату!");
   }
-  
-//  nodeHandle.logwarn("-----------------");
-  //  nodeHandle.logwarn(String(motorNumber).c_str());
-  //  nodeHandle.logwarn(String(motorDirection).c_str());
-//  nodeHandle.logwarn(String(stepperPositions[0]).c_str());
-//  nodeHandle.logwarn(String(stepperPositions[1]).c_str());
-//  nodeHandle.logwarn(String(stepperPositions[2]).c_str());
 
   if ((motorNumber == 1 || motorNumber == 2 || motorNumber == 3) && (motorDirection == 0 || motorDirection == 1)) { // Шаговые двигатели
-    int steps = motorDirection == 0 ? 46 : -46; // По умолчанию ставить 100, на меньшем шаге рушится
+    int steps = motorDirection == 0 ? 100 : -100; // По умолчанию ставить 100, на меньшем шаге рушится
     int motorIndex = motorNumber-1;
     stepperPositions[motorIndex] = stepperPositions[motorIndex] + steps;
     
   } else if (motorNumber == 4 || motorNumber == 5) {
-    nodeHandle.logerror("Servo start!!!!!!!!!");
-
     int servoIndex = motorNumber == 4 ? 0 : 1;
     int deg = motorDirection == 0 ? 10 : -10;
     int start = servoPositions[servoIndex];
@@ -195,11 +146,6 @@ void motorMove(const std_msgs::String& msg){
     if (finish < 0) {
         finish = 0;
     }
-    
-    nodeHandle.logerror("зашло --- ");
-    nodeHandle.logerror(String(servoPositions[servoIndex]).c_str());
-    nodeHandle.logerror(String(start).c_str());
-    nodeHandle.logerror(String(finish).c_str());
 
     if (start < finish) {
         for (int j = start; j < finish; j++) {
@@ -232,30 +178,10 @@ void motorMove(const std_msgs::String& msg){
   steppers.moveTo(stepperPositions);
   steppers.runSpeedToPosition();
   nodeHandle.logwarn("Движение двигателей --- FINISH");
-  ////////////////////////////////////////////////////////////////////////////////////////////////
 
   float stepper_x_joint = stepperPositions[0] /STEP_IN_ANGLE / RADIAN;
   float stepper_y_joint = (stepperPositions[1] / STEP_IN_ANGLE / RADIAN);
   float stepper_z_joint = (stepperPositions[2] / STEP_IN_ANGLE / RADIAN); // 2 joint (3 и 4)
-
-  // корректрировка joints по ограничениям из модели
-//  if (stepper_x_joint < -2.25) {
-//    stepper_x_joint = 2.25;
-//  } else if (stepper_x_joint > 2.25) {
-//    stepper_x_joint = 2.25;
-//  }
-//
-//  if (stepper_y_joint < 0) {
-//    stepper_y_joint = 0;  
-//  } else if (stepper_y_joint > 1.57) {
-//    stepper_y_joint = 1.57;
-//  }
-//
-//  if (stepper_z_joint < 0) {
-//    stepper_z_joint = 0;  
-//  } else if (stepper_z_joint > 1.57) {
-//    stepper_z_joint = 1.57;
-//  }
 
   char message[50];
   strcpy(message, "joints=");
@@ -282,25 +208,20 @@ ros::Subscriber<std_msgs::String> motorMoveSubscriber("move_motor", &motorMove);
 
 void robotMotorMove(const rosserial_arduino::Test::Request & req, rosserial_arduino::Test::Response & res){
    char commands[strlen(req.input)+1];
-   strcpy(commands, req.input); 
-  
+   strcpy(commands, req.input);
+
    nodeHandle.logwarn("Пришли данные:");
    nodeHandle.logwarn(String(commands).c_str());
-  
+
    float jointList[5] = {0, 0, 0, 0, 0};
    char *rest = NULL;
    char *jointStr;
 
    int index = 0;
    for (jointStr = strtok_r(commands, ":", &rest); jointStr != NULL; jointStr = strtok_r(NULL, ":", &rest)) {
-    
+
      float joint = atof(jointStr);
      jointList[index] = joint;
-
-//      nodeHandle.logwarn("---------- joint");
-//      nodeHandle.logwarn(jointStr);
-//      nodeHandle.logwarn(String(joint).c_str());      
-     
      index++;
    }
 
@@ -309,48 +230,22 @@ void robotMotorMove(const rosserial_arduino::Test::Request & req, rosserial_ardu
      nodeHandle.logwarn(String(jointList[i]).substring(0, 8).c_str());
    }
 
-
-//////////////////////////////////////////
-///////////////////////////////////////////
    // Записываем шаговые двигатели
-    for (int i = 0; i < JOINT_STEP_COUNT; i++) {
-      long stepCount = 0;
-      long prevStepCount = 0;
 
-      if (i == 0) {
-        stepCount = jointList[i] * RADIAN * STEP_IN_ANGLE;
-      }
+   // 1 двигатель
+   stepperPositions[0] = jointList[0] * RADIAN * STEP_IN_ANGLE;
 
-      if (i == 1) {
-        // пересчет для 2 двигателя
-//        stepCount = (91 - jointList[i]) * StepsPerDegreeTwo;
-//        stepCount = round(stepCount);
-        stepCount = jointList[i] * RADIAN * STEP_IN_ANGLE * MOTOR_Y_RATIO;
-      }
-      
-      if (i == 2) {
-        // пересчет для 3 двигателя
-//        stepCount = ((abs(jointList[i]) - 93) * StepsPerDegreeThree) + stepperPositions[i-1];
-//        stepCount = round(stepCount);
-        stepCount = jointList[i] * RADIAN * STEP_IN_ANGLE * MOTOR_Z_RATIO;
-      }
-//      
-      nodeHandle.logwarn("********************* Motor #");
-      nodeHandle.logwarn(String(i).c_str());
-      nodeHandle.logwarn(String(jointList[i]).c_str());
-      nodeHandle.logwarn("**********************");
+   // 2 двигатель
+   stepperPositions[1] = jointList[1] * RADIAN * STEP_IN_ANGLE;
 
-      // сохраняем значения для шаговых двигателей
-       stepperPositions[i] = stepCount;
-    }
+   // 3 двигатель
+   stepperPositions[2] = (jointList[2] - jointList[1]) * RADIAN * STEP_IN_ANGLE;
 
    if (buttonOnPressed) {
-//      steppers.moveTo(stepperPositions);
-//      steppers.runSpeedToPosition();
+      steppers.moveTo(stepperPositions);
+      steppers.runSpeedToPosition();
     }
-
-//   steppers.moveTo(stepperPositions);
-//   steppers.runSpeedToPosition();
+    
    delay(1);
    nodeHandle.spinOnce(); 
      

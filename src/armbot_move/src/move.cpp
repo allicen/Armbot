@@ -256,9 +256,6 @@ bool writeJointsToArduino(ros::ServiceClient arduinoClient, rosserial_arduino::T
 
     srv.request.input = joints_str;
 
-    // ROS_INFO("!!!!!!!!!!!!!!!!!!!!!!!!!!123");
-    // ROS_INFO(boost::lexical_cast<std::string>(joints_str).c_str());
-
     if (arduinoClient.call(srv)) {
         ROS_INFO("ARDUINO SUCCESS: ");
         logSimple("Result send command to Arduino: ", "");
@@ -289,7 +286,7 @@ bool setPosition(armbot_move::SetPosition::Request &req,
 
     if (req.position == "button-pressed") { // кнопка нажата
         pose.position.z = zPositionDefaultDown;
-    } else if (req.z != zPositionNone) { // передана координата Z
+    } else if (req.z != zPositionNone && req.z != 0) { // передана координата Z отличная от 0
         pose.position.z = req.z;
     } else { // используется Z по умолчанию
         pose.position.z = zPositionDefault;

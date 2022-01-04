@@ -2,23 +2,25 @@
 <launch>
 	<!-- Run with gui: roslaunch armbot_move run.launch gui:=true -->
 	<!-- Run without gui: roslaunch armbot_move run.launch -->
+	<!-- Запустить с управлением двигателями с клавиатуры: roslaunch armbot_move run.launch keyboardControl:=true -->
 
 	<!-- Armbot model -->
-	<arg name="gui" default="false" />
+	<arg name="gui" default="false" /> <!-- Включение/отключение визуализации -->
+	<arg name="keyboardControl" default="false" /> <!-- Включение/отключение управления двигателями с клавиатуры -->
 	<param name="use_gui" value="$(arg gui)" />
-	<param name="robot_description" textfile="$(find armbot_description)/urdf/dobot.urdf" />
-	<param name="file" type="str" value="$(find armbot_description)/urdf/dobot.urdf" />
+	<param name="robot_description" textfile="$(find armbot_description)/urdf/model_npoa/armbot.urdf" />
+	<param name="file" type="str" value="$(find armbot_description)/urdf/model_npoa/armbot.urdf" />
 	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find armbot_description)/config/armbot.rviz" if="$(arg gui)"/>
 
 	<!-- Run Move-->
 	<node name="move" pkg="armbot_move" type="move" respawn="false" output="screen">
-		<rosparam command="load" file="$(find armbot_moveit_config)/config/kinematics.yaml"/>
+		<rosparam command="load" file="$(find armbot_npoa_moveit_config)/config/kinematics.yaml"/>
 		<param name="planning_plugin" value="ompl_interface/OMPLPlanner"/>
-		<rosparam command="load" file="$(find armbot_moveit_config)/config/ompl_planning.yaml"/>
+		<rosparam command="load" file="$(find armbot_npoa_moveit_config)/config/ompl_planning.yaml"/>
 	</node>
 
 	<!-- Add robot config-->
-	<include file="$(find armbot_moveit_config)/launch/demo.launch">
+	<include file="$(find armbot_npoa_moveit_config)/launch/demo.launch">
 		<arg name="use_gui" value="$(arg gui)"/>
 	</include>
 
@@ -33,4 +35,7 @@
 		<param name="port" value="/dev/ttyACM0"/>
 		<param name="baud" value="115200"/>
 	</node>
+
+	<!-- Управление двигателями с клавиатуры -->
+	<node name="moveMotor" pkg="armbot_move" type="moveMotor" if="$(arg keyboardControl)"/>
 </launch>

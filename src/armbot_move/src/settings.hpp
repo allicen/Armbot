@@ -4,8 +4,8 @@
 
 #define commandDescriptionFile std::string(getenv("ARMBOT_PATH")) + "/data/command_description.txt"
 
-float zPositionDefault = 0.066107;
-float zPositionDefaultDown = 0.0098367;
+float zPositionDefault = 0.05;
+float zPositionDefaultDown = 0.012;
 float zPositionNone = -1000;
 
 typedef struct GripperOrientationDefault {
@@ -23,7 +23,7 @@ typedef struct DefaultPosition {
 
 #define websocketUrl "ws://localhost:9080/ws/coordinate"
 
-#define saveWebSocket false
-#define saveToFile true
+#define saveWebSocket true
+#define saveToFile false
 
 #endif
