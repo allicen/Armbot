@@ -9,7 +9,7 @@
   <mat-list role="list">
     <div role="listitem" *ngFor="let item of coordinateList">
       {{item.name}}
-      <button mat-icon-button color="warn" (click)="choice(item.id)">
+      <button mat-icon-button color="warn" (click)="choice(item.id)" matTooltip="Добавить команду" matTooltipPosition="right">
         <mat-icon>add_circle</mat-icon>
       </button>
       <mat-divider></mat-divider>
@@ -40,7 +40,7 @@
           <span [class]="rowHasError ? 'error' : 'message'" *ngIf="rowId == item.id">{{messageRow}}</span>
         </div>
       </div>
-      <mat-icon color="warn" (click)="remove(item.id)">cancel</mat-icon>
+      <mat-icon color="warn" (click)="remove(item.id)" matTooltip="Удалить команду" matTooltipPosition="right">cancel</mat-icon>
     </div>
   </div>
   <div class="export" *ngIf="commands.length > 0">

@@ -27,6 +27,10 @@ export class ArmbotService {
         });
     }
 
+    armbotOn(): void {
+        this.rosArmbotService.armbotConnect();
+    }
+
     getArmbotMessage(): Observable<string> {
         return this.armbotMessage$.asObservable();
     }
@@ -40,7 +44,7 @@ export class ArmbotService {
     }
 
     setArmbotStatus(status: string): void {
-      this.armbotMessage$.next(status);
+      this.armbotStatus$.next(status);
     }
 
     getArmbotButtonDisabled(): Observable<boolean> {

@@ -14,7 +14,12 @@ export class RosArmbotService {
     private armbotStatus$: BehaviorSubject<string> = new BehaviorSubject<string>(this.config.robotStatus.disconnect);
 
     constructor(public roslibService: NgxRoslibService, private config: Config) {
-        this.rbServer = this.roslibService.connect(config.webSocketRosUrl);
+        this.rbServer = this.roslibService.connect(this.config.webSocketRosUrl);
+        this.armbotConnect();
+    }
+
+    armbotConnect(): void {
+        this.rbServer = this.roslibService.connect(this.config.webSocketRosUrl);
         if (!this.roslibService.onOpen || !this.roslibService.onClose || !this.roslibService.onError) {
             return;
         }

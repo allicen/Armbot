@@ -1,9 +1,9 @@
-import {Component, ElementRef, Input, Output, ViewChild} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {StorageService} from "../../serviсes/storage.service";
-import {Subscription} from "rxjs";
-import {Router} from "@angular/router";
+import {Route, Router} from "@angular/router";
 import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
-import {MatSlideToggle, MatSlideToggleChange} from "@angular/material/slide-toggle";
+import {MatSlideToggleChange} from "@angular/material/slide-toggle";
+import {ArmbotService} from "../../serviсes/armbot.service";
 
 @UntilDestroy()
 @Component({
@@ -11,13 +11,34 @@ import {MatSlideToggle, MatSlideToggleChange} from "@angular/material/slide-togg
     templateUrl: './header.component.html',
     styleUrls: ['./header.component.less']
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
     title = 'user-interface';
 
     userInterfaceOn: boolean = false;
 
-    constructor(public storage: StorageService, private router: Router) {
+    armbotMessage: string = '';
+    armbotStatus: string = '';
+    armbotOnTurn: boolean = false;
+    armbotOnAttempt: number = 0;
+
+    constructor(public storage: StorageService,
+                private router: Router,
+                private armbotService: ArmbotService) {
+    }
+
+    ngOnInit(): void {
         this.storage.getUserInterface().pipe(untilDestroyed(this)).subscribe(data => this.userInterfaceOn = data);
+        this.armbotService.getArmbotStatus().pipe(untilDestroyed(this)).subscribe(data => {
+            this.armbotStatus = data;
+            if (data === 'disconnect') {
+                this.armbotMessage = 'Робот отключен';
+                this.armbotOnTurn = false;
+            } else {
+                this.armbotMessage = 'Робот подключен';
+                this.armbotOnTurn = true;
+                this.armbotOnAttempt = 0;
+            }
+        });
     }
 
     userInterfaceChange($event: MatSlideToggleChange) {
@@ -39,5 +60,10 @@ export class HeaderComponent {
         }
 
         this.storage.setUserInterface(this.userInterfaceOn);
+    }
+
+    armbotOn() {
+        this.armbotService.armbotOn();
+        this.armbotOnAttempt++;
     }
 }

@@ -55,10 +55,12 @@
       <th mat-header-cell *matHeaderCellDef>Действия</th>
       <td mat-cell *matCellDef="let element;" class="field">
         <div class="action-buttons">
-          <button mat-icon-button color="warn" (click)="removeCoordinate(element.id)">
+          <button mat-icon-button color="warn" (click)="removeCoordinate(element.id)"
+                  matTooltip="Удалить команду">
             <mat-icon>close icon</mat-icon>
           </button>
-          <button mat-icon-button color="warn" (click)="armbotRun(element.id)" [disabled]="armbotButtonDisabled">
+          <button mat-icon-button color="warn" (click)="armbotRun(element.id)" [disabled]="armbotButtonDisabled"
+                  matTooltip="Запустить робота" matTooltipPosition="right">
             <mat-icon>play_circle_filled</mat-icon>
           </button>
           <mat-spinner diameter="20" *ngIf="armbotButtonDisabled && element.id === armbotCommandActive"></mat-spinner>

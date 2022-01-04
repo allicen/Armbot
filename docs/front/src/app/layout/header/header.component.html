@@ -1,4 +1,13 @@
 <div class="container">
   <h2><a routerLink="/docs">Armbot 1.0</a></h2>
+  <div class="robot-status">
+    <div class="info">
+      <mat-icon *ngIf="armbotOnTurn">check_circle_outline</mat-icon>
+      <mat-icon *ngIf="!armbotOnTurn">cancel</mat-icon>
+      <div>{{armbotMessage}}</div>
+    </div>
+    <a mat-raised-button color="warn" (click)="armbotOn()"  *ngIf="!armbotOnTurn" class="button">Подключить</a>
+    <div *ngIf="!armbotOnTurn && armbotOnAttempt > 2" class="note info">Проверьте подключение к RosBridge!</div>
+  </div>
   <mat-slide-toggle [checked]="userInterfaceOn" (change)="userInterfaceChange($event)">Режим управления</mat-slide-toggle>
 </div>

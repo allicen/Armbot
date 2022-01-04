@@ -30,7 +30,7 @@
   </div>
 </div>
 
-<section class="control" *ngIf="editingAllowed">
+<div class="control" *ngIf="editingAllowed">
   <div class="form">
     <div class="label">Введите ширину изображения<br />и нажмите Enter:</div>
     <mat-form-field appearance="fill">
@@ -49,7 +49,7 @@
   <div *ngIf="editingAllowed">
     <button mat-raised-button color="warn" (click)="setEditingCompleted()" [disabled]="imageWidthPx === 0 || !imageWidthPx">Отметить точки</button>
   </div>
-</section>
+</div>
 
 
 <div class="robot-area" #robotArea (click)="saveCoordinate($event)">

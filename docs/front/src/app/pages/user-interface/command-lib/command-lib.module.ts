@@ -21,6 +21,7 @@ import {RobotAreaComponent} from "./robot-area/robot-area.component";
 import {CommandTableComponent} from "./command-table/command-table.component";
 import {MatExpansionModule} from "@angular/material/expansion";
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
+import {MatTooltipModule} from "@angular/material/tooltip";
 
 @NgModule({
   declarations: [
@@ -47,7 +48,8 @@ import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
     FormsModule,
     ReactiveFormsModule,
     MatExpansionModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatTooltipModule
   ],
   providers: [HttpClient, MatDialog, MatSnackBar, WebsocketService],
   exports: [

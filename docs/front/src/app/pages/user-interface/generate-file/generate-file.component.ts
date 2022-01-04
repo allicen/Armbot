@@ -7,8 +7,6 @@ import {HttpService} from "../../../serviсes/http.service";
 import {StorageService} from "../../../serviсes/storage.service";
 import {ArmbotService} from "../../../serviсes/armbot.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
-import {MessageService} from "../../../serviсes/message.service";
-import {map} from "rxjs/operators";
 
 @UntilDestroy()
 @Component({
