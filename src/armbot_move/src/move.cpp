@@ -341,6 +341,8 @@ int main(int argc, char *argv[]) {
     // Сохраняет позицию из Arduino
     ros::Subscriber savePositionSubscriber = n.subscribe("execute_command", 1000, executeCommand);
 
+    logs.writeVersionLog(FILENAME);
+
     ros::Duration(1).sleep();
     ros::waitForShutdown();
     return 0;

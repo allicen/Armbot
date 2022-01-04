@@ -15,6 +15,7 @@ class LogClass {
         void logGetCoordinates(const std::string*, const std::string*, const std::string*, char*);
         void logPrintPose(const geometry_msgs::Pose, char*);
         void logPrintJoints(const std::vector<double>, char*);
+        void writeVersionLog(char*);
 };
 
 // Запись логов через shell
@@ -26,6 +27,18 @@ inline void LogClass::writeLog(const char* log, char* fileName) {
     strcat (shell, fileName);
     strcat (shell, " — ");
     strcat (shell, log);
+    strcat (shell, "'");
+    system (shell);
+}
+
+// Запись версии ПО через shell
+inline void LogClass::writeVersionLog(char* fileName) {
+    char type[10] = "INFO";
+    char shell[500] = "$ARMBOT_PATH/scripts/extended/functions/functions_log_cpp_version.sh '[";
+    strcat (shell, type);
+    strcat (shell, "] — ");
+    strcat (shell, fileName);
+    strcat (shell, " — ");
     strcat (shell, "'");
     system (shell);
 }

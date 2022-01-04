@@ -126,3 +126,11 @@ left 4
 <p>6.2. Перенести пакет в проект.</p>
 <p>6.3. Сформировать конфигурацию робота с помощью <a href="http://docs.ros.org/en/kinetic/api/moveit_tutorials/html/doc/setup_assistant/setup_assistant_tutorial.html">MoveIt Setup Assistant</a>.</p>
 <p>Запуск MoveIt Setup Assistant из Docker-контейнера: <code>roslaunch moveit_setup_assistant setup_assistant.launch</code></p>
+<p><br /></p>
+
+<h2>7. Обновление версии робота</h2>
+<p>Версию робота необходимо поменять в 2х местах:</p>
+<ul>
+  <li>В проекте: <strong>Armbot/version</strong> (выводится в логи при запуске move, выводится в UI при запуске UI из проекта)</li>
+  <li>В UI: <strong>Armbot/docs/back/src/main/resources</strong> (выводится в UI только если не может найти файл $ARMBOT_PATH/version)</li>
+</ul>

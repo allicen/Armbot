@@ -318,4 +318,15 @@ export class HttpService {
             })
         );
     }
+
+  /**
+   * Получить номер версии
+   * */
+    getAppVersion(): Observable<any> {
+        return this.http.get(`${this.config.httpUrl}/version/get`).pipe(
+            map(res => {
+                return res;
+            })
+        );
+    }
 }
