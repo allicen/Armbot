@@ -22,8 +22,6 @@ function printLog {
        sudo mkdir -p "$logPath"
    fi
 
-   echo "$logPath/$logFile"
-
    if ! [[ -e "$logPath/$logFile" ]] ; then
        cd "$logPath"
        sudo > "$logFile"

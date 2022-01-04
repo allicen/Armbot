@@ -94,7 +94,14 @@ long stepperPositions[JOINT_STEP_COUNT] = {0, 0, 0}; /// 3 двигателя
 int servoPositions[SERVO_COUNT] = {0, 0};
 
 std_msgs::String str_msg;
-ros::Publisher chatter("save_position", &str_msg);
+ros::Publisher chatter("execute_command", &str_msg);
+
+void logWrite(String message) {
+    message = "log:" + message;
+    str_msg.data = message.c_str();
+    chatter.publish(&str_msg);
+}
+
 
 // Возврат мотора в исходное положение
 void robotReturnStartPosition () {
@@ -126,6 +133,7 @@ void motorMove(const std_msgs::String& msg){
     motorDirection = data[2] - '0';
   } else {
     nodeHandle.logerror("Ошибка в данных запуска двигателя. Строка не соответствует формату!");
+    logWrite("An error in the engine start data. The string does not match the format!");
   }
 
   if ((motorNumber == 1 || motorNumber == 2 || motorNumber == 3) && (motorDirection == 0 || motorDirection == 1)) { // Шаговые двигатели
@@ -165,19 +173,16 @@ void motorMove(const std_msgs::String& msg){
     nodeHandle.logerror(String(servoPositions[servoIndex]).c_str());
 
   } else {
+    logWrite("An error when starting the engine. Incorrect engine or direction value");
     nodeHandle.logerror("Ошибка при запуске двигателя. Неверное значение двигателя или направления");
   }
 
-  ////////// НЕ УДАЛЯТЬ! Почему-то без этого заходит в setup постоянно!!!!
-  nodeHandle.logwarn("**** Движение двигателей ***");
-  nodeHandle.logwarn(String(stepperPositions[0]).c_str());
-  nodeHandle.logwarn(String(stepperPositions[1]).c_str());
-  nodeHandle.logwarn(String(stepperPositions[2]).c_str());
-  /////////////////
+  // Не удалять строку лога (иначе всегда заходит в setup)
+  logWrite("Motor run: 1 motor: " + String(stepperPositions[0]) + ", 2 motor: " + String(stepperPositions[1]) + ", 3 motor: " + String(stepperPositions[2]));
 
   steppers.moveTo(stepperPositions);
   steppers.runSpeedToPosition();
-  nodeHandle.logwarn("Движение двигателей --- FINISH");
+  logWrite("Motor run funish");
 
   float stepper_x_joint = stepperPositions[0] /STEP_IN_ANGLE / RADIAN;
   float stepper_y_joint = (stepperPositions[1] / STEP_IN_ANGLE / RADIAN);
@@ -210,8 +215,7 @@ void robotMotorMove(const rosserial_arduino::Test::Request & req, rosserial_ardu
    char commands[strlen(req.input)+1];
    strcpy(commands, req.input);
 
-   nodeHandle.logwarn("Пришли данные:");
-   nodeHandle.logwarn(String(commands).c_str());
+   logWrite("GET DATA: " + String(commands));
 
    float jointList[5] = {0, 0, 0, 0, 0};
    char *rest = NULL;
@@ -223,11 +227,6 @@ void robotMotorMove(const rosserial_arduino::Test::Request & req, rosserial_ardu
      float joint = atof(jointStr);
      jointList[index] = joint;
      index++;
-   }
-
-   nodeHandle.logwarn("---------- joints ---------");
-   for (int i = 0; i < 4; i++) {
-     nodeHandle.logwarn(String(jointList[i]).substring(0, 8).c_str());
    }
 
    // Записываем шаговые двигатели
@@ -250,7 +249,7 @@ void robotMotorMove(const rosserial_arduino::Test::Request & req, rosserial_ardu
    nodeHandle.spinOnce(); 
      
    res.output = "FINISH"; 
-   nodeHandle.logwarn(res.output);
+   logWrite("FINISH motor run");
 }
 
 
@@ -317,8 +316,6 @@ void setup() {
     nodeHandle.advertiseService(server);
     nodeHandle.subscribe(motorMoveSubscriber);  
     nodeHandle.advertise(chatter);
-    
-    nodeHandle.loginfo("Startup complete");
 }
 
 
@@ -331,7 +328,7 @@ void loop() {
     // кнопка нажата
     if (buttonOn.wasPressed()) {
       buttonOnPressed = !buttonOnPressed;
-      nodeHandle.logwarn("Робот включен");
+      logWrite("Robot is ready");
     }
   
     if (buttonOnPressed) {

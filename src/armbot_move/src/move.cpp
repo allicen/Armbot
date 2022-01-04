@@ -149,24 +149,36 @@ bool writeJointsFromArduino(const std::string &command) {
     return 0;
 }
 
-
+// Обработка команд из Arduino
 void executeCommand(const std_msgs::String::ConstPtr& msg){
 
-    char command[50];
+    char logFileName[20] = "move_arduino.ino";
+
+    char command[255];
     strcpy (command, msg->data.c_str());
 
-    logs.logSimple("Get command: ", command, FILENAME);
+    std::string markerLog = "log:";
+    std::string commandStr = command;
 
-    if (strcmp("save", command) == 0) {
+    bool isLog = commandStr.rfind(markerLog, 0) == 0;
+    if (isLog) {
+        commandStr = commandStr.substr(markerLog.length());
+    } else {
+        logs.logSimple("Get command from Arduino: ", command, logFileName);
+    }
+
+    if (strcmp("save", command) == 0) { // сохранить координату по кнопке
         saveCommand();
         return;
-    } else if (strcmp("stop", command) == 0) {
+    } else if (strcmp("stop", command) == 0) { // остановить робота
         stopCommand();
         return;
-    } else if (strcmp("start", command) == 0) {
+    } else if (strcmp("start", command) == 0) { // запустить робота
         startCommand();
         return;
-    } else {
+    } else if (isLog) { // записать лог
+        logs.logSimple("", commandStr.c_str(), logFileName);
+    } else {  // записать значения joints из Arduino
 
         writeJointsFromArduino(command);
         return;
@@ -206,12 +218,10 @@ bool writeJointsToArduino(ros::ServiceClient arduinoClient, rosserial_arduino::T
     srv.request.input = joints_str;
 
     if (arduinoClient.call(srv)) {
-        ROS_INFO("ARDUINO SUCCESS: ");
-        logs.logSimple("Result send command to Arduino: ", "", FILENAME);
-
+        logs.logSimple("Result send command to Arduino: SUCCESS", "", FILENAME);
     } else {
         ROS_ERROR("Failed to call service set_joints_arduino");
-        logs.logSimple("Failed to call service set_joints_arduino: ", "", FILENAME);
+        logs.logSimple("Failed to call service set_joints_arduino", "", FILENAME);
         return 1;
     }
 
@@ -329,7 +339,7 @@ int main(int argc, char *argv[]) {
     //                                       ("set_joints_model", boost::bind(writeJointsFromArduino, _1, _2));
 
     // Сохраняет позицию из Arduino
-    ros::Subscriber savePositionSubscriber = n.subscribe("save_position", 1000, executeCommand);
+    ros::Subscriber savePositionSubscriber = n.subscribe("execute_command", 1000, executeCommand);
 
     ros::Duration(1).sleep();
     ros::waitForShutdown();
