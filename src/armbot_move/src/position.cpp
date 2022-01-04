@@ -18,17 +18,12 @@ int startMoveToPosition(ros::ServiceClient client, armbot_move::SetPosition srv,
     srv.request.y = std::stof(params[2].c_str());
     srv.request.z = params.size() == 5 ? std::stof(params[3].c_str()) : zPositionNone;
 
-    char log[255];
     if (client.call(srv)) {
         ROS_INFO("Result: %s", srv.response.result.c_str());
-        strcpy (log, "Result: ");
-        strcat (log, srv.response.result.c_str());
-        logs.writeLog(log, FILENAME);
+        logs.logSimple("Result: ", srv.response.result.c_str(), FILENAME);
     } else {
         ROS_ERROR("Failed to call service set_position: %s", position.c_str());
-        strcpy (log, "Failed to call service set_position: ");
-        strcat (log, position.c_str());
-        logs.writeLog(log, FILENAME);
+        logs.logSimple("Failed to call service set_position: ", position.c_str(), FILENAME);
         return 1;
     }
 
@@ -40,7 +35,7 @@ int main(int argc, char**argv) {
     ros::init(argc, argv, "position");
     
     ROS_INFO_STREAM("Writer is ready.");
-    logs.writeLog("Writer is ready.", FILENAME);
+    logs.logSimple("Writer is ready.", "", FILENAME);
 
     std::vector<std::string> params;
     std::string param;
@@ -48,11 +43,7 @@ int main(int argc, char**argv) {
     ros::NodeHandle n("~");
     n.getParam("param", param);
     ROS_INFO("Got parameter: %s", param.c_str());
-
-    char log[255];
-    strcpy(log, "Got parameter: ");
-    strcat(log, param.c_str());
-    logs.writeLog(log, FILENAME);
+    logs.logSimple("Got parameter: ", param.c_str(), FILENAME);
 
     ros::NodeHandle nh;
     ros::ServiceClient client = nh.serviceClient<armbot_move::SetPosition>("set_position");
@@ -96,6 +87,6 @@ int main(int argc, char**argv) {
     ros::spinOnce();
     
     ROS_INFO_STREAM("Publishing is finished!\n");
-    logs.writeLog("Publishing is finished!", FILENAME);
+    logs.logSimple("Publishing is finished!", "", FILENAME);
     return result;
 }

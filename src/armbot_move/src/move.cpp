@@ -42,60 +42,9 @@ bool isEmpty(std::ifstream& file) {
 }
 
 
-/// Logs Start ///
-void logSimple(const char* logText, const char* data) {
-    char log[400];
-    strcpy(log, logText);
-    strcat(log, data);
-    logs.writeLog(log, FILENAME);
-}
-
-void logGetCoordinates(const std::string* x, const std::string* y, const std::string* z) {
-    char log[255];
-    strcpy(log, "Coordinates obtained for saving: x=");
-    strcat(log, x->c_str());
-    strcat(log, ", y=");
-    strcat(log, y->c_str());
-    strcat(log, ", z=");
-    strcat(log, z->c_str());
-    logs.writeLog(log, FILENAME);
-}
-
-void logPrintPose(const geometry_msgs::Pose pose) {
-    char log[255];
-    strcpy(log, "Get pose: position_X=");
-    strcat(log, boost::lexical_cast<std::string>(pose.position.x).c_str());
-    strcat(log, ", position_Y=");
-    strcat(log, boost::lexical_cast<std::string>(pose.position.y).c_str());
-    strcat(log, ", position_Z=");
-    strcat(log, boost::lexical_cast<std::string>(pose.position.z).c_str());
-    strcat(log, ", orientation_X=");
-    strcat(log, boost::lexical_cast<std::string>(pose.orientation.x).c_str());
-    strcat(log, ", orientation_Y=");
-    strcat(log, boost::lexical_cast<std::string>(pose.orientation.y).c_str());
-    strcat(log, ", orientation_Z=");
-    strcat(log, boost::lexical_cast<std::string>(pose.orientation.z).c_str());
-    logs.writeLog(log, FILENAME);
-}
-
-void logPrintJoints(const std::vector<double> joints) {
-    char log[255];
-    strcpy(log, "Get joints value: 1=");
-    strcat(log, boost::lexical_cast<std::string>(joints.at(0)).c_str());
-    strcat(log, ", 2=");
-    strcat(log, boost::lexical_cast<std::string>(joints.at(1)).c_str());
-    strcat(log, ", 3=");
-    strcat(log, boost::lexical_cast<std::string>(joints.at(2)).c_str());
-    strcat(log, ", 4=");
-    strcat(log, boost::lexical_cast<std::string>(joints.at(3)).c_str());
-    logs.writeLog(log, FILENAME);
-}
-/// Logs End ///
-
-
 void webSocketMessage(const std::string &message) {
     printf(">>> %s\n", message.c_str());
-    logSimple("Websocket. Get message from server:  ", message.c_str());
+    logs.logSimple("Websocket. Get message from server:  ", message.c_str(), FILENAME);
 
     // Не закрывать соединение при статусе CONNECT
     if (message.find("\"status\":\"CONNECT\"") == std::string::npos) {
@@ -108,9 +57,9 @@ void webSocket(const std::string &message) {
 
     ws = WebSocket::from_url(websocketUrl);
     assert(ws);
-    logSimple("Websocket. Connect to:  ", websocketUrl);
+    logs.logSimple("Websocket. Connect to:  ", websocketUrl, FILENAME);
     ws->send(message.c_str());
-    logSimple("Websocket. Send data:  ", message.c_str());
+    logs.logSimple("Websocket. Send data:  ", message.c_str(), FILENAME);
     while (ws->getReadyState() != WebSocket::CLOSED) {
       ws->poll();
       ws->dispatch(webSocketMessage);
@@ -149,7 +98,7 @@ void saveCommand() {
              ROS_INFO("Input command name:");
              std::string commandName;
              std::cin >> commandName;
-             logSimple("User input command name: ", commandName.c_str());
+             logs.logSimple("User input command name: ", commandName.c_str(), FILENAME);
              std::cout << "Command saved!" << std::endl;
 
              std::ifstream file(commandDescriptionFile);
@@ -174,7 +123,7 @@ void saveCommand() {
                 out << command;
                 out.close();
 
-                logSimple("Point coordinates saved:  ", command.c_str());
+                logs.logSimple("Point coordinates saved:  ", command.c_str(), FILENAME);
              }
         }
     } catch (tf::TransformException ex){
@@ -206,7 +155,7 @@ void executeCommand(const std_msgs::String::ConstPtr& msg){
     char command[50];
     strcpy (command, msg->data.c_str());
 
-    logSimple("Get command: ", command);
+    logs.logSimple("Get command: ", command, FILENAME);
 
     if (strcmp("save", command) == 0) {
         saveCommand();
@@ -258,11 +207,11 @@ bool writeJointsToArduino(ros::ServiceClient arduinoClient, rosserial_arduino::T
 
     if (arduinoClient.call(srv)) {
         ROS_INFO("ARDUINO SUCCESS: ");
-        logSimple("Result send command to Arduino: ", "");
+        logs.logSimple("Result send command to Arduino: ", "", FILENAME);
 
     } else {
         ROS_ERROR("Failed to call service set_joints_arduino");
-        logSimple("Failed to call service set_joints_arduino: ", "");
+        logs.logSimple("Failed to call service set_joints_arduino: ", "", FILENAME);
         return 1;
     }
 
@@ -308,11 +257,11 @@ bool setPosition(armbot_move::SetPosition::Request &req,
         move_group->move->setStartState(start_state);
 
         std::vector<double> joints = move_group->move->getCurrentJointValues();
-        logPrintJoints(joints);
+        logs.logPrintJoints(joints, FILENAME);
 
 
         result = "SUCCESS. Position: " + req.position;
-        logSimple("Command execution result: ", result.c_str());
+        logs.logSimple("Command execution result: ", result.c_str(), FILENAME);
 
 
 	    // Отправляет значения joints на Arduino
@@ -361,7 +310,7 @@ int main(int argc, char *argv[]) {
         planner_plugin_loader.reset(new pluginlib::ClassLoader<planning_interface::PlannerManager>("moveit_core", "planning_interface::PlannerManager"));
     } catch (pluginlib::PluginlibException& ex) {
         ROS_FATAL_STREAM("Exception while creating planning plugin loader " << ex.what());
-        logSimple("Exception while creating planning plugin loader ", boost::lexical_cast<std::string>(ex.what()).c_str());
+        logs.logSimple("Exception while creating planning plugin loader ", boost::lexical_cast<std::string>(ex.what()).c_str(), FILENAME);
     }
 
     move_group->move->setPlanningTime(60*5);
