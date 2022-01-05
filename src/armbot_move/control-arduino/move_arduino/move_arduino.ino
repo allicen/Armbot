@@ -240,10 +240,10 @@ void robotMotorMove(const rosserial_arduino::Test::Request & req, rosserial_ardu
    // 3 двигатель
    stepperPositions[2] = (jointList[2] - jointList[1]) * RADIAN * STEP_IN_ANGLE;
 
-   if (buttonOnPressed) {
+//   if (buttonOnPressed) {
       steppers.moveTo(stepperPositions);
       steppers.runSpeedToPosition();
-    }
+//    }
     
    delay(1);
    nodeHandle.spinOnce(); 

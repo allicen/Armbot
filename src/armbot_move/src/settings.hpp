@@ -18,20 +18,18 @@ LogClass logConfig;
 
 float zPositionDefault = 0.05;
 float zPositionDefaultDown = 0.012;
-float zPositionNone = -1000;
 
-typedef struct GripperOrientationDefault {
-    float x = 0.999973;
-    float y = 0.00734455;
-    float z = -3.69362e-05;
-    float w = -2.76376e-06;
-} Orientation;
+// Координата не указана
+float coordinateNone = -1000;
 
-typedef struct DefaultPosition {
-	float x = 0.15731;
-	float y = 0.00169707;
-	float z = 0.119355;
-} DefaultPosition;
+float defaultOrientation_x = 0.999973;
+float defaultOrientation_y = 0.00734455;
+float defaultOrientation_z = -3.69362e-05;
+float defaultOrientation_w = -2.76376e-06;
+
+float defaultPosition_x = 0.15731;
+float defaultPosition_y = 0.00169707;
+float defaultPosition_z = 0.119355;
 
 bool saveWebSocket = true;
 bool saveToFile = false;
@@ -44,9 +42,6 @@ class SettingsClass {
 
 // Перезаписать конфиги из файла
 inline void SettingsClass::update() {
-    Orientation orientation;
-    DefaultPosition position;
-
     std::ifstream file("/home/armbot-info/Armbot.txt");
     std::string line;
 
@@ -74,33 +69,33 @@ inline void SettingsClass::update() {
                 zPositionDefaultDown = stof(line);
                 logConfig.logSimple("Переопределена переменная zPositionDefaultDown, новое значение: ",  boost::lexical_cast<std::string>(zPositionDefaultDown).c_str(), FILE_SETTINGS);
 
-            } else if (strcmp("Orientation.x", token.c_str()) == 0) {
-                orientation.x = stof(line);
-                logConfig.logSimple("Переопределена переменная Orientation.x, новое значение: ",  boost::lexical_cast<std::string>(orientation.x).c_str(), FILE_SETTINGS);
+            } else if (strcmp("defaultOrientation_x", token.c_str()) == 0) {
+                defaultOrientation_x = stof(line);
+                logConfig.logSimple("Переопределена переменная defaultOrientation_x, новое значение: ",  boost::lexical_cast<std::string>(defaultOrientation_x).c_str(), FILE_SETTINGS);
 
-            } else if (strcmp("Orientation.y", token.c_str()) == 0) {
-                orientation.y = stof(line);
-                logConfig.logSimple("Переопределена переменная Orientation.y, новое значение: ",  boost::lexical_cast<std::string>(orientation.y).c_str(), FILE_SETTINGS);
+            } else if (strcmp("defaultOrientation_y", token.c_str()) == 0) {
+                defaultOrientation_y = stof(line);
+                logConfig.logSimple("Переопределена переменная defaultOrientation_y, новое значение: ",  boost::lexical_cast<std::string>(defaultOrientation_y).c_str(), FILE_SETTINGS);
 
-            } else if (strcmp("Orientation.z", token.c_str()) == 0) {
-                orientation.z = stof(line);
-                logConfig.logSimple("Переопределена переменная Orientation.z, новое значение: ",  boost::lexical_cast<std::string>(orientation.z).c_str(), FILE_SETTINGS);
+            } else if (strcmp("defaultOrientation_z", token.c_str()) == 0) {
+                defaultOrientation_z = stof(line);
+                logConfig.logSimple("Переопределена переменная defaultOrientation_z, новое значение: ",  boost::lexical_cast<std::string>(defaultOrientation_z).c_str(), FILE_SETTINGS);
 
-            } else if (strcmp("Orientation.w", token.c_str()) == 0) {
-                orientation.w = stof(line);
-                logConfig.logSimple("Переопределена переменная Orientation.w, новое значение: ",  boost::lexical_cast<std::string>(orientation.w).c_str(), FILE_SETTINGS);
+            } else if (strcmp("defaultOrientation_w", token.c_str()) == 0) {
+                defaultOrientation_w = stof(line);
+                logConfig.logSimple("Переопределена переменная defaultOrientation_w, новое значение: ",  boost::lexical_cast<std::string>(defaultOrientation_w).c_str(), FILE_SETTINGS);
 
-            } else if (strcmp("DefaultPosition.x", token.c_str()) == 0) {
-                position.x = stof(line);
-                logConfig.logSimple("Переопределена переменная DefaultPosition.x, новое значение: ",  boost::lexical_cast<std::string>(position.x).c_str(), FILE_SETTINGS);
+            } else if (strcmp("defaultPosition_x", token.c_str()) == 0) {
+                defaultPosition_x = stof(line);
+                logConfig.logSimple("Переопределена переменная defaultPosition_x, новое значение: ",  boost::lexical_cast<std::string>(defaultPosition_x).c_str(), FILE_SETTINGS);
 
-            } else if (strcmp("DefaultPosition.y", token.c_str()) == 0) {
-                position.y = stof(line);
-                logConfig.logSimple("Переопределена переменная DefaultPosition.y, новое значение: ",  boost::lexical_cast<std::string>(position.y).c_str(), FILE_SETTINGS);
+            } else if (strcmp("defaultPosition_y", token.c_str()) == 0) {
+                defaultPosition_y = stof(line);
+                logConfig.logSimple("Переопределена переменная defaultPosition_y, новое значение: ",  boost::lexical_cast<std::string>(defaultPosition_y).c_str(), FILE_SETTINGS);
 
-            } else if (strcmp("DefaultPosition.z", token.c_str()) == 0) {
-                position.z = stof(line);
-                logConfig.logSimple("Переопределена переменная DefaultPosition.z, новое значение: ",  boost::lexical_cast<std::string>(position.z).c_str(), FILE_SETTINGS);
+            } else if (strcmp("defaultPosition_z", token.c_str()) == 0) {
+                defaultPosition_z = stof(line);
+                logConfig.logSimple("Переопределена переменная defaultPosition_z, новое значение: ",  boost::lexical_cast<std::string>(defaultPosition_z).c_str(), FILE_SETTINGS);
 
             } else if (strcmp("saveWebSocket", token.c_str()) == 0) {
                 saveWebSocket = (strcmp("true", line.c_str()) == 0);

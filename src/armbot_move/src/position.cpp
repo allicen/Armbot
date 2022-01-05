@@ -16,7 +16,7 @@ int startMoveToPosition(ros::ServiceClient client, armbot_move::SetPosition srv,
     srv.request.position = position;
     srv.request.x = std::stof(params[1].c_str());
     srv.request.y = std::stof(params[2].c_str());
-    srv.request.z = params.size() == 5 ? std::stof(params[3].c_str()) : zPositionNone;
+    srv.request.z = params.size() == 5 ? std::stof(params[3].c_str()) : coordinateNone;
 
     if (client.call(srv)) {
         ROS_INFO("Result: %s", srv.response.result.c_str());
@@ -59,11 +59,9 @@ int main(int argc, char**argv) {
     int result = 0;
 
     if (params.size() == 1) {
-        DefaultPosition defaultPosition;
-
-        params.push_back(boost::lexical_cast<std::string>(defaultPosition.x));
-        params.push_back(boost::lexical_cast<std::string>(defaultPosition.y));
-        params.push_back(boost::lexical_cast<std::string>(defaultPosition.z));
+        params.push_back(boost::lexical_cast<std::string>(coordinateNone));
+        params.push_back(boost::lexical_cast<std::string>(coordinateNone));
+        params.push_back(boost::lexical_cast<std::string>(coordinateNone));
 
         result = startMoveToPosition(client, srv, params[0].c_str(), params);
         sleep(1);

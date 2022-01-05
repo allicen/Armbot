@@ -238,24 +238,23 @@ bool setPosition(armbot_move::SetPosition::Request &req,
 
     std::string result = "ERROR";
 
-    Orientation orientation;
-
     geometry_msgs::Pose pose;
-    pose.position.x = req.x;
-    pose.position.y = req.y;
+    pose.position.x = req.x == coordinateNone ? defaultPosition_x : req.x;
+    pose.position.y = req.y == coordinateNone ? defaultPosition_y : req.y;
+    pose.position.z = req.x == coordinateNone && req.y == coordinateNone && req.z == coordinateNone ? defaultPosition_z : req.z;
 
     if (req.position == "button-pressed") { // кнопка нажата
         pose.position.z = zPositionDefaultDown;
-    } else if (req.z != zPositionNone && req.z != 0) { // передана координата Z отличная от 0
+    } else if (req.z != coordinateNone && req.z != 0) { // передана координата Z отличная от 0
         pose.position.z = req.z;
     } else { // используется Z по умолчанию
         pose.position.z = zPositionDefault;
     }
 
-    pose.orientation.x = orientation.x;
-    pose.orientation.y = orientation.y;
-    pose.orientation.z = orientation.z;
-    pose.orientation.w = orientation.w;
+    pose.orientation.x = defaultOrientation_x;
+    pose.orientation.y = defaultOrientation_y;
+    pose.orientation.z = defaultOrientation_z;
+    pose.orientation.w = defaultOrientation_w;
 
     move_group->move->setApproximateJointValueTarget(pose,"link_grip");
     bool success = (move_group->move->move() == moveit::planning_interface::MoveItErrorCode::SUCCESS);
@@ -327,11 +326,10 @@ int main(int argc, char *argv[]) {
     move_group->move->setPlanningTime(60*5);
     move_group->move->setGoalTolerance(.0001);
 
-    ros::NodeHandle n;
-
     logs.writeVersionLog(FILENAME);
-
     settingsConfig.update();
+
+    ros::NodeHandle n;
 
     // Получает позицию из position
     ros::ServiceServer setPositionService = n.advertiseService<armbot_move::SetPosition::Request, armbot_move::SetPosition::Response>
