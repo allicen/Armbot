@@ -137,7 +137,7 @@ void motorMove(const std_msgs::String& msg){
   }
 
   if ((motorNumber == 1 || motorNumber == 2 || motorNumber == 3) && (motorDirection == 0 || motorDirection == 1)) { // Шаговые двигатели
-    int steps = motorDirection == 0 ? 100 : -100; // По умолчанию ставить 100, на меньшем шаге рушится
+    int steps = motorDirection == 0 ? 46 : -46; // По умолчанию ставить 100, на меньшем шаге рушится
     int motorIndex = motorNumber-1;
     stepperPositions[motorIndex] = stepperPositions[motorIndex] + steps;
     
@@ -232,13 +232,13 @@ void robotMotorMove(const rosserial_arduino::Test::Request & req, rosserial_ardu
    // Записываем шаговые двигатели
 
    // 1 двигатель
-   stepperPositions[0] = jointList[0] * RADIAN * STEP_IN_ANGLE;
+   stepperPositions[0] = -jointList[0] * RADIAN * STEP_IN_ANGLE; // Едет в другую сторону
 
    // 2 двигатель
    stepperPositions[1] = jointList[1] * RADIAN * STEP_IN_ANGLE;
 
    // 3 двигатель
-   stepperPositions[2] = (jointList[2] - jointList[1]) * RADIAN * STEP_IN_ANGLE;
+   stepperPositions[2] = -(jointList[2] + jointList[1]) * RADIAN * STEP_IN_ANGLE;
 
 //   if (buttonOnPressed) {
       steppers.moveTo(stepperPositions);
