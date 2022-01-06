@@ -1,0 +1,5 @@
+int32 motorNumber
+int32 stepCount
+int32 direction
+---
+string result

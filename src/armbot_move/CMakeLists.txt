@@ -66,6 +66,8 @@ add_service_files(
    SetPosition.srv
    SavePosition.srv
    RunArmbot.srv
+   RunMotor.srv
+   RunMotorStart.srv
 )
 
 ## Generate actions in the 'action' folder

@@ -1,4 +1,4 @@
-<div class="wsConnect">
+<div class="wsConnect" *ngIf="sessionExists">
   <button mat-raised-button color="primary" (click)="connectWS()" [disabled]="wsConnect">Включить запись команд с кнопки</button>
   <span *ngIf="wsConnect" class="message">Соединение установлено</span>
   <span *ngIf="!wsConnect" class="error">Соединение не установлено</span>

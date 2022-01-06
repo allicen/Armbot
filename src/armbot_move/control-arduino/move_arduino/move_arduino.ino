@@ -117,27 +117,42 @@ void robotReturnStartPosition () {
   delay(1);  
 }
 
+
+void motorMoveStart(const std_msgs::String& msg) {
+  robotReturnStartPosition ();
+}
+
+
 // Управление моторами с клавиатуры
+// Формат данных: '0:1' либо 0:1:46
 void motorMove(const std_msgs::String& msg){
   int motorNumber; // 1 - снизу, 2 - слева, 3 - справа
   int motorDirection; // 0 - FORWARD или 1 - INVERSE
+  int stepCount = 100; // Количество шагов
 
   char data[strlen(msg.data)];
-  strcpy(data, msg.data);  
+  strcpy(data, msg.data);
 
-  char *token;
-  token = strtok(data, ":");
+  int dataArr[3] = {0, 0, 0};
+  char *rest = NULL;
+  char *dataStr;
+  
+  int index = 0;
+  for (dataStr = strtok_r(data, ":", &rest); dataStr != NULL; dataStr = strtok_r(NULL, ":", &rest)) {
+     int item = atoi(dataStr);
+     dataArr[index] = item;
+     index++;
+  }
 
-  if (token != NULL && strlen(msg.data) == 3) { // Формат данных: '0:1'
-    motorNumber = data[0] - '0';
-    motorDirection = data[2] - '0';
-  } else {
-    nodeHandle.logerror("Ошибка в данных запуска двигателя. Строка не соответствует формату!");
-    logWrite("An error in the engine start data. The string does not match the format!");
+  motorNumber = dataArr[0];
+  motorDirection = dataArr[1];
+
+  if (dataArr[2] != 0) {
+    stepCount = dataArr[2];
   }
 
   if ((motorNumber == 1 || motorNumber == 2 || motorNumber == 3) && (motorDirection == 0 || motorDirection == 1)) { // Шаговые двигатели
-    int steps = motorDirection == 0 ? 46 : -46; // По умолчанию ставить 100, на меньшем шаге рушится
+    int steps = motorDirection == 0 ? stepCount : -stepCount;
     int motorIndex = motorNumber-1;
     stepperPositions[motorIndex] = stepperPositions[motorIndex] + steps;
     
@@ -209,6 +224,7 @@ void motorMove(const std_msgs::String& msg){
 
 
 ros::Subscriber<std_msgs::String> motorMoveSubscriber("move_motor", &motorMove);
+ros::Subscriber<std_msgs::String> robotReturnStartPositionSubscriber("move_motor_start", &motorMoveStart);
 
 
 void robotMotorMove(const rosserial_arduino::Test::Request & req, rosserial_arduino::Test::Response & res){
@@ -324,7 +340,8 @@ void setup() {
     nodeHandle.getHardware()->setBaud(115200);
     nodeHandle.initNode();
     nodeHandle.advertiseService(server);
-    nodeHandle.subscribe(motorMoveSubscriber);  
+    nodeHandle.subscribe(motorMoveSubscriber);
+    nodeHandle.subscribe(robotReturnStartPositionSubscriber);
     nodeHandle.advertise(chatter);
 }
 

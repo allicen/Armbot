@@ -62,4 +62,12 @@ export class ArmbotService {
     runArmbotLaunch(filesPath: any): void {
         this.rosArmbotService.runArmbotLaunch(filesPath);
     }
+
+    runMotor(motorNumber: number, stepCount: number, direction: number): void {
+        this.rosArmbotService.runMotor(motorNumber, stepCount, direction);
+    }
+
+    runMotorStart(): void {
+        this.rosArmbotService.runMotorStart();
+    }
 }

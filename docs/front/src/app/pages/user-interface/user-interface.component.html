@@ -3,6 +3,7 @@
     <a mat-tab-link routerLink="/user-interface" [class.active]="tab === 'user-interface'" (click)="changeTab('user-interface')">1. Создать команды</a>
     <a mat-tab-link routerLink="generate-file" [class.active]="tab === 'generate-file'" (click)="changeTab('generate-file')">2. Сформировать файл запуска</a>
     <a mat-tab-link routerLink="settings" [class.active]="tab === 'settings'" (click)="changeTab('settings')">Настройки</a>
+    <a mat-tab-link routerLink="motor-move" [class.active]="tab === 'motor-move'" (click)="changeTab('motor-move')">Управление роботом</a>
   </section>
   <section class="buttons">
     <button mat-stroked-button color="primary" (click)="exportSession()" *ngIf="sessionExists">

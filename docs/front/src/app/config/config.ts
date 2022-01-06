@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {Coordinate, WorkOption} from "../model/models";
+import {Coordinate, Motor, WorkOption} from "../model/models";
 
 @Injectable({ providedIn: 'root' })
 export class Config {
@@ -31,5 +31,10 @@ export class Config {
     {key: 'defaultPosition_z', value: null, name: 'Позиция Z по умолчанию', type: 'number'},
     {key: 'saveWebSocket', value: null, name: 'Сохранять координаты по вебсокету', type: 'boolean'},
     {key: 'saveToFile', value: null, name: 'Сохранять координаты в файл в проекте', type: 'boolean'}
+  ];
+  motors: Motor[] = [
+    {key: 1, value: 'Нижний двигатель'},
+    {key: 2, value: 'Левый двигатель'},
+    {key: 3, value: 'Правый двигатель'}
   ];
 }

@@ -33,3 +33,8 @@ export interface WorkOption {
   key: string,
   value: string
 }
+
+export interface Motor {
+  key: number,
+  value: string
+}

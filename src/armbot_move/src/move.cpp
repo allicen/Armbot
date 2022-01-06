@@ -5,6 +5,8 @@
 #include <armbot_move/SetPosition.h>
 #include <armbot_move/SavePosition.h>
 #include <armbot_move/RunArmbot.h>
+#include <armbot_move/RunMotor.h>
+#include <armbot_move/RunMotorStart.h>
 #include <rosserial_arduino/Test.h>
 #include <std_msgs/String.h>
 
@@ -228,6 +230,36 @@ bool runArmbot(armbot_move::RunArmbot::Request &req, armbot_move::RunArmbot::Res
 }
 
 
+bool runMotor(armbot_move::RunMotor::Request &req, armbot_move::RunMotor::Response &res, ros::Publisher &motorMovePub) {
+    char command[50];
+    strcpy(command, boost::lexical_cast<std::string>(req.motorNumber).c_str());
+    strcat(command, ";");
+    strcat(command, boost::lexical_cast<std::string>(req.direction).c_str());
+    strcat(command, ";");
+    strcat(command, boost::lexical_cast<std::string>(req.stepCount).c_str());
+
+    logs.logSimple("Get data for run step motor: ", command, FILENAME);
+
+    std_msgs::String msg;
+    msg.data = command;
+    motorMovePub.publish(msg);
+    res.result = "FINISH in ROS";
+    return true;
+}
+
+
+bool runMotorStart(armbot_move::RunMotorStart::Request &req, armbot_move::RunMotorStart::Response &res, ros::Publisher &motorMoveStartPub) {
+
+    logs.logSimple("Return motor to start: ", "", FILENAME);
+
+    std_msgs::String msg;
+    msg.data = "Start";
+    motorMoveStartPub.publish(msg);
+    res.result = "FINISH in ROS";
+    return true;
+}
+
+
 bool writeJointsToArduino(ros::ServiceClient arduinoClient, rosserial_arduino::Test srv, const std::vector<double> joints) {
 
     char joints_str[500];
@@ -360,7 +392,18 @@ int main(int argc, char *argv[]) {
     ros::ServiceServer setPositionService = n.advertiseService<armbot_move::SetPosition::Request, armbot_move::SetPosition::Response>
                                 ("set_position", boost::bind(setPosition, _1, _2, move_group, start_state, joint_model_group));
 
+    // Запуск робота из UI
     ros::ServiceServer armbotRunService = n.advertiseService("armbot_run", runArmbot);
+
+    // Запуск моторов из UI
+    ros::Publisher motorMovePub = n.advertise<std_msgs::String>("move_motor", 1000);
+    ros::ServiceServer motorRunService = n.advertiseService<armbot_move::RunMotor::Request, armbot_move::RunMotor::Response>
+                                ("motor_run", boost::bind(runMotor, _1, _2, motorMovePub));
+
+    // Возврат моторов в исходное положение из UI
+    ros::Publisher motorMoveStartPub = n.advertise<std_msgs::String>("move_motor_start", 1000);
+    ros::ServiceServer motorRunStartService = n.advertiseService<armbot_move::RunMotorStart::Request, armbot_move::RunMotorStart::Response>
+                                    ("motor_run_start", boost::bind(runMotorStart, _1, _2, motorMoveStartPub));
 
     // Сохраняет позицию из Arduino
     boost::function<void (const std_msgs::String::ConstPtr& msg)> f = boost::bind(executeCommand, _1, move_group);

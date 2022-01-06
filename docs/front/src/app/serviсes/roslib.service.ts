@@ -82,4 +82,32 @@ export class RosArmbotService {
             this.setArmbotStatus(this.config.robotStatus.ready);
         });
     }
+
+    runMotor(motorNumber: number, stepCount: number, direction: number): void {
+        this.setArmbotStatus(this.config.robotStatus.busy);
+        const service = new RosService<{},{ topics: string[]; types: string[]; }>({
+            ros: this.rbServer,
+            name: '/motor_run',
+            serviceType: 'armbot_move/RunMotor',
+        });
+
+        service.call({'motorNumber': motorNumber, 'stepCount': stepCount, 'direction': direction}, (msg) => {
+            console.log(`ROS MOTOR FINISH. RESULT`);
+            this.setArmbotStatus(this.config.robotStatus.ready);
+        });
+    }
+
+    runMotorStart(): void {
+        this.setArmbotStatus(this.config.robotStatus.busy);
+        const service = new RosService<{},{ topics: string[]; types: string[]; }>({
+            ros: this.rbServer,
+            name: '/motor_run_start',
+            serviceType: 'armbot_move/RunMotorStart',
+        });
+
+        service.call({}, (msg) => {
+            console.log(`ROS MOTOR FINISH. RESULT`);
+            this.setArmbotStatus(this.config.robotStatus.ready);
+        });
+    }
 }

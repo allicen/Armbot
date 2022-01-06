@@ -52,6 +52,7 @@ export class CommandTableComponent implements OnInit {
     armbotCommandActive: number = 0;
 
     wsConnect: boolean = false;
+    sessionExists: boolean = false;
 
     @ViewChild(MatTable) table: MatTable<Coordinate> | undefined;
     @ViewChild("exportExcel") exportExcel: ElementRef | undefined;
@@ -123,6 +124,7 @@ export class CommandTableComponent implements OnInit {
             this.clickCoordinate = data;
             this.selectedPointIndex = this.coordinateList.findIndex(c => c.name === this.clickCoordinate?.name) || 0;
         });
+        this.sessionService.getSessionExists().pipe(untilDestroyed(this)).subscribe(data => this.sessionExists = data);
     }
 
     changeCoordinateRow(value: any, type: string, id: number) {

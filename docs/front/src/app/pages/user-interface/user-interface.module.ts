@@ -14,6 +14,7 @@ const routes: Routes = [
       { path: '', loadChildren: () => import('../../pages/user-interface/command-lib/command-lib.module').then(m => m.CommandLibModule) },
       { path: 'generate-file', loadChildren: () => import('../../pages/user-interface/generate-file/generate-file.module').then(m => m.GenerateFileModule) },
       { path: 'settings', loadChildren: () => import('../../pages/user-interface/settings/settings.module').then(m => m.SettingsModule) },
+      { path: 'motor-move', loadChildren: () => import('../../pages/user-interface/motor-move/motor-move.module').then(m => m.MotorMoveModule) },
       { path: '**', loadChildren: () => import('../../components/not-found/not-found.module').then(m => m.NotFoundModule) }
     ]}
 ];
