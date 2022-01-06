@@ -20,6 +20,10 @@ export class WebsocketService {
         return this.subject;
     }
 
+    public tryConnect() {
+        this.subject = this.create(this.url);
+    }
+
     private create(url: string): Subject<MessageEvent> {
         let ws = new WebSocket(url);
 

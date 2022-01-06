@@ -1,3 +1,9 @@
+<div class="wsConnect">
+  <button mat-raised-button color="primary" (click)="connectWS()" [disabled]="wsConnect">Включить запись команд с кнопки</button>
+  <span *ngIf="wsConnect" class="message">Соединение установлено</span>
+  <span *ngIf="!wsConnect" class="error">Соединение не установлено</span>
+  <span></span>
+</div>
 <div class="points" *ngIf="coordinateList.length > 0">
   <div class="row">
     <h2>Отмеченные точки:</h2>

@@ -51,6 +51,8 @@ export class CommandTableComponent implements OnInit {
     armbotButtonDisabled: boolean = true;
     armbotCommandActive: number = 0;
 
+    wsConnect: boolean = false;
+
     @ViewChild(MatTable) table: MatTable<Coordinate> | undefined;
     @ViewChild("exportExcel") exportExcel: ElementRef | undefined;
     @ViewChild("exportTxt") exportTxt: ElementRef | undefined;
@@ -85,6 +87,8 @@ export class CommandTableComponent implements OnInit {
 
         this.wsService.connect().pipe().pipe(untilDestroyed(this)).subscribe(res => {
             const response = JSON.parse(res.data);
+            this.wsConnect = response.status;
+
             if (response.details) {
                 const coordinate: Coordinate = response.details;
                 this.coordinateList.push(coordinate);
@@ -225,5 +229,9 @@ export class CommandTableComponent implements OnInit {
         this.armbotCommandActive = id;
         this.snackBar.open(`Запущен робот для проверки команды '${coordinate.name}'`, 'X');
         this.armbotService.runArmbotCommand(coordinate);
+    }
+
+    connectWS() {
+        this.wsService.tryConnect();
     }
 }
