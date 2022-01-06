@@ -250,7 +250,7 @@ bool runMotor(armbot_move::RunMotor::Request &req, armbot_move::RunMotor::Respon
 
 bool runMotorStart(armbot_move::RunMotorStart::Request &req, armbot_move::RunMotorStart::Response &res, ros::Publisher &motorMoveStartPub) {
 
-    logs.logSimple("Return motor to start: ", "", FILENAME);
+    logs.logSimple("Return motor to start", "", FILENAME);
 
     std_msgs::String msg;
     msg.data = "Start";
