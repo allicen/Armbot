@@ -21,8 +21,10 @@
 #include <iostream>
 #include <math.h> 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string>
 #include <fstream>
+#include <cmath>
 
 #include "../lib/easywsclient/easywsclient.hpp"
 #include "../lib/easywsclient/easywsclient.cpp"
@@ -68,16 +70,45 @@ void webSocket(const std::string &message) {
     delete ws;
 }
 
-void saveCommand() {
-    tf::TransformListener listener;
+void saveCommand(std::string commandStr, MoveOperationClass *move_group) {
 
+    std::stringstream ss(commandStr);
+    std::vector<float> result;
+
+    int index = 0;
+    while(ss.good()) {
+        std::string substr;
+        getline(ss, substr, ':');
+        if (index > 0) {
+            result.push_back(std::stof(substr.c_str()));
+        }
+        index++;
+    }
+
+    float joint_1 = result[0];
+    float joint_2 = result[1];
+    float joint_3 = result[2];
+
+    std::map<std::string, double> target;
+    target["joint_1"] = joint_1;
+    target["joint_2"] = joint_2;
+    target["joint_3"] = joint_3;
+    target["joint_4"] = abs(joint_3) - abs(joint_2);
+
+    move_group->move->setJointValueTarget(target);
+    logs.writeLog("Robot started moving", FILENAME);
+    move_group->move->move();
+    logs.writeLog("Robot stopped ", FILENAME);
+
+    tf::TransformListener listener;
     tf::StampedTransform transform;
-    try{
+
+    try {
          listener.waitForTransform("/link_grip","/base_link", ros::Time(), ros::Duration(5.0));
          listener.lookupTransform("/link_grip", "/base_link", ros::Time(), transform);
 
-         float x = transform.getOrigin().x();
-         float y = -transform.getOrigin().y(); // Почему-то записывает с другим знаком
+         float x = -transform.getOrigin().x(); // Смена знака
+         float y = -transform.getOrigin().y(); // Смена знака
          float z = transform.getOrigin().z();
 
          if (saveWebSocket) {
@@ -143,15 +174,8 @@ void startCommand() {
     system ("$ARMBOT_PATH/scripts/armbot.sh start false");
 }
 
-
-bool writeJointsFromArduino(const std::string &command) {
-    ROS_ERROR("TEST_CONNECT!!!");
-    ROS_INFO("get: %s",  command.c_str());
-    return 0;
-}
-
 // Обработка команд из Arduino
-void executeCommand(const std_msgs::String::ConstPtr& msg){
+void executeCommand(const std_msgs::String::ConstPtr& msg, MoveOperationClass *move_group){
 
     char logFileName[20] = "move_arduino.ino";
 
@@ -159,6 +183,7 @@ void executeCommand(const std_msgs::String::ConstPtr& msg){
     strcpy (command, msg->data.c_str());
 
     std::string markerLog = "log:";
+    std::string markerSave = "save:";
     std::string commandStr = command;
 
     bool isLog = commandStr.rfind(markerLog, 0) == 0;
@@ -168,8 +193,10 @@ void executeCommand(const std_msgs::String::ConstPtr& msg){
         logs.logSimple("Get command from Arduino: ", command, logFileName);
     }
 
-    if (strcmp("save", command) == 0) { // сохранить координату по кнопке
-        saveCommand();
+    bool isSaveCommand = commandStr.rfind(markerSave, 0) == 0;
+
+    if (isSaveCommand) { // сохранить координату по кнопке
+        saveCommand(commandStr, move_group);
         return;
     } else if (strcmp("stop", command) == 0) { // остановить робота
         stopCommand();
@@ -179,9 +206,7 @@ void executeCommand(const std_msgs::String::ConstPtr& msg){
         return;
     } else if (isLog) { // записать лог
         logs.logSimple("", commandStr.c_str(), logFileName);
-    } else {  // записать значения joints из Arduino
-
-        writeJointsFromArduino(command);
+    } else {
         return;
     }
 }
@@ -337,12 +362,9 @@ int main(int argc, char *argv[]) {
 
     ros::ServiceServer armbotRunService = n.advertiseService("armbot_run", runArmbot);
 
-    // // Получает значение joint из Arduino
-    // ros::ServiceServer setJointsService = n.advertiseService<rosserial_arduino::Test::Request, rosserial_arduino::Test::Response>
-    //                                       ("set_joints_model", boost::bind(writeJointsFromArduino, _1, _2));
-
     // Сохраняет позицию из Arduino
-    ros::Subscriber savePositionSubscriber = n.subscribe("execute_command", 1000, executeCommand);
+    boost::function<void (const std_msgs::String::ConstPtr& msg)> f = boost::bind(executeCommand, _1, move_group);
+    ros::Subscriber savePositionSubscriber = n.subscribe("execute_command", 1000, f);
 
     ros::Duration(1).sleep();
     ros::waitForShutdown();

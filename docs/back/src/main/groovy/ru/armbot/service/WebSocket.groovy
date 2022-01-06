@@ -1,6 +1,7 @@
 package ru.armbot.service
 
 import ru.armbot.domain.LogStatus
+import ru.armbot.domain.SessionState
 import ru.armbot.dto.ResponseDto
 import ru.armbot.domain.ResponseStatus
 import io.micronaut.core.annotation.Creator
@@ -14,11 +15,13 @@ import jakarta.inject.Inject
 import org.reactivestreams.Publisher
 import ru.armbot.domain.Coordinate
 import ru.armbot.repository.CoordinateRepository
+import ru.armbot.repository.SessionStateRepository
 import ru.armbot.utils.SizeUnitUtils
 
 @ServerWebSocket("/ws/coordinate")
 class WebSocket {
     @Inject CoordinateRepository coordinateRepository
+    @Inject SessionStateRepository sessionStateRepository
     @Inject CoordinateService coordinateService
     @Inject LogService logService
 
@@ -47,7 +50,8 @@ class WebSocket {
             Coordinate coordinate = new Coordinate(name: coordinateService.generateName(),
                                                    x: SizeUnitUtils.fromM(messArr[0]),
                                                    y: SizeUnitUtils.fromM(messArr[1]),
-                                                   z: SizeUnitUtils.fromM(messArr[2]))
+                                                   z: SizeUnitUtils.fromM(messArr[2]),
+                                                   sessionState: sessionStateRepository.list()?.getAt(0))
             coordinateRepository.save(coordinate)
             String mess = 'Сохранена новая координата по вебсокету'
             logService.writeLog(this, mess)

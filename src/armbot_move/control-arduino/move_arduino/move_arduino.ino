@@ -260,8 +260,18 @@ ros::ServiceServer<rosserial_arduino::Test::Request, rosserial_arduino::Test::Re
 void savePositionRobotModel () {
     if (buttonPublisher.wasPressed()) {
          nodeHandle.logwarn("Button pressed save process .......");
+         logWrite("Steps 1 motor : " + String(stepperPositions[0]) + ", 2 motor: " + String(stepperPositions[1]) + ", 3 motor: " + String(stepperPositions[2]));
          
-         char message[13] = "save";
+         float joint_1 = -(stepperPositions[0] / RADIAN / STEP_IN_ANGLE);
+         float joint_2 = stepperPositions[1] / RADIAN / STEP_IN_ANGLE;
+         float joint_3 = -(stepperPositions[2] + stepperPositions[1]) / RADIAN / STEP_IN_ANGLE;
+         
+         char message[50] = "save:";
+         strcat(message, String(joint_1).substring(0, 8).c_str());
+         strcat(message, ":");
+         strcat(message, String(joint_2).substring(0, 8).c_str());
+         strcat(message, ":");
+         strcat(message, String(joint_3).substring(0, 8).c_str());
          str_msg.data = message;
          chatter.publish(&str_msg);
     }
