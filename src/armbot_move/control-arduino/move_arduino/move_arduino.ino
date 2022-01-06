@@ -17,17 +17,17 @@
 #include "button.h"
 #include "stepper.h"
 
-// 1 joint (шаговый двигатель)
+// 1 joint (шаговый двигатель) - правый
 #define Z_STEP_PIN   46
 #define Z_DIR_PIN    48
 #define Z_ENABLE_PIN 62
 
-// 2 joint (шаговый двигатель)
+// 2 joint (шаговый двигатель) - нижний
 #define X_STEP_PIN   54
 #define X_DIR_PIN    55
 #define X_ENABLE_PIN 38
 
-// 3 joint (шаговый двигатель)
+// 3 joint (шаговый двигатель) - левый
 #define Y_STEP_PIN   60
 #define Y_DIR_PIN    61
 #define Y_ENABLE_PIN 56
@@ -67,7 +67,7 @@ ros::NodeHandle nodeHandle;
 #define BUTTON_RETURN_START 27
 
 // Кнопка для запуска робота
-#define BUTTON_ROBOT_START 29
+#define BUTTON_ROBOT_START 31
 
 Button buttonOn(BUTTON_ON_PIN);
 Button buttonPublisher(BUTTON_PUBLISHER_PIN);
@@ -240,10 +240,10 @@ void robotMotorMove(const rosserial_arduino::Test::Request & req, rosserial_ardu
    // 3 двигатель
    stepperPositions[2] = -(jointList[2] + jointList[1]) * RADIAN * STEP_IN_ANGLE;
 
-//   if (buttonOnPressed) {
+   if (buttonOnPressed) {
       steppers.moveTo(stepperPositions);
       steppers.runSpeedToPosition();
-//    }
+    }
     
    delay(1);
    nodeHandle.spinOnce(); 
