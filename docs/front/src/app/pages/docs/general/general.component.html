@@ -24,7 +24,7 @@
 <p>1.2.3. Сохранить docker-образ: <code>sudo docker save armbot-img > armbot-img.tar</code></p>
 <p>1.2.4. Заархивировать docker-образ: <code>tar -zcvf armbot-img.tar.gz armbot-img.tar</code></p>
 <p><strong>1.3. Перенести на целевую машину</strong></p>
-<p>1.3.1. Скачать архивы docs-img.tar.gz и armbot-img.tar.gz на флешку. Скопировать на целевую машину</p>
+<p>1.3.1. Скачать архив armbot-img.tar.gz на флешку. Скопировать на целевую машину</p>
 <p>1.3.2. Разархивировать armbot-img.tar.gz: <code>tar -xvf armbot-img.tar.gz</code></p>
 <p>1.3.3. Загрузить docker-образ робота: <code>sudo docker load < armbot-img.tar</code></p>
 <p><br /></p>
@@ -145,15 +145,15 @@ zPositionDefault = 0.06
 zPositionDefaultDown = 0.012
 
 # Ориентация по умолчанию
-Orientation.x = 0.999973
-Orientation.y = 0.00734455
-Orientation.z = -3.69362e-05
-Orientation.w = -2.76376e-06
+defaultOrientation_x = 0.999979
+defaultOrientation_y = 0.00740374
+defaultOrientation_z = 7.85675e-05
+defaultOrientation_w = -3.01276e-06
 
 # Позиция по умолчанию
-DefaultPosition.x = 0.15731
-DefaultPosition.y = 0.00169707
-DefaultPosition.z = 0.119355
+defaultPosition_x = 0.105
+defaultPosition_y = 0
+defaultPosition_z = 0.05
 
 # Сохранять координаты по вебсокету
 saveWebSocket = true
