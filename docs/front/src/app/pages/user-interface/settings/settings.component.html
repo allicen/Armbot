@@ -1,6 +1,12 @@
 <h1>Настройки</h1>
-<h2>Конфиги робота</h2>
+<div class="header-row">
+  <h2>Конфиги робота</h2>
+  <div>
+    <button mat-raised-button color="warn" (click)="configUpdate()"  class="button">Обновить</button>
+  </div>
+</div>
 <p>Конфиги берутся из файла /home/armbot-info/Armbot.txt.</p>
+<p><strong>Важно!</strong> Чтобы конфиги применились после обновления на роботе, надо перезапустить move.</p>
 <table>
   <ng-container *ngFor="let item of settings">
     <ng-container *ngIf="item.value">

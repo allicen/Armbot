@@ -16,17 +16,23 @@ export class SettingsComponent implements OnInit {
     settings: any;
 
     ngOnInit(): void {
-        this.httpService.getArmbotConfigs().pipe(untilDestroyed(this)).subscribe(data => {
-            if (data?.details) {
-                this.config.robotConfig.forEach(item => {
-                    let key = item.key;
-                    let configItem = data?.details.filter((x: { key: string; }) => x.key === key);
-                    if (configItem.length === 1) {
-                        item.value = configItem[0].value;
-                    }
-                });
-            }
-            this.settings = this.config.robotConfig;
-        });
+        this.httpService.getArmbotConfigs().pipe(untilDestroyed(this)).subscribe(data => this.loadConfig(data));
+    }
+
+    configUpdate() {
+        this.httpService.updateArmbotConfigs().pipe(untilDestroyed(this)).subscribe(data => this.loadConfig(data));
+    }
+
+    loadConfig(data: any): void {
+        if (data?.details) {
+            this.config.robotConfig.forEach(item => {
+                let key = item.key;
+                let configItem = data?.details.filter((x: { key: string; }) => x.key === key);
+                if (configItem.length === 1) {
+                    item.value = configItem[0].value;
+                }
+            });
+        }
+        this.settings = this.config.robotConfig;
     }
 }
