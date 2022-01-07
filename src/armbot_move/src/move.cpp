@@ -233,9 +233,9 @@ bool runArmbot(armbot_move::RunArmbot::Request &req, armbot_move::RunArmbot::Res
 bool runMotor(armbot_move::RunMotor::Request &req, armbot_move::RunMotor::Response &res, ros::Publisher &motorMovePub) {
     char command[50];
     strcpy(command, boost::lexical_cast<std::string>(req.motorNumber).c_str());
-    strcat(command, ";");
+    strcat(command, ":");
     strcat(command, boost::lexical_cast<std::string>(req.direction).c_str());
-    strcat(command, ";");
+    strcat(command, ":");
     strcat(command, boost::lexical_cast<std::string>(req.stepCount).c_str());
 
     logs.logSimple("Get data for run step motor: ", command, FILENAME);
