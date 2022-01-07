@@ -6,11 +6,15 @@
     <mat-radio-button *ngFor="let item of motors;let i = index;" [value]="item.key" color="warn" [checked]="currentMotor === item.key" (change)="changeMotor(item.key)">{{item.value}}</mat-radio-button>
   </mat-radio-group>
 </div>
-<p class="title"><strong>2. Укажите количество шагов</strong></p>
-<p>Выберите количество шагов (1 градус = 46 шагов). Введите целое число от 1 до 1000.</p>
+<p class="title"><strong>2. Укажите количество
+  <ng-container *ngIf="changeStepCount">шагов</ng-container>
+  <ng-container *ngIf="!changeStepCount">градусов</ng-container></strong>
+</p>
+<p *ngIf="changeStepCount">Выберите количество шагов (1 градус = 46 шагов). Введите целое число от 1 до 1000.</p>
+<p *ngIf="!changeStepCount">Выберите количество градусов. Введите целое число от 1 до 180.</p>
 <mat-form-field appearance="fill">
   <mat-label>Значение</mat-label>
-  <input matInput type="number" #steps [valueAsNumber]="stepCount" (change)="changeSteps(steps.value)">
+  <input matInput type="number" #steps [valueAsNumber]="stepDegreesValue" (change)="changeSteps(steps.value)">
 </mat-form-field>
 <p class="title"><strong>3. Вращайте двигателем</strong></p>
 <div class="button-group">
@@ -18,7 +22,7 @@
     <button mat-raised-button color="primary" [disabled]="!armbotOnTurn || armbotButtonDisabled" (click)="runMotor(0)">Вперед</button>
     <button mat-raised-button color="warn" [disabled]="!armbotOnTurn || armbotButtonDisabled" (click)="runMotor(1)">Назад</button>
     <span class="error" *ngIf="!armbotOnTurn">Робот выключен</span>
-    <span class="error" *ngIf="armbotButtonDisabled">Робот занят</span>
+    <span class="error" *ngIf="armbotOnTurn && armbotButtonDisabled">Робот занят</span>
   </div>
   <div class="button-group-right">
     <button mat-stroked-button color="warn" [disabled]="!armbotOnTurn || armbotButtonDisabled" (click)="runMotorStart()">Вернуть двигатели в исходное положение</button>

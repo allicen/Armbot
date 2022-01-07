@@ -128,7 +128,7 @@ void motorMoveStart(const std_msgs::String& msg) {
 void motorMove(const std_msgs::String& msg){
   int motorNumber; // 1 - снизу, 2 - слева, 3 - справа
   int motorDirection; // 0 - FORWARD или 1 - INVERSE
-  int stepCount = 100; // Количество шагов
+  int stepDegreeValue = 100; // Количество шагов
 
   char data[strlen(msg.data)];
   strcpy(data, msg.data);
@@ -148,17 +148,17 @@ void motorMove(const std_msgs::String& msg){
   motorDirection = dataArr[1];
 
   if (dataArr[2] != 0) {
-    stepCount = dataArr[2];
+    stepDegreeValue = dataArr[2];
   }
 
   if ((motorNumber == 1 || motorNumber == 2 || motorNumber == 3) && (motorDirection == 0 || motorDirection == 1)) { // Шаговые двигатели
-    int steps = motorDirection == 0 ? stepCount : -stepCount;
+    int steps = motorDirection == 0 ? stepDegreeValue : -stepDegreeValue;
     int motorIndex = motorNumber-1;
     stepperPositions[motorIndex] = stepperPositions[motorIndex] + steps;
     
   } else if (motorNumber == 4 || motorNumber == 5) {
     int servoIndex = motorNumber == 4 ? 0 : 1;
-    int deg = motorDirection == 0 ? 10 : -10;
+    int deg = motorDirection == 0 ? stepDegreeValue : -stepDegreeValue;
     int start = servoPositions[servoIndex];
     int finish = start + deg;
 
