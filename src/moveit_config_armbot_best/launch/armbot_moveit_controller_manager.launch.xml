@@ -7,4 +7,7 @@
 
   <!-- loads ros_controllers to the param server -->
   <rosparam file="$(find moveit_config_armbot_best)/config/ros_controllers.yaml"/>
+
+  <!-- Свои контроллеры используются только для симуляторов, для отображения в rViz подключать их не надо, надо использовать фейковый контролллер -->
+  <!--  <rosparam file="$(find moveit_config_armbot_best)/config/controllers.yaml"/>-->
 </launch>
