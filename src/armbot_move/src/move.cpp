@@ -72,7 +72,7 @@ void webSocket(const std::string &message) {
     delete ws;
 }
 
-void saveCommand(std::string commandStr, MoveOperationClass *move_group) {
+void saveCommand(std::string commandStr, MoveOperationClass *move_group, robot_state::RobotState start_state) {
 
     std::stringstream ss(commandStr);
     std::vector<float> result;
@@ -100,18 +100,22 @@ void saveCommand(std::string commandStr, MoveOperationClass *move_group) {
     move_group->move->setJointValueTarget(target);
     logs.writeLog("Robot started moving", FILENAME);
     move_group->move->move();
+    move_group->move->setStartState(start_state);
     logs.writeLog("Robot stopped ", FILENAME);
 
-    tf::TransformListener listener;
-    tf::StampedTransform transform;
+    const Eigen::Affine3d pos = start_state.getGlobalLinkTransform("link_grip");
+
+    std::string posInfo = "X=" + boost::lexical_cast<std::string>(pos.translation().x()) +
+                          ", Y=" + boost::lexical_cast<std::string>(pos.translation().y()) +
+                          ", Z=" + boost::lexical_cast<std::string>(pos.translation().z());
+
+    logs.logSimple("Get new Affine3d position: ", posInfo.c_str(), FILENAME);
 
     try {
-         listener.waitForTransform("/link_grip","/base_link", ros::Time(), ros::Duration(5.0));
-         listener.lookupTransform("/link_grip", "/base_link", ros::Time(), transform);
 
-         float x = -transform.getOrigin().x(); // Смена знака
-         float y = -transform.getOrigin().y(); // Смена знака
-         float z = transform.getOrigin().z();
+         float x = pos.translation().x(); // Смена знака
+         float y = pos.translation().y();
+         float z = pos.translation().z();
 
          if (saveWebSocket) {
             // отправляем вебсокет
@@ -177,7 +181,7 @@ void startCommand() {
 }
 
 // Обработка команд из Arduino
-void executeCommand(const std_msgs::String::ConstPtr& msg, MoveOperationClass *move_group){
+void executeCommand(const std_msgs::String::ConstPtr& msg, MoveOperationClass *move_group, robot_state::RobotState start_state){
 
     char logFileName[20] = "move_arduino.ino";
 
@@ -198,7 +202,7 @@ void executeCommand(const std_msgs::String::ConstPtr& msg, MoveOperationClass *m
     bool isSaveCommand = commandStr.rfind(markerSave, 0) == 0;
 
     if (isSaveCommand) { // сохранить координату по кнопке
-        saveCommand(commandStr, move_group);
+        saveCommand(commandStr, move_group, start_state);
         return;
     } else if (strcmp("stop", command) == 0) { // остановить робота
         stopCommand();
@@ -406,7 +410,7 @@ int main(int argc, char *argv[]) {
                                     ("motor_run_start", boost::bind(runMotorStart, _1, _2, motorMoveStartPub));
 
     // Сохраняет позицию из Arduino
-    boost::function<void (const std_msgs::String::ConstPtr& msg)> f = boost::bind(executeCommand, _1, move_group);
+    boost::function<void (const std_msgs::String::ConstPtr& msg)> f = boost::bind(executeCommand, _1, move_group, start_state);
     ros::Subscriber savePositionSubscriber = n.subscribe("execute_command", 1000, f);
 
     ros::Duration(1).sleep();

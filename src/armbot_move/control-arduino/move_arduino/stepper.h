@@ -13,7 +13,7 @@ class Stepper {
         stepper.setEnablePin(enablePin);
         stepper.setPinsInverted(false, false, true);
         stepper.enableOutputs();
-        stepper.setMaxSpeed(500);
+        stepper.setMaxSpeed(1500);
 
         return stepper;
     } 
