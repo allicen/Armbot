@@ -119,7 +119,19 @@ void robotReturnStartPosition () {
 
 
 void motorMoveStart(const std_msgs::String& msg) {
-  robotReturnStartPosition ();
+  robotReturnStartPosition();
+}
+
+
+void setMotorSpeed(const std_msgs::String& msg) { 
+  int motorSpeed = atoi(msg.data);
+
+  // Переопределение скорости из конфигов
+  stepperX = stepper_x.setSpeedStepper(stepperX, motorSpeed);
+  stepperY = stepper_y.setSpeedStepper(stepperY, motorSpeed);
+  stepperZ = stepper_z.setSpeedStepper(stepperZ, motorSpeed);
+
+  logWrite("Arduino get speed: " + String(motorSpeed));
 }
 
 
@@ -225,6 +237,7 @@ void motorMove(const std_msgs::String& msg){
 
 ros::Subscriber<std_msgs::String> motorMoveSubscriber("move_motor", &motorMove);
 ros::Subscriber<std_msgs::String> robotReturnStartPositionSubscriber("move_motor_start", &motorMoveStart);
+ros::Subscriber<std_msgs::String> setMotorSpeedSubscriber("set_motor_speed", &setMotorSpeed);
 
 
 void robotMotorMove(const rosserial_arduino::Test::Request & req, rosserial_arduino::Test::Response & res){
@@ -342,6 +355,7 @@ void setup() {
     nodeHandle.advertiseService(server);
     nodeHandle.subscribe(motorMoveSubscriber);
     nodeHandle.subscribe(robotReturnStartPositionSubscriber);
+    nodeHandle.subscribe(setMotorSpeedSubscriber);
     nodeHandle.advertise(chatter);
 }
 
@@ -356,6 +370,13 @@ void loop() {
     if (buttonOn.wasPressed()) {
       buttonOnPressed = !buttonOnPressed;
       logWrite("Robot is ready");
+
+      // Получить значение скорости при включении робота
+      if (buttonOnPressed) {
+        char message[13] = "speed";
+        str_msg.data = message;
+        chatter.publish(&str_msg);
+      }
     }
   
     if (buttonOnPressed) {

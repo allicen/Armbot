@@ -180,8 +180,22 @@ void startCommand() {
     system ("$ARMBOT_PATH/scripts/armbot.sh start false");
 }
 
+
+bool setSpeedMotor(ros::Publisher motorSpeedPub) {
+    std_msgs::String msg;
+    msg.data = boost::lexical_cast<std::string>(maxSpeedStepperMotor).c_str();
+    motorSpeedPub.publish(msg);
+
+    logs.logSimple("Finish set speed in Arduino: ", boost::lexical_cast<std::string>(maxSpeedStepperMotor).c_str(), FILENAME);
+    return true;
+}
+
+
 // Обработка команд из Arduino
-void executeCommand(const std_msgs::String::ConstPtr& msg, MoveOperationClass *move_group, robot_state::RobotState start_state){
+void executeCommand(const std_msgs::String::ConstPtr& msg,
+                    MoveOperationClass *move_group,
+                    robot_state::RobotState start_state,
+                    ros::Publisher motorSpeedPub){
 
     char logFileName[20] = "move_arduino.ino";
 
@@ -210,8 +224,11 @@ void executeCommand(const std_msgs::String::ConstPtr& msg, MoveOperationClass *m
     } else if (strcmp("start", command) == 0) { // запустить робота
         startCommand();
         return;
+    } else if (strcmp("speed", command) == 0) { // получить значение скорости
+        setSpeedMotor(motorSpeedPub);
+        return;
     } else if (isLog) { // записать лог
-        logs.logSimple("", commandStr.c_str(), logFileName);
+    logs.logSimple("", commandStr.c_str(), logFileName);
     } else {
         return;
     }
@@ -392,6 +409,9 @@ int main(int argc, char *argv[]) {
 
     ros::NodeHandle n;
 
+    // Передает значение скорости моторов
+    ros::Publisher motorSpeedPub = n.advertise<std_msgs::String>("set_motor_speed", 1000);
+
     // Получает позицию из position
     ros::ServiceServer setPositionService = n.advertiseService<armbot_move::SetPosition::Request, armbot_move::SetPosition::Response>
                                 ("set_position", boost::bind(setPosition, _1, _2, move_group, start_state, joint_model_group));
@@ -410,7 +430,7 @@ int main(int argc, char *argv[]) {
                                     ("motor_run_start", boost::bind(runMotorStart, _1, _2, motorMoveStartPub));
 
     // Сохраняет позицию из Arduino
-    boost::function<void (const std_msgs::String::ConstPtr& msg)> f = boost::bind(executeCommand, _1, move_group, start_state);
+    boost::function<void (const std_msgs::String::ConstPtr& msg)> f = boost::bind(executeCommand, _1, move_group, start_state, motorSpeedPub);
     ros::Subscriber savePositionSubscriber = n.subscribe("execute_command", 1000, f);
 
     ros::Duration(1).sleep();

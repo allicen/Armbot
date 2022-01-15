@@ -31,8 +31,16 @@ float defaultPosition_x = 0.15731;
 float defaultPosition_y = 0.00169707;
 float defaultPosition_z = 0.119355;
 
+// Сохранение кординаты в БД
 bool saveWebSocket = true;
+
+// Сохранение координаты в файл data/command_description.txt
 bool saveToFile = false;
+
+// Скорость шаговых двигателей
+// Рекомендуемый диапазон: от 500 до 3000
+// Максимум можно установить 11000
+int maxSpeedStepperMotor = 500;
 
 class SettingsClass {
     public:
@@ -104,6 +112,10 @@ inline void SettingsClass::update() {
             } else if (strcmp("saveToFile", token.c_str()) == 0) {
                 saveToFile = (strcmp("true", line.c_str()) == 0);
                 logConfig.logSimple("Переопределена переменная saveToFile, новое значение: ",  boost::lexical_cast<std::string>(saveToFile).c_str(), FILE_SETTINGS);
+
+            } else if (strcmp("maxSpeedStepperMotor", token.c_str()) == 0) {
+                maxSpeedStepperMotor = atoi(line.c_str());
+                logConfig.logSimple("Переопределена переменная maxSpeedStepperMotor, новое значение: ",  boost::lexical_cast<std::string>(maxSpeedStepperMotor).c_str(), FILE_SETTINGS);
             }
         }
     }
