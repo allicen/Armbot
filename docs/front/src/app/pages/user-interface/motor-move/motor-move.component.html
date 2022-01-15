@@ -3,7 +3,7 @@
 <p class="title"><strong>1. Выберите двигатель</strong></p>
 <div class="change-motor">
   <mat-radio-group>
-    <mat-radio-button *ngFor="let item of motors;let i = index;" [value]="item.key" color="warn" [checked]="currentMotor === item.key" (change)="changeMotor(item.key)">{{item.value}}</mat-radio-button>
+    <mat-radio-button *ngFor="let item of motors;let i = index;" [value]="item.key" color="warn" [checked]="currentMotor.key === item.key" (change)="changeMotor(item.key)">{{item.value}}</mat-radio-button>
   </mat-radio-group>
 </div>
 <p class="title"><strong>2. Укажите количество
@@ -19,8 +19,12 @@
 <p class="title"><strong>3. Вращайте двигателем</strong></p>
 <div class="button-group">
   <div class="button-group-left">
-    <button mat-raised-button color="primary" [disabled]="!armbotOnTurn || armbotButtonDisabled" (click)="runMotor(0)">Вперед</button>
-    <button mat-raised-button color="warn" [disabled]="!armbotOnTurn || armbotButtonDisabled" (click)="runMotor(1)">Назад</button>
+    <button mat-raised-button color="primary" [disabled]="!armbotOnTurn || armbotButtonDisabled" (click)="runMotor(0)">
+      {{currentMotor.forwardDirection}}
+    </button>
+    <button mat-raised-button color="warn" [disabled]="!armbotOnTurn || armbotButtonDisabled" (click)="runMotor(1)">
+      {{currentMotor.inverseDirection}}
+    </button>
     <span class="error" *ngIf="!armbotOnTurn">Робот выключен</span>
     <span class="error" *ngIf="armbotOnTurn && armbotButtonDisabled">Робот занят</span>
   </div>

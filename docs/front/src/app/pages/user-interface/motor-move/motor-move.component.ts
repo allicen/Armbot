@@ -17,34 +17,34 @@ export class MotorMoveComponent implements OnInit {
     stepCountDefault: number = 46; //  количество шагов для двигателя
     degreesCountDefault: number = 10; // количество градусов для сервопривода
 
-    currentMotor: number = 1;
     changeStepCount: boolean = true;
     stepCount: number = this.stepCountDefault;
     degreesCount: number = this.degreesCountDefault;
     stepDegreesValue: number = this.stepCountDefault;
-    motors: Motor[] = [];
+    motorDefault: Motor = {key: 0, value: '', forwardDirection: '', inverseDirection: ''};
+    motors: Motor[] = this.config.motors || [];
+    currentMotor: Motor = this.motors.length > 0 ? this.motors[0] : this.motorDefault;
     armbotOnTurn: boolean = false;
     armbotButtonDisabled: boolean = true;
 
     ngOnInit(): void {
-        this.motors = this.config.motors;
 
-      this.armbotService.getArmbotStatus().pipe(untilDestroyed(this)).subscribe(data => {
-         this.armbotOnTurn = data !== 'disconnect';
-      });
+        this.armbotService.getArmbotStatus().pipe(untilDestroyed(this)).subscribe(data => {
+           this.armbotOnTurn = data !== 'disconnect';
+        });
 
-      this.armbotService.getArmbotButtonDisabled().pipe(untilDestroyed(this)).subscribe(data => this.armbotButtonDisabled = data);
+        this.armbotService.getArmbotButtonDisabled().pipe(untilDestroyed(this)).subscribe(data => this.armbotButtonDisabled = data);
     }
 
     changeMotor(key: number): void {
-        this.currentMotor = key;
+        this.currentMotor = this.config.motors.find(m => m.key === key) || this.motorDefault;
         this.changeStepCount = key === 1 || key === 2 || key === 3;
         this.stepDegreesValue = this.changeStepCount ? this.stepCount : this.degreesCount;
     }
 
     // Направление: 0 - Вперед, 1 - Назад
     runMotor(direction: number): void {
-        this.armbotService.runMotor(this.currentMotor, this.stepCount, direction);
+        this.armbotService.runMotor(this.currentMotor?.key || 0, this.stepCount, direction);
     }
 
     changeSteps(steps: string): void {

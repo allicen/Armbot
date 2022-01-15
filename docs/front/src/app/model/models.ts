@@ -36,5 +36,7 @@ export interface WorkOption {
 
 export interface Motor {
   key: number,
-  value: string
+  value: string,
+  forwardDirection: string,
+  inverseDirection: string
 }
