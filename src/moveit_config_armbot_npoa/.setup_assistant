@@ -1,11 +1,11 @@
 moveit_setup_assistant_config:
   URDF:
     package: armbot_description
-    relative_path: urdf/model_best/armbot.urdf
+    relative_path: urdf/model_npoa/armbot.urdf
     xacro_args: ""
   SRDF:
     relative_path: config/armbot.srdf
   CONFIG:
     author_name: ElenaRubleva
     author_email: elena@erubleva.ru
-    generated_timestamp: 1642451455
+    generated_timestamp: 1642453101

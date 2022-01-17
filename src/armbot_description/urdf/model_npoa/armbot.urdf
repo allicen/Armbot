@@ -2,7 +2,6 @@
 <!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
      Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
      For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
-
 <robot name="armbot">
 
   <material name="Black">
@@ -32,23 +31,24 @@
   <link name="world"/>
 
   <joint name="joint1_world" type="fixed" >
-      <parent link="world"/>
-      <child link="base_link"/> </joint>
+    <parent link="world"/>
+    <child link="base_link"/>
+  </joint>
 
   <link
     name="base_link">
     <inertial>
       <origin
-        xyz="0.0211202900240581 2.59775846834193E-11 0.00380052135150776"
-        rpy="0 0 0" />
+        xyz="0.0211202900240581 2.59775846179198E-11 0.00380052135150775"
+        rpy="0 0 3.14" />
       <mass
         value="0.271570047216607" />
       <inertia
         ixx="0.000442541459178714"
-        ixy="-7.61202510824958E-12"
+        ixy="-7.61202510854808E-12"
         ixz="-5.27773157069647E-07"
         iyy="0.000555892462598209"
-        iyz="5.63321074251884E-15"
+        iyz="5.63321075341317E-15"
         izz="0.000997118891006557" />
     </inertial>
     <visual>
@@ -64,7 +64,7 @@
     <collision>
       <origin
         xyz="0 0 0"
-        rpy="0 0 0" />
+        rpy="0 0 3.14" />
       <geometry>
         <mesh
           filename="package://armbot_description/meshes/model_npoa/base_link.STL" />
@@ -76,22 +76,22 @@
     name="link_1">
     <inertial>
       <origin
-        xyz="-0.00272155425407784 -0.000113340999406611 -0.0586724985336868"
+        xyz="-0.00272155425407784 0.00011334099940661 0.0586724985336868"
         rpy="0 0 0" />
       <mass
         value="0.579092466366984" />
       <inertia
         ixx="0.000456587803138105"
-        ixy="-1.13087657027162E-07"
-        ixz="3.16702255632446E-06"
+        ixy="1.13087657027168E-07"
+        ixz="-3.16702255632447E-06"
         iyy="0.000511771419629803"
-        iyz="-1.37277769518058E-06"
+        iyz="-1.37277769518059E-06"
         izz="0.000496840287124422" />
     </inertial>
     <visual>
       <origin
         xyz="0 0 0"
-        rpy="0 0 3.14" />
+        rpy="0 0 0" />
       <geometry>
         <mesh
           filename="package://armbot_description/meshes/model_npoa/link_1.STL" />
@@ -114,7 +114,7 @@
     type="revolute">
     <origin
       xyz="0.003 0 0.0155"
-      rpy="-3.1416 0 -3.1269" />
+      rpy="0 0 0" />
     <parent
       link="base_link" />
     <child
@@ -132,21 +132,21 @@
     name="link_2">
     <inertial>
       <origin
-        xyz="0.0886170480813812 0.005985856672575 0.0152502295082419"
+        xyz="0.0886170464339107 0.00598587894412289 0.015250229508242"
         rpy="0 0 0" />
       <mass
-        value="0.100204717943486" />
+        value="0.100204717943485" />
       <inertia
-        ixx="2.61429021289324E-05"
-        ixy="2.54454507036305E-05"
-        ixz="1.09431347818403E-11"
-        iyy="0.000203985274699578"
-        iyz="-1.27442674892586E-12"
-        izz="0.000226109263195528" />
+        ixx="2.61428888938491E-05"
+        ixy="2.54454044525182E-05"
+        ixz="1.09431351303679E-11"
+        iyy="0.000203985287934659"
+        iyz="-1.27442393275307E-12"
+        izz="0.000226109263195527" />
     </inertial>
     <visual>
       <origin
-        xyz="0 -0.005 0"
+        xyz="0 0 0"
         rpy="0 0 0" />
       <geometry>
         <mesh
@@ -164,41 +164,39 @@
       </geometry>
     </collision>
   </link>
-
   <joint
     name="joint_2"
     type="revolute">
     <origin
-      xyz="0.0027435 0.0155 -0.09502"
-      rpy="1.5708 1.5708 0" />
+      xyz="0.0026508 0.015956 0.09502"
+      rpy="1.5708 -1.5708 0" />
     <parent
       link="link_1" />
     <child
       link="link_2" />
     <axis
-      xyz="0 0 1" />
+      xyz="0 0.010019 0.99995" />
     <limit
       lower="-1.5708"
       upper="0"
       effort="150"
       velocity="3.15" />
   </joint>
-
   <link
     name="link_3">
     <inertial>
       <origin
-        xyz="0.064674729234811 -0.0429649321408343 -0.010241645589869"
+        xyz="0.0646747389696024 -0.0429649174871422 -0.0102416455898691"
         rpy="0 0 0" />
       <mass
-        value="0.0817197581918697" />
+        value="0.0817197581918649" />
       <inertia
-        ixx="4.0415498257249E-05"
-        ixy="6.56935131118188E-05"
-        ixz="-6.5359216897847E-12"
-        iyy="0.000201073936512037"
-        iyz="2.86095194327021E-12"
-        izz="0.000240128503885537" />
+        ixx="4.0415468488221E-05"
+        ixy="6.56934767105951E-05"
+        ixz="-6.53592268573663E-12"
+        iyy="0.000201073966281048"
+        iyz="2.86095067335606E-12"
+        izz="0.00024012850388552" />
     </inertial>
     <visual>
       <origin
@@ -220,7 +218,6 @@
       </geometry>
     </collision>
   </link>
-
   <joint
     name="joint_3"
     type="revolute">
@@ -243,17 +240,17 @@
     name="link_4">
     <inertial>
       <origin
-        xyz="-0.00375610824670326 0.0215143905323992 0.00749999999999806"
+        xyz="0.0207581575218029 0.00678794854439591 -0.00749999999999806"
         rpy="0 0 0" />
       <mass
         value="0.0208066724716135" />
       <inertia
-        ixx="6.19890674797337E-06"
-        ixy="2.80615422421083E-06"
-        ixz="-1.89885927056448E-19"
-        iyy="4.90291491797169E-06"
-        iyz="-4.33905862120816E-20"
-        izz="9.64616279359452E-06" />
+        ixx="2.86175125785257E-06"
+        ixy="1.03093211001244E-06"
+        ixz="-5.08716076720112E-20"
+        iyy="8.24007040809251E-06"
+        iyz="1.88345716755874E-19"
+        izz="9.64616279359455E-06" />
     </inertial>
     <visual>
       <origin
@@ -281,40 +278,40 @@
     type="revolute">
     <origin
       xyz="0.15162 -0.051106 -0.017433"
-      rpy="0 0 -3.0829" />
+      rpy="3.1416 0 -1.0232" />
     <parent
       link="link_3" />
     <child
       link="link_4" />
     <axis
-      xyz="0 0 1" />
+      xyz="0 0 -1" />
     <limit
       lower="-3.14159265"
       upper="3.14159265"
       effort="150"
       velocity="3.15" />
   </joint>
-  
+
   <link
     name="link_end">
     <inertial>
       <origin
-        xyz="-0.0483151025046168 -0.219886709667518 3.40719887590205E-05"
-        rpy="0 0 0" />
+        xyz="0 0 0"
+        rpy="1.5708 0 0.27" />
       <mass
         value="0.0720522181905562" />
       <inertia
         ixx="4.65168177236826E-06"
-        ixy="2.69782530922447E-07"
-        ixz="2.26895455918722E-10"
+        ixy="2.69782530922448E-07"
+        ixz="2.26895455918749E-10"
         iyy="5.43707428101803E-06"
-        iyz="1.28996353964216E-09"
+        iyz="1.28996353964247E-09"
         izz="8.25427653472157E-06" />
     </inertial>
     <visual>
       <origin
-        xyz="0.096 0.2375 -0.0075"
-        rpy="0 0 0" />
+        xyz="0.028 0.2558 -0.0075"
+        rpy="0 0 0.27" />
       <geometry>
         <mesh
           filename="package://armbot_description/meshes/model_npoa/link_end.STL" />
@@ -339,9 +336,12 @@
   <joint
     name="joint_end"
     type="fixed">
+    <!--<origin
+      xyz="0.02517 0.25546 -0.0075"
+      rpy="0 0 0.28474" />-->
     <origin
-      xyz="0 0 0"
-      rpy="-3.1416 0 1.7749" />
+        xyz="0 0 0"
+        rpy="0 0 0" />
     <parent
       link="link_4" />
     <child
@@ -349,12 +349,12 @@
     <axis
       xyz="0 0 0" />
   </joint>
-  
+
   <link
     name="link_grip">
     <inertial>
       <origin
-        xyz="0.00200590224436334 -0.0122688289336258 0.0385866948639068"
+        xyz="0.0020059022443632 -0.0122688289336258 0.0385866948639068"
         rpy="0 0 0" />
       <mass
         value="0.142220620437737" />
@@ -372,7 +372,8 @@
         rpy="0 0 0" />
       <geometry>
         <cylinder length="0.10" radius="0.0025"/>
-        <!-- <mesh filename="package://armbot_description/meshes/model_npoa/link_grip.STL" /> -->
+        <!-- <mesh
+          filename="package://armbot_description/meshes/model_npoa/link_grip.STL" /> -->
       </geometry>
       <material name="Black"/>
     </visual>
@@ -382,7 +383,8 @@
         rpy="0 0 0" />
       <geometry>
         <cylinder length="0.10" radius="0.0025"/>
-        <!-- <mesh filename="package://armbot_description/meshes/model_npoa/link_grip.STL" /> -->
+        <!-- <mesh
+          filename="package://armbot_description/meshes/model_npoa/link_grip.STL" /> -->
       </geometry>
     </collision>
   </link>
@@ -391,8 +393,8 @@
     name="joint_grip"
     type="revolute">
     <origin
-      xyz="0.0525 -0.083 -0.0075"
-      rpy="1.5708 0 0" />
+      xyz="0.0715 -0.064 -0.0075"
+      rpy="1.5708 0 0.27" />
     <parent
       link="link_end" />
     <child

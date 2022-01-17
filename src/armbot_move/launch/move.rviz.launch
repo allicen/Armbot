@@ -1,32 +1,16 @@
 <!-- Запуск движений робота НПОА: roslaunch armbot_move move.rviz.launch -->
 <!-- Запуск движений робота (модель по-умолчанию): roslaunch armbot_move move.rviz.launch model:=default -->
 
-
 <launch>
 
   <arg name="model" default="best" />
-  <!-- Модель по умолчанию (Добот) -->
-  <node name="move" pkg="armbot_move" type="move" respawn="false" output="screen" if="$(eval model=='default')">
-    <rosparam command="load" file="$(find armbot_moveit_config)/config/kinematics.yaml"/>
-    <param name="planning_plugin" value="ompl_interface/OMPLPlanner"/>
-    <rosparam command="load" file="$(find armbot_moveit_config)/config/ompl_planning.yaml"/>
-  </node>
-
-  <include file="$(find armbot_moveit_config)/launch/armbot.launch" if="$(eval model=='default')">
-    <arg name="use_gui" value="true"/>
-  </include>
-
 
   <!-- Модель НПОА -->
   <node name="move" pkg="armbot_move" type="move" respawn="false" output="screen" if="$(eval model=='npoa')">
-    <rosparam command="load" file="$(find armbot_npoa_moveit_config)/config/kinematics.yaml"/>
+    <rosparam command="load" file="$(find moveit_config_armbot_npoa)/config/kinematics.yaml"/>
     <param name="planning_plugin" value="ompl_interface/OMPLPlanner"/>
-    <rosparam command="load" file="$(find armbot_npoa_moveit_config)/config/ompl_planning.yaml"/>
+    <rosparam command="load" file="$(find moveit_config_armbot_npoa)/config/ompl_planning.yaml"/>
   </node>
-  <include file="$(find armbot_npoa_moveit_config)/launch/armbot.launch" if="$(eval model=='npoa')">
-    <arg name="use_gui" value="true"/>
-  </include>
-
 
   <!-- Модель BEST -->
   <node name="move" pkg="armbot_move" type="move" respawn="false" output="screen" if="$(eval model=='best')">
@@ -34,14 +18,15 @@
     <param name="planning_plugin" value="ompl_interface/OMPLPlanner"/>
     <rosparam command="load" file="$(find moveit_config_armbot_best)/config/ompl_planning.yaml"/>
   </node>
-  <include file="$(find moveit_config_armbot_best)/launch/armbot.launch" if="$(eval model=='best')">
-    <arg name="use_gui" value="true"/>
-  </include>
 
+  <!-- Старт конфигов moveit -->
+  <include file="$(find armbot_move)/launch/armbot.launch">
+    <arg name="use_gui" value="true"/>
+    <arg name="model" value="$(arg model)"/>
+  </include>
 
   <!-- Подключение  joint_subscriber -->
   <node name="joint_subscriber" pkg="armbot_move" type="joint_subscriber"/>
-
 
   <!-- Подключение Webserver rosbridge -->
   <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
