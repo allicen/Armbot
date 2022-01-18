@@ -41,6 +41,9 @@ SettingsClass settingsConfig;
 using easywsclient::WebSocket;
 static WebSocket::pointer ws = NULL;
 
+char positionInfo[20000]; // Информация о рассчитанных позициях
+bool calculatePositionSuccess = true; // Результат расчета позиций в череде команд
+
 
 bool isEmpty(std::ifstream& file) {
     return file.peek() == std::ifstream::traits_type::eof();
@@ -281,9 +284,26 @@ bool runMotorStart(armbot_move::RunMotorStart::Request &req, armbot_move::RunMot
 }
 
 
-bool writeJointsToArduino(ros::ServiceClient arduinoClient, rosserial_arduino::Test srv, const std::vector<double> joints) {
+float roundJoint(float num) {
+    std::size_t exponent = boost::lexical_cast<std::string>(num).find("e");
+    if (exponent!=std::string::npos) {
+        return 0;
+    }
 
-    char joints_str[500];
+    int correction = 100000;
+    return round(num * correction) / correction;
+}
+
+
+// Пример сообщения:
+// 0.14:0.22:1.5:1.88:0.02:5.12;0.14:0.22:1.5:1.88:0.02:5.12
+bool saveCommandForArduino(const std::vector<double> joints, const float delay) {
+
+    if (!calculatePositionSuccess) {
+        return true;
+    }
+
+    char joints_str[200];
     strcpy(joints_str, boost::lexical_cast<std::string>(joints.at(0)).c_str());
     strcat(joints_str, ":");
     strcat(joints_str, boost::lexical_cast<std::string>(joints.at(1)).c_str());
@@ -293,9 +313,22 @@ bool writeJointsToArduino(ros::ServiceClient arduinoClient, rosserial_arduino::T
     strcat(joints_str, boost::lexical_cast<std::string>(joints.at(3)).c_str());
     strcat(joints_str, ":");
     strcat(joints_str, boost::lexical_cast<std::string>(joints.at(4)).c_str());
+    strcat(joints_str, ":");
+    strcat(joints_str, boost::lexical_cast<std::string>(delay).substr(0,7).c_str()); // пауза
 
-    srv.request.input = joints_str;
+    if (strlen(positionInfo) > 0) {
+        strcat(positionInfo, ";");
+    }
 
+    strcat(positionInfo, joints_str);
+
+    return 0;
+}
+
+
+bool writeJointsToArduino(ros::ServiceClient arduinoClient, rosserial_arduino::Test srv) {
+
+    srv.request.input = positionInfo;
     if (arduinoClient.call(srv)) {
         logs.logSimple("Result send command to Arduino: SUCCESS", "", FILENAME);
     } else {
@@ -356,7 +389,25 @@ bool setPosition(armbot_move::SetPosition::Request &req,
         ros::NodeHandle nh;
         ros::ServiceClient arduinoClient = nh.serviceClient<rosserial_arduino::Test>("set_joints_arduino");
         rosserial_arduino::Test srv;
-        writeJointsToArduino(arduinoClient, srv, joints);
+
+        float delay = atof(boost::lexical_cast<std::string>(req.delay).c_str());
+        saveCommandForArduino(joints, delay);
+
+        // Возврат в исходную точку
+        if (calculatePositionSuccess && strcmp("return_default_position", req.position.c_str()) == 0) {
+            ROS_INFO("COMMAND - %s", positionInfo);
+            writeJointsToArduino(arduinoClient, srv);
+            strcpy(positionInfo, "");
+        } else if (strcmp("return_default_position", req.position.c_str()) == 0) {
+            // Для следующей партии команд переводим в true
+            calculatePositionSuccess = true;
+            logs.writeLog("The robot is ready to execute commands.", FILENAME);
+            strcpy(positionInfo, "");
+        }
+    } else {
+        calculatePositionSuccess = false;
+        logs.writeLog("Trajectory calculation error. A series of commands will not be sent to the robot.", FILENAME);
+        ROS_ERROR("Trajectory calculation error. A series of commands will not be sent to the robot.");
     }
 
     res.result = result;

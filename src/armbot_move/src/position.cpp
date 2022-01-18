@@ -17,6 +17,7 @@ int startMoveToPosition(ros::ServiceClient client, armbot_move::SetPosition srv,
     srv.request.x = std::stof(params[1].c_str());
     srv.request.y = std::stof(params[2].c_str());
     srv.request.z = params.size() == 5 ? std::stof(params[3].c_str()) : coordinateNone;
+    srv.request.delay = std::stof(params[params.size()-1].c_str());
 
     if (client.call(srv)) {
         ROS_INFO("Result: %s", srv.response.result.c_str());
@@ -68,10 +69,6 @@ int main(int argc, char**argv) {
         return result;
     }
 
-    double delay = atof(params[params.size()-1].c_str());
-
-    sleep(1);
-
     // Goal position
     result = startMoveToPosition(client, srv, params[0].c_str(), params);
 
@@ -81,7 +78,7 @@ int main(int argc, char**argv) {
     // // Button up
     result = startMoveToPosition(client, srv, params[0].c_str(), params);
 
-    ros::Duration(delay).sleep();
+    ros::Duration(1).sleep();
     ros::spinOnce();
     
     ROS_INFO_STREAM("Publishing is finished!\n");
