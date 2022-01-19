@@ -63,7 +63,8 @@ export class RosArmbotService {
         service.call({position: coordinate.name,
                           x: coordinate.x/1000, // в ROS расстояния в метрах
                           y: coordinate.y/1000,
-                          z: coordinate.z/1000}, (msg) => {
+                          z: coordinate.z/1000,
+                          pressing: false}, (msg) => {
             console.log(`ROS FINISH. RESULT`);
             this.setArmbotStatus(this.config.robotStatus.ready);
         });

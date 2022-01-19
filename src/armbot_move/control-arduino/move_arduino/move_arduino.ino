@@ -43,6 +43,8 @@
 // Количество сервоприводов
 #define SERVO_COUNT 2
 
+#define JOINT_COUNT 5
+
 // Градусов в радиане 
 #define RADIAN 57.3
 
@@ -240,8 +242,58 @@ ros::Subscriber<std_msgs::String> robotReturnStartPositionSubscriber("move_motor
 ros::Subscriber<std_msgs::String> setMotorSpeedSubscriber("set_motor_speed", &setMotorSpeed);
 
 
-// Запуск моторов по командам из файла запуска
-void robotMotorMove(const rosserial_arduino::Test::Request & req, rosserial_arduino::Test::Response & res){
+// Записываем шаговые двигатели
+void runStepMotors(float jointList[]) {
+
+   // 1 двигатель
+   stepperPositions[0] = jointList[0] * RADIAN * STEP_IN_ANGLE;
+
+   // 2 двигатель
+   stepperPositions[1] = -jointList[1] * RADIAN * STEP_IN_ANGLE; // Смена знака
+
+   // 3 двигатель
+   stepperPositions[2] = -(jointList[2] - jointList[1]) * RADIAN * STEP_IN_ANGLE; // Смена знака
+
+   // Выполнение траектории завершено (координаты точек не переданы)
+   bool stopPosition = jointList[0] == 0 && jointList[1] == 0 && jointList[2] == 0 && jointList[3] == 0 && jointList[4] == 0;
+
+   logWrite("Motor step calculate: 1 motor: " + String(stepperPositions[0]) + ", 2 motor: " + String(stepperPositions[1]) + ", 3 motor: " + String(stepperPositions[2]));   
+   
+   if (buttonOnPressed && !stopPosition) {
+      steppers.moveTo(stepperPositions);
+      steppers.runSpeedToPosition();
+   }
+}
+
+
+float prevJointList[] = {0, 0, 0, 0, 0}; // Вернуться в эту позицию после нажатия кнопки
+bool runStepper(char* rowStr, int rowIndex) {
+      
+   float jointList[] = {0, 0, 0, 0, 0};
+   char *rest = NULL;
+   char *jointStr;
+
+   int index = 0;
+   for (jointStr = strtok_r(rowStr, ":", &rest); jointStr != NULL; jointStr = strtok_r(NULL, ":", &rest)) {
+     float joint = atof(jointStr);
+     jointList[index] = joint;
+
+     if (rowIndex == 0) {
+         prevJointList[index] = joint;
+     } 
+     
+     index++;
+   }
+
+  runStepMotors(jointList);
+   
+  rowIndex++;
+  return true;
+}
+
+
+// Запуск моторов по командам (позиция - нажатие - позиция)
+void robotMotorMove(const rosserial_arduino::Test::Request & req, rosserial_arduino::Test::Response & res) {
    char commands[strlen(req.input)+1];
    strcpy(commands, req.input);
 
@@ -253,63 +305,23 @@ void robotMotorMove(const rosserial_arduino::Test::Request & req, rosserial_ardu
    char *rowStr;
    
    int rowIndex = 0;
+   
    for (rowStr = strtok_r(commands, ";", &restRow); rowStr != NULL; rowStr = strtok_r(NULL, ";", &restRow)) {
-
-    nodeHandle.logerror(String(rowIndex).c_str());
-
-       long commandProcessTime = millis();
-      
-       float jointList[6] = {0, 0, 0, 0, 0, 0}; // 6 число - величина паузы
-       char *rest = NULL;
-       char *jointStr;
-    
-       int index = 0;
-       for (jointStr = strtok_r(rowStr, ":", &rest); jointStr != NULL; jointStr = strtok_r(NULL, ":", &rest)) {
-    
-         float joint = atof(jointStr);
-         jointList[index] = joint;
-         index++;
-       }
-    
-       // Записываем шаговые двигатели
-
-       //nodeHandle.logerror("Joints"); 
-       //nodeHandle.logerror(String(jointList[0]).c_str());
-       //nodeHandle.logerror(String(jointList[1]).c_str());
-       //nodeHandle.logerror(String(jointList[2]).c_str());
-    
-       // 1 двигатель
-       stepperPositions[0] = -jointList[0] * RADIAN * STEP_IN_ANGLE; // Едет в другую сторону
-    
-       // 2 двигатель
-       stepperPositions[1] = jointList[1] * RADIAN * STEP_IN_ANGLE;
-    
-       // 3 двигатель
-       stepperPositions[2] = -(jointList[2] + jointList[1]) * RADIAN * STEP_IN_ANGLE;
-
-       //nodeHandle.logerror("Двигатели"); 
-       //nodeHandle.logerror(String(stepperPositions[0]).c_str());
-       //nodeHandle.logerror(String(stepperPositions[1]).c_str());
-       //nodeHandle.logerror(String(stepperPositions[2]).c_str());
-    
-       if (buttonOnPressed) {
-          steppers.moveTo(stepperPositions);
-          steppers.runSpeedToPosition();
-
-          long commandExecuteTime = millis() - commandProcessTime;
-          logWrite("Command #" + String(rowIndex) + " was executed for " + String(commandExecuteTime) + "s."); // Время выполнения 1 команды
-       }
-       
+      runStepper(rowStr, rowIndex);
       rowIndex++;
-
-      delay(jointList[5]);
    }
+
+   // Возврат в исходную позицию после нажатия
+   if (rowIndex > 1) {
+      runStepMotors(prevJointList);
+   }
+
+   nodeHandle.logerror(String(rowIndex).c_str()); 
+   long commandExecuteTime = millis() - allProcessTime;
+   logWrite("Command #" + String(rowIndex) + " was executed for " + String(commandExecuteTime) + "s."); // Время выполнения 1 команды
     
    delay(1);
    nodeHandle.spinOnce();
-
-   long commandExecuteTime = millis() - allProcessTime;
-   logWrite("LaunchFile was executed for " + String(commandExecuteTime) + "s."); // Время выполнения одного сценария
      
    res.output = "FINISH"; 
    logWrite("FINISH motor run");

@@ -284,19 +284,8 @@ bool runMotorStart(armbot_move::RunMotorStart::Request &req, armbot_move::RunMot
 }
 
 
-float roundJoint(float num) {
-    std::size_t exponent = boost::lexical_cast<std::string>(num).find("e");
-    if (exponent!=std::string::npos) {
-        return 0;
-    }
-
-    int correction = 100000;
-    return round(num * correction) / correction;
-}
-
-
 // Пример сообщения:
-// 0.14:0.22:1.5:1.88:0.02:5.12;0.14:0.22:1.5:1.88:0.02:5.12
+// 0.14:0.22:1.5:1.88:0.02;0.14:0.22:1.5:1.88:0.02
 bool saveCommandForArduino(const std::vector<double> joints, const float delay) {
 
     if (!calculatePositionSuccess) {
@@ -313,8 +302,6 @@ bool saveCommandForArduino(const std::vector<double> joints, const float delay) 
     strcat(joints_str, boost::lexical_cast<std::string>(joints.at(3)).c_str());
     strcat(joints_str, ":");
     strcat(joints_str, boost::lexical_cast<std::string>(joints.at(4)).c_str());
-    strcat(joints_str, ":");
-    strcat(joints_str, boost::lexical_cast<std::string>(delay).substr(0,7).c_str()); // пауза
 
     if (strlen(positionInfo) > 0) {
         strcat(positionInfo, ";");
@@ -326,11 +313,13 @@ bool saveCommandForArduino(const std::vector<double> joints, const float delay) 
 }
 
 
-bool writeJointsToArduino(ros::ServiceClient arduinoClient, rosserial_arduino::Test srv) {
+bool writeJointsToArduino(ros::ServiceClient arduinoClient, rosserial_arduino::Test srv, float delay) {
 
     srv.request.input = positionInfo;
+    
     if (arduinoClient.call(srv)) {
         logs.logSimple("Result send command to Arduino: SUCCESS", "", FILENAME);
+        ros::Duration(delay).sleep();
     } else {
         ROS_ERROR("Failed to call service set_joints_arduino");
         logs.logSimple("Failed to call service set_joints_arduino", "", FILENAME);
@@ -393,17 +382,24 @@ bool setPosition(armbot_move::SetPosition::Request &req,
         float delay = atof(boost::lexical_cast<std::string>(req.delay).c_str());
         saveCommandForArduino(joints, delay);
 
-        // Возврат в исходную точку
-        if (calculatePositionSuccess && strcmp("return_default_position", req.position.c_str()) == 0) {
-            ROS_INFO("COMMAND - %s", positionInfo);
-            writeJointsToArduino(arduinoClient, srv);
+        bool buttonPressed = strcmp("button-pressed", req.position.c_str()) == 0;
+        bool returnDefaultPosition = strcmp("return_default_position", req.position.c_str()) == 0;
+        bool withPressing = req.pressing;
+
+        if (calculatePositionSuccess && buttonPressed || calculatePositionSuccess && !req.pressing) { //  Кнопка нажата или нажатие не требуется
+            writeJointsToArduino(arduinoClient, srv, delay);
             strcpy(positionInfo, "");
-        } else if (strcmp("return_default_position", req.position.c_str()) == 0) {
-            // Для следующей партии команд переводим в true
+
+        } else if (returnDefaultPosition) { // Возврат в исходную позицию
+            writeJointsToArduino(arduinoClient, srv, 0);
+            strcpy(positionInfo, "");
+
+        } else if (buttonPressed) {
             calculatePositionSuccess = true;
-            logs.writeLog("The robot is ready to execute commands.", FILENAME);
+            logs.writeLog("The transition to the position 'button-pressed' is not calculated. Trajectory execution is skipped.", FILENAME);
             strcpy(positionInfo, "");
         }
+
     } else {
         calculatePositionSuccess = false;
         logs.writeLog("Trajectory calculation error. A series of commands will not be sent to the robot.", FILENAME);

@@ -17,6 +17,7 @@ int startMoveToPosition(ros::ServiceClient client, armbot_move::SetPosition srv,
     srv.request.x = std::stof(params[1].c_str());
     srv.request.y = std::stof(params[2].c_str());
     srv.request.z = params.size() == 5 ? std::stof(params[3].c_str()) : coordinateNone;
+    srv.request.pressing = true; // Выполнить с нажатием
     srv.request.delay = std::stof(params[params.size()-1].c_str());
 
     if (client.call(srv)) {
@@ -63,6 +64,7 @@ int main(int argc, char**argv) {
         params.push_back(boost::lexical_cast<std::string>(coordinateNone));
         params.push_back(boost::lexical_cast<std::string>(coordinateNone));
         params.push_back(boost::lexical_cast<std::string>(coordinateNone));
+        params.push_back(boost::lexical_cast<std::string>(0));
 
         result = startMoveToPosition(client, srv, params[0].c_str(), params);
         sleep(1);
@@ -75,8 +77,8 @@ int main(int argc, char**argv) {
     // // Button pressed
     result = startMoveToPosition(client, srv, "button-pressed", params);
 
-    // // Button up
-    result = startMoveToPosition(client, srv, params[0].c_str(), params);
+    // // Button up (временно возврат в исходную позицию в rViz не делаем)
+    // result = startMoveToPosition(client, srv, params[0].c_str(), params);
 
     ros::Duration(1).sleep();
     ros::spinOnce();
