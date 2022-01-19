@@ -316,7 +316,6 @@ void robotMotorMove(const rosserial_arduino::Test::Request & req, rosserial_ardu
       runStepMotors(prevJointList);
    }
 
-   nodeHandle.logerror(String(rowIndex).c_str()); 
    long commandExecuteTime = millis() - allProcessTime;
    logWrite("Command #" + String(rowIndex) + " was executed for " + String(commandExecuteTime) + "s."); // Время выполнения 1 команды
     

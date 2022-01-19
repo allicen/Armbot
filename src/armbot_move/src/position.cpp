@@ -77,8 +77,8 @@ int main(int argc, char**argv) {
     // // Button pressed
     result = startMoveToPosition(client, srv, "button-pressed", params);
 
-    // // Button up (временно возврат в исходную позицию в rViz не делаем)
-    // result = startMoveToPosition(client, srv, params[0].c_str(), params);
+    // // Button up
+    result = startMoveToPosition(client, srv, params[0].c_str(), params);
 
     ros::Duration(1).sleep();
     ros::spinOnce();
