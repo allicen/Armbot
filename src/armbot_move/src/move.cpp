@@ -44,6 +44,7 @@ static WebSocket::pointer ws = NULL;
 char positionInfo[20000]; // Информация о рассчитанных позициях
 bool calculatePositionSuccess = true; // Результат расчета позиций в череде команд
 std::vector<std::string> allCommands; // Все команды из файла запуска
+std::vector<std::string> commandDelay; // Задержка после выполнения команды
 bool pressButtonFinish = false; // Было нажатие
 
 
@@ -288,7 +289,7 @@ bool runMotorStart(armbot_move::RunMotorStart::Request &req, armbot_move::RunMot
 
 // Пример сообщения:
 // 0.14:0.22:1.5:1.88:0.02;0.14:0.22:1.5:1.88:0.02
-bool saveCommandForArduino(const std::vector<double> joints, const float delay) {
+bool saveCommandForArduino(const std::vector<double> joints) {
 
     if (!calculatePositionSuccess) {
         return true;
@@ -315,20 +316,23 @@ bool saveCommandForArduino(const std::vector<double> joints, const float delay) 
 }
 
 
-bool writeJointsToArduino(ros::ServiceClient arduinoClient, rosserial_arduino::Test srv, float delay) {
+bool writeJointsToArduino(ros::ServiceClient arduinoClient, rosserial_arduino::Test srv) {
 
-
+    int index = 0;
     for(std::string command : allCommands) {
         srv.request.input = command;
 
         if (arduinoClient.call(srv)) {
             logs.logSimple("Result send command to Arduino: SUCCESS", "", FILENAME);
-            ros::Duration(delay).sleep();
         } else {
             ROS_ERROR("Failed to call service set_joints_arduino");
             logs.logSimple("Failed to call service set_joints_arduino", "", FILENAME);
             return 1;
         }
+
+        logs.logSimple("Delay after set goal position (s) = ", commandDelay[index].c_str(), FILENAME);
+        ros::Duration(std::stof(commandDelay[index])).sleep();
+        index++;
     }
 
     return 0;
@@ -385,31 +389,35 @@ bool setPosition(armbot_move::SetPosition::Request &req,
         rosserial_arduino::Test srv;
 
         if (!pressButtonFinish) {
-            float delay = atof(boost::lexical_cast<std::string>(req.delay).c_str());
-            saveCommandForArduino(joints, delay);
+            saveCommandForArduino(joints);
         }
 
         bool buttonPressed = strcmp("button-pressed", req.position.c_str()) == 0;
         bool returnDefaultPosition = strcmp("return_default_position", req.position.c_str()) == 0;
         bool withPressing = req.pressing;
 
-        if (calculatePositionSuccess && buttonPressed || calculatePositionSuccess && !req.pressing) { //  Кнопка нажата или нажатие не требуется
+        if (calculatePositionSuccess && buttonPressed) { //  Кнопка нажата
             allCommands.push_back(positionInfo);
             strcpy(positionInfo, "");
 
             pressButtonFinish = buttonPressed;
 
-        } else if (returnDefaultPosition) { // Возврат в исходную позицию
+            commandDelay.push_back(boost::lexical_cast<std::string>(req.delay));
+
+        } else if (returnDefaultPosition || calculatePositionSuccess && !req.pressing) { // Нажатие не требуется (возврат в исходную позицию или проверка команды)
             allCommands.push_back(positionInfo);
-            writeJointsToArduino(arduinoClient, srv, 0);
+            commandDelay.push_back("0");
+            writeJointsToArduino(arduinoClient, srv);
             strcpy(positionInfo, "");
             allCommands.clear();
+            commandDelay.clear();
 
         } else if (buttonPressed) {
             calculatePositionSuccess = true;
             logs.writeLog("The transition to the position 'button-pressed' is not calculated. Trajectory execution is skipped.", FILENAME);
             strcpy(positionInfo, "");
             allCommands.clear();
+            commandDelay.clear();
 
         } else if (pressButtonFinish) {
             pressButtonFinish = false;
