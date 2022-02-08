@@ -246,13 +246,13 @@ ros::Subscriber<std_msgs::String> setMotorSpeedSubscriber("set_motor_speed", &se
 void runStepMotors(float jointList[]) {
 
    // 1 двигатель
-   stepperPositions[0] = jointList[0] * RADIAN * STEP_IN_ANGLE;
+   stepperPositions[0] = -jointList[0] * RADIAN * STEP_IN_ANGLE; // Смена знака jointList[0]
 
    // 2 двигатель
-   stepperPositions[1] = -jointList[1] * RADIAN * STEP_IN_ANGLE; // Смена знака
+   stepperPositions[1] = jointList[1] * RADIAN * STEP_IN_ANGLE;
 
    // 3 двигатель
-   stepperPositions[2] = -(jointList[2] - jointList[1]) * RADIAN * STEP_IN_ANGLE; // Смена знака
+   stepperPositions[2] = (jointList[2] - jointList[1]) * RADIAN * STEP_IN_ANGLE;
 
    // Выполнение траектории завершено (координаты точек не переданы)
    bool stopPosition = jointList[0] == 0 && jointList[1] == 0 && jointList[2] == 0 && jointList[3] == 0 && jointList[4] == 0;

@@ -33,9 +33,9 @@ export class Config {
     {key: 'saveToFile', value: null, name: 'Сохранять координаты в файл в проекте', type: 'boolean'}
   ];
   motors: Motor[] = [
-    {key: 1, value: 'Нижний двигатель', forwardDirection: 'Вправо', inverseDirection: 'Влево'},
-    {key: 2, value: 'Левый двигатель', forwardDirection: 'Вниз', inverseDirection: 'Вверх'},
-    {key: 3, value: 'Правый двигатель', forwardDirection: 'Вверх', inverseDirection: 'Вниз'},
+    {key: 1, value: 'Нижний двигатель', forwardDirection: 'Влево', inverseDirection: 'Вправо'},
+    {key: 2, value: 'Левый двигатель', forwardDirection: 'Назад', inverseDirection: 'Вперед'},
+    {key: 3, value: 'Правый двигатель', forwardDirection: 'Вниз', inverseDirection: 'Вверх'},
     {key: 4, value: 'Сервопривод - поворот рабочего инструмента', forwardDirection: 'Вперед', inverseDirection: 'Назад'},
     {key: 5, value: 'Сервопривод - размыкание захвата', forwardDirection: 'Вперед', inverseDirection: 'Назад'}
   ];
