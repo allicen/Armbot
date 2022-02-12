@@ -267,6 +267,8 @@ bool runArmbot(armbot_move::RunArmbot::Request &req, armbot_move::RunArmbot::Res
 
     system (command);
     res.result = "FINISH in ROS";
+
+    ros::spinOnce();
     return true;
 }
 
@@ -455,6 +457,8 @@ bool setPosition(armbot_move::SetPosition::Request &req,
     }
 
     res.result = result;
+
+    ros::spinOnce();
 
     return true;
 }

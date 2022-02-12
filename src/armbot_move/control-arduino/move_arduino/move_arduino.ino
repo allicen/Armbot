@@ -78,7 +78,6 @@ Button buttonReturn(BUTTON_RETURN_START);
 Button buttonRobotStart(BUTTON_ROBOT_START);
 boolean buttonOnPressed = false;
 
-
 Stepper stepper_x(X_STEP_PIN, X_DIR_PIN, X_ENABLE_PIN); // Нижний двигатель
 Stepper stepper_y(Y_STEP_PIN, Y_DIR_PIN, Y_ENABLE_PIN); // Левый двигатель
 Stepper stepper_z(Z_STEP_PIN, Z_DIR_PIN, Z_ENABLE_PIN); // Правый двигатель
@@ -93,7 +92,11 @@ Servo robotServos[SERVO_COUNT];
 
 int servo_pins[SERVO_COUNT] = {JOINT_GRIP_PIN, JOINT_GRIP_END_PIN}; // Servo Pins
 long stepperPositions[JOINT_STEP_COUNT] = {0, 0, 0}; /// 3 двигателя
+long stepperTemp[JOINT_STEP_COUNT] = {0, 0, 0}; // Запись двигателей при работе на медленных скоростях
 int servoPositions[SERVO_COUNT] = {0, 0};
+int motorSpeed = 700; // Скорость по умолчанию
+int minMotorSpeed = 500; // Минимальная нормальная скорость, всё что ниже - низкая скорость
+int minStep = 100; // Минимальное количество шагов для одной итерации при работе на низких скоростях
 
 std_msgs::String str_msg;
 ros::Publisher chatter("execute_command", &str_msg);
@@ -102,6 +105,8 @@ void logWrite(String message) {
     message = "log:" + message;
     str_msg.data = message.c_str();
     chatter.publish(&str_msg);
+    
+    nodeHandle.spinOnce();
 }
 
 
@@ -111,22 +116,20 @@ void robotReturnStartPosition () {
   for (int i = 0; i < JOINT_STEP_COUNT; i++) {
      stepperPositions[i] = 0;
   }
-    
-  steppers.moveTo(stepperPositions);
-  steppers.runSpeedToPosition();
-  
+
+  writeStepperMotors();
   nodeHandle.spinOnce();
-  delay(1);
 }
 
 
 void motorMoveStart(const std_msgs::String& msg) {
   robotReturnStartPosition();
+  nodeHandle.spinOnce();
 }
 
 
 void setMotorSpeed(const std_msgs::String& msg) {
-  int motorSpeed = atoi(msg.data);
+  motorSpeed = atoi(msg.data);
 
   // Переопределение скорости из конфигов
   stepperX = stepper_x.setSpeedStepper(stepperX, motorSpeed);
@@ -134,6 +137,7 @@ void setMotorSpeed(const std_msgs::String& msg) {
   stepperZ = stepper_z.setSpeedStepper(stepperZ, motorSpeed);
 
   logWrite("Arduino get speed: " + String(motorSpeed));
+  nodeHandle.spinOnce();
 }
 
 
@@ -187,14 +191,12 @@ void motorMove(const std_msgs::String& msg){
     if (start < finish) {
         for (int j = start; j < finish; j++) {
             robotServos[servoIndex].write(j);
-            delay(10);
         }
     }
 
     if (start > finish) {
         for (int j = start; j > finish; j--) {
             robotServos[servoIndex].write(j);
-            delay(10);
         }
     }
 
@@ -208,8 +210,7 @@ void motorMove(const std_msgs::String& msg){
   // Не удалять строку лога (иначе всегда заходит в setup)
   logWrite("Motor run: 1 motor: " + String(stepperPositions[0]) + ", 2 motor: " + String(stepperPositions[1]) + ", 3 motor: " + String(stepperPositions[2]));
 
-  steppers.moveTo(stepperPositions);
-  steppers.runSpeedToPosition();
+  writeStepperMotors();
   logWrite("Motor run funish");
 
   float stepper_x_joint = stepperPositions[0] /STEP_IN_ANGLE / RADIAN;
@@ -231,7 +232,6 @@ void motorMove(const std_msgs::String& msg){
   strcat(message, String(stepperPositions[2]).substring(0, 8).c_str());
   str_msg.data = message;
   chatter.publish(&str_msg);
-  delay(1);
   
   nodeHandle.spinOnce();
 }
@@ -240,6 +240,52 @@ void motorMove(const std_msgs::String& msg){
 ros::Subscriber<std_msgs::String> motorMoveSubscriber("move_motor", &motorMove);
 ros::Subscriber<std_msgs::String> robotReturnStartPositionSubscriber("move_motor_start", &motorMoveStart);
 ros::Subscriber<std_msgs::String> setMotorSpeedSubscriber("set_motor_speed", &setMotorSpeed);
+
+
+void writeMotor(int motorNumber) {
+  if (stepperTemp[motorNumber] != stepperPositions[motorNumber]) {
+    int diffrence = 0; 
+    
+    if (stepperPositions[motorNumber] >= 0 && stepperPositions[motorNumber] > stepperTemp[motorNumber]) { // Положительное направление, вперед
+        diffrence = stepperTemp[motorNumber] + minStep > stepperPositions[motorNumber] ? stepperPositions[motorNumber] : stepperTemp[motorNumber] + minStep;
+      
+    } else if (stepperPositions[motorNumber] >= 0 && stepperPositions[motorNumber] < stepperTemp[motorNumber]) { // Положительное направление, назад
+        diffrence = stepperTemp[motorNumber] - minStep < 0 ? 0 : stepperTemp[motorNumber] - minStep;
+      
+    } else if (stepperPositions[motorNumber] < 0 && stepperPositions[motorNumber] < stepperTemp[motorNumber]) { // Отрицательное направление, вперед
+        diffrence = stepperTemp[motorNumber] - minStep < stepperPositions[motorNumber] ? stepperPositions[motorNumber] : stepperTemp[motorNumber] - minStep;
+        
+    } else if (stepperPositions[motorNumber] < 0 && stepperPositions[motorNumber] > stepperTemp[motorNumber]) { // Отрицательное направление, назад
+        diffrence = stepperTemp[motorNumber] + minStep > 0 ? 0 : stepperTemp[motorNumber] + minStep;
+        
+    }
+
+    stepperTemp[motorNumber] = diffrence;
+   }
+}
+
+
+void writeStepperMotors() {
+    if (motorSpeed <= minMotorSpeed) {
+          // Костыль для работы на низких скоростях
+          // В кнопку попадает неточно (+- 2 мм)
+          // В противном случае будет ошибка "Lost sync with device, restarting..."
+        while (stepperTemp[0] != stepperPositions[0] || stepperTemp[1] != stepperPositions[1] || stepperTemp[2] != stepperPositions[2]) {
+            writeMotor(0);
+            writeMotor(1);
+            writeMotor(2);
+              
+            steppers.moveTo(stepperTemp);
+            nodeHandle.spinOnce();
+            steppers.runSpeedToPosition();
+        }
+          
+    } else {
+        steppers.moveTo(stepperPositions);
+         nodeHandle.spinOnce();
+         steppers.runSpeedToPosition();
+    }
+}
 
 
 // Записываем шаговые двигатели
@@ -257,14 +303,11 @@ void runStepMotors(float jointList[]) {
    // Выполнение траектории завершено (координаты точек не переданы)
    bool stopPosition = jointList[0] == 0 && jointList[1] == 0 && jointList[2] == 0 && jointList[3] == 0 && jointList[4] == 0;
 
-   logWrite("Motor step calculate: 1 motor: " + String(stepperPositions[0]) + ", 2 motor: " + String(stepperPositions[1]) + ", 3 motor: " + String(stepperPositions[2]));   
+   logWrite("Motor step calculate: 1 motor: " + String(stepperPositions[0]) + ", 2 motor: " + String(stepperPositions[1]) + ", 3 motor: " + String(stepperPositions[2])); 
    
    if (buttonOnPressed && !stopPosition) {
-      steppers.moveTo(stepperPositions);
-      steppers.runSpeedToPosition();
+      writeStepperMotors();
    }
-
-   nodeHandle.spinOnce();
 }
 
 
@@ -291,6 +334,8 @@ bool runStepper(char* rowStr, int rowIndex) {
    
   rowIndex++;
   return true;
+
+  nodeHandle.spinOnce();
 }
 
 
@@ -323,8 +368,7 @@ void robotMotorMove(const rosserial_arduino::Test::Request & req, rosserial_ardu
      
    res.output = "FINISH"; 
    logWrite("FINISH motor run");
-
-   delay(1);
+   
    nodeHandle.spinOnce();
 }
 
@@ -354,6 +398,8 @@ void savePositionRobotModel () {
          str_msg.data = message;
          chatter.publish(&str_msg);
     }
+
+    nodeHandle.spinOnce();
 }
 
 
@@ -366,6 +412,8 @@ void startMoveRobot() {
          str_msg.data = message;
          chatter.publish(&str_msg);
     }
+
+    nodeHandle.spinOnce();
 }
 
 
@@ -378,6 +426,8 @@ void stopMoveRobot() {
         str_msg.data = message;
         chatter.publish(&str_msg);
     }
+
+    nodeHandle.spinOnce();
 }
 
 
@@ -402,13 +452,12 @@ void setup() {
   
     nodeHandle.getHardware()->setBaud(115200);
     nodeHandle.initNode();
+
+    nodeHandle.advertise(chatter);
     nodeHandle.advertiseService(server);
     nodeHandle.subscribe(motorMoveSubscriber);
     nodeHandle.subscribe(robotReturnStartPositionSubscriber);
     nodeHandle.subscribe(setMotorSpeedSubscriber);
-    nodeHandle.advertise(chatter);
-
-    nodeHandle.spinOnce();
 }
 
 
