@@ -78,6 +78,23 @@ void webSocket(const std::string &message) {
     delete ws;
 }
 
+
+void setJoints(float joint_1, float joint_2, float joint_3, float joint_4, float joint_grip,
+               MoveOperationClass *move_group, robot_state::RobotState start_state) {
+    std::map<std::string, double> target;
+    target["joint_1"] = joint_1;
+    target["joint_2"] = joint_2;
+    target["joint_3"] = joint_3;
+    target["joint_4"] = joint_4;
+    target["joint_grip"] = joint_grip;
+
+    move_group->move->setJointValueTarget(target);
+    logs.writeLog("Robot started moving", FILENAME);
+    move_group->move->move();
+    move_group->move->setStartState(start_state);
+    logs.writeLog("Robot stopped ", FILENAME);
+}
+
 void saveCommand(std::string commandStr, MoveOperationClass *move_group, robot_state::RobotState start_state) {
 
     std::stringstream ss(commandStr);
@@ -96,18 +113,10 @@ void saveCommand(std::string commandStr, MoveOperationClass *move_group, robot_s
     float joint_1 = result[0];
     float joint_2 = result[1];
     float joint_3 = result[2];
+    float joint_4 = abs(joint_3) - abs(joint_2);
+    float joint_grip = 0;
 
-    std::map<std::string, double> target;
-    target["joint_1"] = joint_1;
-    target["joint_2"] = joint_2;
-    target["joint_3"] = joint_3;
-    target["joint_4"] = abs(joint_3) - abs(joint_2);
-
-    move_group->move->setJointValueTarget(target);
-    logs.writeLog("Robot started moving", FILENAME);
-    move_group->move->move();
-    move_group->move->setStartState(start_state);
-    logs.writeLog("Robot stopped ", FILENAME);
+    setJoints(joint_1, joint_2, joint_3, joint_4, joint_grip, move_group, start_state);
 
     const Eigen::Affine3d pos = start_state.getGlobalLinkTransform("link_grip");
 
@@ -348,27 +357,38 @@ bool setPosition(armbot_move::SetPosition::Request &req,
     std::string result = "ERROR";
 
     geometry_msgs::Pose pose;
-    pose.position.x = req.x == coordinateNone ? defaultPosition_x : req.x;
-    pose.position.y = req.y == coordinateNone ? defaultPosition_y : req.y;
-    pose.position.z = req.x == coordinateNone && req.y == coordinateNone && req.z == coordinateNone ? defaultPosition_z : req.z;
+    bool success = true;
 
-    if (req.position == "button-pressed") { // кнопка нажата
-        pose.position.z = zPositionDefaultDown;
-    } else if (req.z != coordinateNone && req.z != 0) { // передана координата Z отличная от 0
-        pose.position.z = req.z;
-    } else { // используется Z по умолчанию
-        pose.position.z = zPositionDefault;
+    bool returnDefaultPosition = strcmp("return_default_position", req.position.c_str()) == 0;
+
+    // Возврат в исходную позицию не расчитываем
+    // Предполагается, что исходная позиция всегда достижима
+    if (returnDefaultPosition) {
+        setJoints(0, 0, 0, 0, 0, move_group, start_state);
+
+    } else {
+        pose.position.x = req.x == coordinateNone ? defaultPosition_x : req.x;
+        pose.position.y = req.y == coordinateNone ? defaultPosition_y : req.y;
+        pose.position.z = req.x == coordinateNone && req.y == coordinateNone && req.z == coordinateNone ? defaultPosition_z : req.z;
+
+        if (req.position == "button-pressed") { // кнопка нажата
+            pose.position.z = zPositionDefaultDown;
+        } else if (req.z != coordinateNone && req.z != 0) { // передана координата Z отличная от 0
+            pose.position.z = req.z;
+        } else { // используется Z по умолчанию
+            pose.position.z = zPositionDefault;
+        }
+
+        pose.orientation.x = defaultOrientation_x;
+        pose.orientation.y = defaultOrientation_y;
+        pose.orientation.z = defaultOrientation_z;
+        pose.orientation.w = defaultOrientation_w;
+
+        move_group->move->setApproximateJointValueTarget(pose,"link_grip");
+        success = (move_group->move->move() == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+
+        ROS_INFO("Visualizing move 1 (pose goal) %s", success ? "" : "FAILED");
     }
-
-    pose.orientation.x = defaultOrientation_x;
-    pose.orientation.y = defaultOrientation_y;
-    pose.orientation.z = defaultOrientation_z;
-    pose.orientation.w = defaultOrientation_w;
-
-    move_group->move->setApproximateJointValueTarget(pose,"link_grip");
-    bool success = (move_group->move->move() == moveit::planning_interface::MoveItErrorCode::SUCCESS);
-
-    ROS_INFO("Visualizing move 1 (pose goal) %s", success ? "" : "FAILED");
 
     if (success) {
         std::cout<<"Start move"<<std::endl;
@@ -393,7 +413,6 @@ bool setPosition(armbot_move::SetPosition::Request &req,
         }
 
         bool buttonPressed = strcmp("button-pressed", req.position.c_str()) == 0;
-        bool returnDefaultPosition = strcmp("return_default_position", req.position.c_str()) == 0;
         bool withPressing = req.pressing;
 
         if (calculatePositionSuccess && buttonPressed) { //  Кнопка нажата
@@ -409,6 +428,7 @@ bool setPosition(armbot_move::SetPosition::Request &req,
             commandDelay.push_back("0");
             writeJointsToArduino(arduinoClient, srv);
             strcpy(positionInfo, "");
+
             allCommands.clear();
             commandDelay.clear();
 
