@@ -44,7 +44,11 @@ export class MotorMoveComponent implements OnInit {
 
     // Направление: 0 - Вперед, 1 - Назад
     runMotor(direction: number): void {
-        this.armbotService.runMotor(this.currentMotor?.key || 0, this.stepCount, direction);
+        if (this.currentMotor?.key === 4 || this.currentMotor?.key === 5) {
+            this.armbotService.runMotor(this.currentMotor?.key || 0, this.degreesCount, direction);
+        } else {
+            this.armbotService.runMotor(this.currentMotor?.key || 0, this.stepCount, direction);
+        }
     }
 
     changeSteps(steps: string): void {

@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
                     motorIndex = 5;
                     break;    
                 default:
-                    ROS_ERROR("Invalid button pressed. Please click 1, 2 or 3");
+                    ROS_ERROR("Invalid button pressed. Please click 1, 2, 3, 4 or 5");
             }
 
             if (motorIndex == 0) {
