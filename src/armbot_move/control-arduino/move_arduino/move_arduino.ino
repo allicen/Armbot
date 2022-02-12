@@ -116,7 +116,7 @@ void robotReturnStartPosition () {
   steppers.runSpeedToPosition();
   
   nodeHandle.spinOnce();
-  delay(1);  
+  delay(1);
 }
 
 
@@ -125,7 +125,7 @@ void motorMoveStart(const std_msgs::String& msg) {
 }
 
 
-void setMotorSpeed(const std_msgs::String& msg) { 
+void setMotorSpeed(const std_msgs::String& msg) {
   int motorSpeed = atoi(msg.data);
 
   // Переопределение скорости из конфигов
@@ -199,7 +199,6 @@ void motorMove(const std_msgs::String& msg){
     }
 
     servoPositions[servoIndex] = finish;
-    nodeHandle.logerror(String(servoPositions[servoIndex]).c_str());
 
   } else {
     logWrite("An error when starting the engine. Incorrect engine or direction value");
@@ -233,6 +232,7 @@ void motorMove(const std_msgs::String& msg){
   str_msg.data = message;
   chatter.publish(&str_msg);
   delay(1);
+  
   nodeHandle.spinOnce();
 }
 
@@ -263,6 +263,8 @@ void runStepMotors(float jointList[]) {
       steppers.moveTo(stepperPositions);
       steppers.runSpeedToPosition();
    }
+
+   nodeHandle.spinOnce();
 }
 
 
@@ -318,12 +320,12 @@ void robotMotorMove(const rosserial_arduino::Test::Request & req, rosserial_ardu
 
    long commandExecuteTime = millis() - allProcessTime;
    logWrite("Command #" + String(rowIndex) + " was executed for " + String(commandExecuteTime) + "s."); // Время выполнения 1 команды
-    
-   delay(1);
-   nodeHandle.spinOnce();
      
    res.output = "FINISH"; 
    logWrite("FINISH motor run");
+
+   delay(1);
+   nodeHandle.spinOnce();
 }
 
 
@@ -336,9 +338,10 @@ void savePositionRobotModel () {
          nodeHandle.logwarn("Button pressed save process .......");
          logWrite("Steps 1 motor : " + String(stepperPositions[0]) + ", 2 motor: " + String(stepperPositions[1]) + ", 3 motor: " + String(stepperPositions[2]));
          
-         float joint_1 = -(stepperPositions[0] / RADIAN / STEP_IN_ANGLE);
+         float joint_1 = -stepperPositions[0] / RADIAN / STEP_IN_ANGLE;
          float joint_2 = stepperPositions[1] / RADIAN / STEP_IN_ANGLE;
-         float joint_3 = -(stepperPositions[2] + stepperPositions[1]) / RADIAN / STEP_IN_ANGLE;
+         float joint_3 = (stepperPositions[2] + stepperPositions[1]) / RADIAN / STEP_IN_ANGLE;
+         float joint_4 = -(abs(joint_3) - abs(joint_2));
          
          char message[50] = "save:";
          strcat(message, String(joint_1).substring(0, 8).c_str());
@@ -346,6 +349,8 @@ void savePositionRobotModel () {
          strcat(message, String(joint_2).substring(0, 8).c_str());
          strcat(message, ":");
          strcat(message, String(joint_3).substring(0, 8).c_str());
+         strcat(message, ":");
+         strcat(message, String(joint_4).substring(0, 8).c_str());
          str_msg.data = message;
          chatter.publish(&str_msg);
     }
@@ -402,6 +407,8 @@ void setup() {
     nodeHandle.subscribe(robotReturnStartPositionSubscriber);
     nodeHandle.subscribe(setMotorSpeedSubscriber);
     nodeHandle.advertise(chatter);
+
+    nodeHandle.spinOnce();
 }
 
 

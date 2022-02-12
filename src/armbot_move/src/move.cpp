@@ -90,10 +90,13 @@ void setJoints(float joint_1, float joint_2, float joint_3, float joint_4, float
 
     move_group->move->setJointValueTarget(target);
     logs.writeLog("Robot started moving", FILENAME);
+
     move_group->move->move();
     move_group->move->setStartState(start_state);
+
     logs.writeLog("Robot stopped ", FILENAME);
 }
+
 
 void saveCommand(std::string commandStr, MoveOperationClass *move_group, robot_state::RobotState start_state) {
 
@@ -113,13 +116,15 @@ void saveCommand(std::string commandStr, MoveOperationClass *move_group, robot_s
     float joint_1 = result[0];
     float joint_2 = result[1];
     float joint_3 = result[2];
-    float joint_4 = abs(joint_3) - abs(joint_2);
+    float joint_4 = result[3];
     float joint_grip = 0;
 
     setJoints(joint_1, joint_2, joint_3, joint_4, joint_grip, move_group, start_state);
 
-    const Eigen::Affine3d pos = start_state.getGlobalLinkTransform("link_grip");
+    robot_state::RobotState planned_state = move_group->move->getJointValueTarget();
+    planned_state.update();
 
+    const Eigen::Affine3d pos = planned_state.getGlobalLinkTransform("link_grip");
     std::string posInfo = "X=" + boost::lexical_cast<std::string>(pos.translation().x()) +
                           ", Y=" + boost::lexical_cast<std::string>(pos.translation().y()) +
                           ", Z=" + boost::lexical_cast<std::string>(pos.translation().z());
