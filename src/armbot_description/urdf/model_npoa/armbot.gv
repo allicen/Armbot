@@ -1,0 +1,26 @@
+digraph G {
+node [shape=box];
+"world" [label="world"];
+"base_link" [label="base_link"];
+"link_1" [label="link_1"];
+"link_2" [label="link_2"];
+"link_3" [label="link_3"];
+"link_4" [label="link_4"];
+"link_end" [label="link_end"];
+"link_grip" [label="link_grip"];
+node [shape=ellipse, color=blue, fontcolor=blue];
+"world" -> "joint1_world" [label="xyz: 0 0 0 \nrpy: 0 -0 0"]
+"joint1_world" -> "base_link"
+"base_link" -> "joint_1" [label="xyz: 0.003 0 0.0155 \nrpy: 0 -0 0"]
+"joint_1" -> "link_1"
+"link_1" -> "joint_2" [label="xyz: 0.0026508 0.015956 0.09502 \nrpy: 0 -1.5708 1.5708"]
+"joint_2" -> "link_2"
+"link_2" -> "joint_3" [label="xyz: 0.13709 -0.015779 0.0061346 \nrpy: -3.14159 -2.11758e-22 -2.8788"]
+"joint_3" -> "link_3"
+"link_3" -> "joint_4" [label="xyz: 0.15162 -0.051106 -0.017433 \nrpy: -3.14159 4.23516e-22 -1.0232"]
+"joint_4" -> "link_4"
+"link_4" -> "joint_end" [label="xyz: 0 0 0 \nrpy: 0 -0 0"]
+"joint_end" -> "link_end"
+"link_end" -> "joint_grip" [label="xyz: 0.0715 -0.064 -0.0075 \nrpy: 1.5708 -0 0.27"]
+"joint_grip" -> "link_grip"
+}
