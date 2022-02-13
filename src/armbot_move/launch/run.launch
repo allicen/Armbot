@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launch>
+	<!-- НЕАКТУАЛЬНЫЙ ФАЙЛ, НАДО КОРРЕКТИРОВАТЬ -->
+
 	<!-- Run with gui: roslaunch armbot_move run.launch gui:=true -->
 	<!-- Run without gui: roslaunch armbot_move run.launch -->
 	<!-- Запустить с управлением двигателями с клавиатуры: roslaunch armbot_move run.launch keyboardControl:=true -->
