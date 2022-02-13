@@ -1,6 +1,6 @@
 <launch>
 
-    <arg name="model" default="best" />
+    <arg name="model" default="npoa" />
 
     <!-- specify the planning pipeline -->
     <arg name="pipeline" default="ompl" />
