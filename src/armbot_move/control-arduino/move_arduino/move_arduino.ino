@@ -94,9 +94,10 @@ int servo_pins[SERVO_COUNT] = {JOINT_GRIP_PIN, JOINT_GRIP_END_PIN}; // Servo Pin
 long stepperPositions[JOINT_STEP_COUNT] = {0, 0, 0}; /// 3 двигателя
 long stepperTemp[JOINT_STEP_COUNT] = {0, 0, 0}; // Запись двигателей при работе на медленных скоростях
 int servoPositions[SERVO_COUNT] = {0, 0};
-int motorSpeed = 700; // Скорость по умолчанию
+
+int motorSpeed = 700; // Скорость двигателя по умолчанию
 int minMotorSpeed = 500; // Минимальная нормальная скорость, всё что ниже - низкая скорость
-int minStep = 100; // Минимальное количество шагов для одной итерации при работе на низких скоростях
+int maxStepCount = 100; // Максимальное количество шагов для прохождения двигателем при работе на низких скоростях
 
 std_msgs::String str_msg;
 ros::Publisher chatter("execute_command", &str_msg);
@@ -242,21 +243,21 @@ ros::Subscriber<std_msgs::String> robotReturnStartPositionSubscriber("move_motor
 ros::Subscriber<std_msgs::String> setMotorSpeedSubscriber("set_motor_speed", &setMotorSpeed);
 
 
-void writeMotor(int motorNumber) {
+void writeMotorChunk(int motorNumber) {
   if (stepperTemp[motorNumber] != stepperPositions[motorNumber]) {
     int diffrence = 0; 
     
     if (stepperPositions[motorNumber] >= 0 && stepperPositions[motorNumber] > stepperTemp[motorNumber]) { // Положительное направление, вперед
-        diffrence = stepperTemp[motorNumber] + minStep > stepperPositions[motorNumber] ? stepperPositions[motorNumber] : stepperTemp[motorNumber] + minStep;
+        diffrence = stepperTemp[motorNumber] + maxStepCount > stepperPositions[motorNumber] ? stepperPositions[motorNumber] : stepperTemp[motorNumber] + maxStepCount;
       
     } else if (stepperPositions[motorNumber] >= 0 && stepperPositions[motorNumber] < stepperTemp[motorNumber]) { // Положительное направление, назад
-        diffrence = stepperTemp[motorNumber] - minStep < 0 ? 0 : stepperTemp[motorNumber] - minStep;
+        diffrence = stepperTemp[motorNumber] - maxStepCount < 0 ? 0 : stepperTemp[motorNumber] - maxStepCount;
       
     } else if (stepperPositions[motorNumber] < 0 && stepperPositions[motorNumber] < stepperTemp[motorNumber]) { // Отрицательное направление, вперед
-        diffrence = stepperTemp[motorNumber] - minStep < stepperPositions[motorNumber] ? stepperPositions[motorNumber] : stepperTemp[motorNumber] - minStep;
+        diffrence = stepperTemp[motorNumber] - maxStepCount < stepperPositions[motorNumber] ? stepperPositions[motorNumber] : stepperTemp[motorNumber] - maxStepCount;
         
     } else if (stepperPositions[motorNumber] < 0 && stepperPositions[motorNumber] > stepperTemp[motorNumber]) { // Отрицательное направление, назад
-        diffrence = stepperTemp[motorNumber] + minStep > 0 ? 0 : stepperTemp[motorNumber] + minStep;
+        diffrence = stepperTemp[motorNumber] + maxStepCount > 0 ? 0 : stepperTemp[motorNumber] + maxStepCount;
         
     }
 
@@ -268,12 +269,13 @@ void writeMotor(int motorNumber) {
 void writeStepperMotors() {
     if (motorSpeed <= minMotorSpeed) {
           // Костыль для работы на низких скоростях
-          // В кнопку попадает неточно (+- 2 мм)
-          // В противном случае будет ошибка "Lost sync with device, restarting..."
+          // Решает проблему с ошибкой "Lost sync with device, restarting..." (потеря соединения медлу ROS и Arduino, после которой надо перезапускать робота)
+          // В кнопку попадает неточно (+- 2 мм), поэтому для выполнения сценария с нажатиями надо ставить нормальную скорость
+          // Чтобы попадал точно, надо будет изменять maxStepCount пропорционально для всех моторов (сейчас maxStepCount одинаковое для всех моторов независимо от расстояния)
         while (stepperTemp[0] != stepperPositions[0] || stepperTemp[1] != stepperPositions[1] || stepperTemp[2] != stepperPositions[2]) {
-            writeMotor(0);
-            writeMotor(1);
-            writeMotor(2);
+            writeMotorChunk(0);
+            writeMotorChunk(1);
+            writeMotorChunk(2);
               
             steppers.moveTo(stepperTemp);
             nodeHandle.spinOnce();

@@ -102,7 +102,11 @@ export class CommandTableComponent implements OnInit {
         });
 
         this.storageService.getCoordinateDeleteError().pipe(untilDestroyed(this)).subscribe(err => this.validateError = err);
-        this.storageService.getCoordinateDeleteMessage().pipe(untilDestroyed(this)).subscribe(mess => this.coordValidateMessage = mess);
+        this.storageService.getCoordinateDeleteMessage().pipe(untilDestroyed(this)).subscribe(mess => {
+            this.snackBar.open(mess, 'X', {
+                duration: 2000
+            });
+        });
         this.exportCoordinateUrl = this.httpService.getUrlExport();
         this.exportTxtCoordinateUrl = this.httpService.getUrlExportTxt();
 
@@ -158,7 +162,13 @@ export class CommandTableComponent implements OnInit {
             }
 
             this.validateError = res.status === 'ERROR';
-            this.coordValidateMessage = res.message ? res.message : '';
+            if (!this.validateError && res.message) {
+                this.snackBar.open(res.message, 'X', {
+                    duration: 2000
+                });
+            } else {
+                this.coordValidateMessage = res.message ? res.message : '';
+            }
 
             const index = this.coordinateList.findIndex(c => c.id === coordinate.id);
             if (!this.validateError) {
