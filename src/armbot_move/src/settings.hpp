@@ -40,7 +40,7 @@ bool saveToFile = false;
 // Скорость шаговых двигателей
 // Рекомендуемый диапазон: от 500 до 3000
 // Максимум можно установить 11000
-int maxSpeedStepperMotor = 500;
+int maxSpeedStepperMotor = 700;
 
 class SettingsClass {
     public:
