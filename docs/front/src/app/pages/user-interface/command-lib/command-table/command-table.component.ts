@@ -103,9 +103,11 @@ export class CommandTableComponent implements OnInit {
 
         this.storageService.getCoordinateDeleteError().pipe(untilDestroyed(this)).subscribe(err => this.validateError = err);
         this.storageService.getCoordinateDeleteMessage().pipe(untilDestroyed(this)).subscribe(mess => {
-            this.snackBar.open(mess, 'X', {
-                duration: 2000
-            });
+            if (mess.length > 0) {
+                this.snackBar.open(mess, 'X', {
+                    duration: 2000
+                });
+            }
         });
         this.exportCoordinateUrl = this.httpService.getUrlExport();
         this.exportTxtCoordinateUrl = this.httpService.getUrlExportTxt();
