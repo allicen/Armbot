@@ -37,6 +37,6 @@ export class Config {
     {key: 2, value: 'Левый двигатель', forwardDirection: 'Назад', inverseDirection: 'Вперед'},
     {key: 3, value: 'Правый двигатель', forwardDirection: 'Вниз', inverseDirection: 'Вверх'},
     {key: 4, value: 'Сервопривод - поворот рабочего инструмента', forwardDirection: 'Вперед', inverseDirection: 'Назад'},
-    {key: 5, value: 'Сервопривод - размыкание захвата', forwardDirection: 'Вперед', inverseDirection: 'Назад'}
+    {key: 5, value: 'Сервопривод - размыкание схвата', forwardDirection: 'Вперед', inverseDirection: 'Назад'}
   ];
 }
