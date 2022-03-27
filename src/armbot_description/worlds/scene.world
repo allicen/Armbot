@@ -9,6 +9,13 @@
     <include>
       <uri>model://ground_plane</uri>
     </include>
+    <gui fullscreen='0'>
+      <camera name='user_camera'>
+        <pose frame=''>-18.4292 -29.2602 22.1634 0 0.611643 1.0242</pose>
+        <view_controller>orbit</view_controller>
+        <projection_type>perspective</projection_type>
+      </camera>
+    </gui>
     <model name="my_lightmap_table">
       <static>true</static>
       <pose>0 0 0.648 0 0 0</pose>
