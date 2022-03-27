@@ -33,7 +33,7 @@
   </library_cameras>
   <library_images>
     <image id="table_lightmap" name="table_lightmap">
-      <init_from>../materials/textures/table_lightmap.png</init_from>
+      <init_from>http://gazebosim.org/models/table_marble/materials/textures/table_lightmap.png</init_from>
     </image>
   </library_images>
   <library_effects>
