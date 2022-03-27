@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launch>
 
-  <param name="robot_description" textfile="$(find armbot_description)/urdf/model_best/armbot.urdf" />
-
-  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" ></node>
+  <param name="robot_description" textfile="$(find armbot_description)/urdf/model_best/armbot.gazebo.urdf" />
 
   <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" output="screen" >
-    <param name="publish_frequency" type="double" value="40.0" />
+    <!-- <param name="publish_frequency" type="double" value="40.0" /> -->
+    <remap from="/joint_states" to="/arm/joint_states" />
+  </node>
+
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+      <rosparam param="source_list">["joint_states"]</rosparam>
   </node>
 
 
@@ -20,7 +23,6 @@
   </include>
 
 
-  <node name="armbot_description" pkg="gazebo_ros" type="spawn_model" output="screen"
-   args="-urdf -param robot_description -model armbot" />
+  <node name="armbot_description" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model armbot -param robot_description -z 0.965"/>
 
 </launch>
