@@ -4,7 +4,7 @@
   <param name="robot_description" textfile="$(find armbot_description)/urdf/model_best/armbot.gazebo.urdf" />
 
   <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" output="screen" >
-    <!-- <param name="publish_frequency" type="double" value="40.0" /> -->
+    <param name="publish_frequency" type="double" value="40.0" />
     <remap from="/joint_states" to="/arm/joint_states" />
   </node>
 
@@ -23,6 +23,6 @@
   </include>
 
 
-  <node name="armbot_description" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model armbot -param robot_description -z 0.965"/>
+  <node name="armbot" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model armbot -param robot_description"/>
 
 </launch>

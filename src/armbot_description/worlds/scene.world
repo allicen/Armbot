@@ -1,24 +1,83 @@
 <?xml version="1.0" ?>
 <sdf version="1.5">
   <world name="default">
-    <!-- A global light source -->
-    <include>
-      <uri>model://sun</uri>
-    </include>
-    <!-- A ground plane -->
-    <include>
-      <uri>model://ground_plane</uri>
-    </include>
+    <light name='sun' type='directional'>
+      <cast_shadows>0</cast_shadows>
+      <grid>0</grid>
+      <pose frame=''>0 0 10 0 -0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
     <gui fullscreen='0'>
       <camera name='user_camera'>
-        <pose frame=''>-18.4292 -29.2602 22.1634 0 0.611643 1.0242</pose>
+        <pose frame=''>0.086619 -0.881795 0.098944 0.00 -0.044356 1.488202</pose>
         <view_controller>orbit</view_controller>
         <projection_type>perspective</projection_type>
       </camera>
     </gui>
-    <model name="my_lightmap_table">
+    <gravity>0 0 -9.8</gravity>
+    <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
+    <atmosphere type='adiabatic'/>
+    <physics name='default_physics' default='0' type='ode'>
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+    </physics>
+    <scene>
+      <grid>0</grid>
+      <ambient>0.97 0.97 0.97 1</ambient>
+      <shadows>0</shadows>
+      <sky>
+        <time>17</time>
+        <clouds>
+          <speed>12</speed>
+        </clouds>
+      </sky>
+    </scene>
+    <audio>
+      <device>default</device>
+    </audio>
+    <wind/>
+    <spherical_coordinates>
+      <surface_model>EARTH_WGS84</surface_model>
+      <latitude_deg>0</latitude_deg>
+      <longitude_deg>0</longitude_deg>
+      <elevation>0</elevation>
+      <heading_deg>0</heading_deg>
+    </spherical_coordinates>
+    <state world_name='default'>
+      <sim_time>358 567000000</sim_time>
+      <real_time>25 461046791</real_time>
+      <wall_time>1609085578 807120527</wall_time>
+      <iterations>25176</iterations>
+      <model name='Scene'>
+        <pose frame=''>0.404556 -0.01074 -0.163868 0 -0 0</pose>
+        <scale>1 1 1</scale>
+        <link name='link_0'>
+          <pose frame=''>0.404556 -0.01074 -0.163868 0 -0 0</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+      </model>
+      <light name='sun'>
+        <pose frame=''>0 0 30 0 -0 0</pose>
+      </light>
+    </state>
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+    <!--<model name="my_lightmap_table">
       <static>true</static>
       <pose>0 0 0.648 0 0 0</pose>
+      <allow_auto_disable>1</allow_auto_disable>
       <link name="link">
         <collision name="collision">
           <geometry>
@@ -44,6 +103,6 @@
           </material>
         </visual>
       </link>
-    </model>
+    </model>-->
   </world>
 </sdf>
