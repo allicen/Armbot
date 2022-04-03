@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launch>
-
-  <node name="camera_node" pkg="armbot_camera" type="camera_node" output="screen" />
-
+    <param name="robot_description_camera" command="$(find xacro)/xacro.py '$(find armbot_camera)/urdf/camera.xacro'"/>
+    <node name="camera" pkg="gazebo_ros" type="spawn_model" output="screen" args="-urdf -param robot_description_camera -model camera" />
+    <node name="camera_node" pkg="armbot_camera" type="camera.py" output="screen" />
 </launch>

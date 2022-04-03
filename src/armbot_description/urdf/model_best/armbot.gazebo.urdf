@@ -2,10 +2,9 @@
 <!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com)
      Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
      For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
-<robot name="armbot"  xmlns:xacro="http://www.ros.org/wiki/xacro">
-
+<robot name="armbot" xmlns:xacro="http://www.ros.org/wiki/xacro">
     <xacro:include filename="$(find armbot_description)/urdf/model_best/camera.gazebo" />
-    <xacro:include filename="$(find armbot_description)/urdf/model_best/materials.xacro" />
+    <xacro:include filename="$(find armbot_description)/urdf/materials/materials.xacro" />
 
     <link name="world" />
     <joint name="joint1_world" type="fixed">
@@ -13,21 +12,17 @@
         <child link="base_link" />
     </joint>
     <link name="base_link">
-
-<inertial>
+        <inertial>
             <origin xyz="-2.71598519099587E-09 2.95460784927449E-08 0.00471164634309819" rpy="0 0 0" />
             <mass value="0.539924220844728" />
             <inertia ixx="0.000900127008306627" ixy="2.4109041697427E-11" ixz="-2.74229850494837E-12" iyy="0.000900126622269955" iyz="1.00434637976328E-10" izz="0.00179527912392399" />
         </inertial>
-
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
                 <mesh filename="package://armbot_description/meshes/model_best/base_link.STL" />
             </geometry>
-            <material name="">
-                <color rgba="0.898039215686275 0.917647058823529 0.929411764705882 1" />
-            </material>
+            <material name="BlueLight"/>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
@@ -36,22 +31,20 @@
             </geometry>
         </collision>
     </link>
+    <gazebo reference="base_link">
+        <material>Gazebo/DarkGrey</material>
+    </gazebo>
     <link name="link_1">
-
-<inertial>
+        <inertial>
             <origin xyz="-0.00035177793578259 -8.3567663927646E-06 0.0898336401547187" rpy="0 0 0" />
             <mass value="3.66151948541535" />
             <inertia ixx="0.00310618079266536" ixy="-2.45620483339759E-10" ixz="-4.26422866781222E-06" iyy="0.00238146240355345" iyz="6.19764914060838E-06" izz="0.00193792067716221" />
         </inertial>
-
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
                 <mesh filename="package://armbot_description/meshes/model_best/link_1.STL" />
             </geometry>
-            <material name="">
-                <color rgba="0.529411764705882 0.549019607843137 0.549019607843137 1" />
-            </material>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
@@ -60,6 +53,9 @@
             </geometry>
         </collision>
     </link>
+    <gazebo reference="link_1">
+        <material>Gazebo/Grey</material>
+    </gazebo>
     <joint name="joint_1" type="revolute">
         <origin xyz="0 0 0.023" rpy="0 0 0" />
         <parent link="base_link" />
@@ -68,21 +64,17 @@
         <limit lower="-2.25" upper="2.25" effort="150" velocity="3.15" />
     </joint>
     <link name="link_2">
-
-<inertial>
+        <inertial>
             <origin xyz="0.0860772263679253 0.00481374339791762 0.0170516442881634" rpy="0 0 0" />
             <mass value="0.270091528613745" />
             <inertia ixx="0.000110751048574797" ixy="9.16010403480173E-05" ixz="1.04403380254391E-11" iyy="0.000514671801468967" iyz="1.34376439423107E-12" izz="0.000606312552798777" />
         </inertial>
-
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
                 <mesh filename="package://armbot_description/meshes/model_best/link_2.STL" />
             </geometry>
-            <material name="">
-                <color rgba="0.529411764705882 0.549019607843137 0.549019607843137 1" />
-            </material>
+            <material name="black" />
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
@@ -91,6 +83,9 @@
             </geometry>
         </collision>
     </link>
+    <gazebo reference="link_2">
+        <material>Gazebo/Grey</material>
+    </gazebo>
     <joint name="joint_2" type="revolute">
         <origin xyz="0 0.017 0.126" rpy="1.5708 -1.5708 0" />
         <parent link="link_1" />
@@ -99,21 +94,16 @@
         <limit lower="-1.5708" upper="0" effort="150" velocity="3.15" />
     </joint>
     <link name="link_3">
-
-<inertial>
+        <inertial>
             <origin xyz="0.0914332908537794 -0.0167844932717846 -0.0287545509911682" rpy="0 0 0" />
             <mass value="0.138752300390972" />
             <inertia ixx="2.12989089083982E-05" ixy="6.30912270132773E-06" ixz="-3.01004064938247E-10" iyy="0.000240369421588553" iyz="3.13455825736619E-11" izz="0.000256277873413444" />
         </inertial>
-
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
                 <mesh filename="package://armbot_description/meshes/model_best/link_3.STL" />
             </geometry>
-            <material name="">
-                <color rgba="0.898039215686275 0.917647058823529 0.929411764705882 1" />
-            </material>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
@@ -122,6 +112,9 @@
             </geometry>
         </collision>
     </link>
+    <gazebo reference="link_3">
+        <material>Gazebo/Grey</material>
+    </gazebo>
     <joint name="joint_3" type="revolute">
         <origin xyz="0.13278 -0.024396 -0.011298" rpy="3.1416 0 -2.8607" />
         <parent link="link_2" />
@@ -130,21 +123,16 @@
         <limit lower="-1.5708" upper="0" effort="150" velocity="3.15" />
     </joint>
     <link name="link_4">
-
-<inertial>
+        <inertial>
             <origin xyz="0.0252665043259715 -0.00292723331935488 0.0213987090714586" rpy="0 0 0" />
             <mass value="0.0428002294983427" />
             <inertia ixx="5.61420284677293E-06" ixy="2.98503982130507E-06" ixz="-1.49030701731882E-14" iyy="1.031136516409E-05" iyz="1.9807022005668E-21" izz="1.51155017105663E-05" />
         </inertial>
-
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
                 <mesh filename="package://armbot_description/meshes/model_best/link_4.STL" />
             </geometry>
-            <material name="">
-                <color rgba="0.898039215686275 0.917647058823529 0.929411764705882 1" />
-            </material>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
@@ -160,22 +148,20 @@
         <axis xyz="0 0 1" />
         <limit lower="-3.14159265" upper="3.14159265" effort="150" velocity="3.15" />
     </joint>
+    <gazebo reference="link_4">
+        <material>Gazebo/Grey</material>
+    </gazebo>
     <link name="link_end">
-
-<inertial>
+        <inertial>
             <origin xyz="0.0426390524583918 -0.00265741118661039 0.0213989196125615" rpy="0 0 0" />
             <mass value="0.0563600278018003" />
             <inertia ixx="3.93235368638855E-06" ixy="-3.15138585201784E-07" ixz="-1.53808854606612E-11" iyy="3.24845632092875E-06" iyz="-9.57169865947569E-11" izz="5.8909074621393E-06" />
         </inertial>
-
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
                 <mesh filename="package://armbot_description/meshes/model_best/link_end.STL" />
             </geometry>
-            <material name="">
-                <color rgba="0.250980392156863 0.250980392156863 0.250980392156863 1" />
-            </material>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
@@ -184,6 +170,9 @@
             </geometry>
         </collision>
     </link>
+    <gazebo reference="link_end">
+        <material>Gazebo/FlatBlack</material>
+    </gazebo>
     <joint name="joint_end" type="fixed">
         <origin xyz="0 0 0" rpy="0 0 0" />
         <parent link="link_4" />
@@ -191,21 +180,16 @@
         <axis xyz="0 0 0" />
     </joint>
     <link name="link_grip">
-
         <inertial>
             <origin xyz="0.00255411407865992 -0.000617197035658913 -0.0189247801905327" rpy="0 0 0" />
             <mass value="0.0557728067893351" />
             <inertia ixx="3.92728176216146E-06" ixy="-2.61102891000333E-12" ixz="3.15138580124161E-07" iyy="5.88583553323269E-06" iyz="9.57169867073918E-11" izz="3.24790074280288E-06" />
         </inertial>
-
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
                 <cylinder length="0.10" radius="0.0025" />
             </geometry>
-            <material name="">
-                <color rgba="0.250980392156863 0.250980392156863 0.250980392156863 1" />
-            </material>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
@@ -214,6 +198,9 @@
             </geometry>
         </collision>
     </link>
+    <gazebo reference="link_grip">
+        <material>Gazebo/FlatBlack</material>
+    </gazebo>
     <joint name="joint_grip" type="revolute">
         <origin xyz="0.038079 -0.0716 0.021516" rpy="1.5708 0 0" />
         <parent link="link_end" />
@@ -221,24 +208,53 @@
         <axis xyz="0 0 -1" />
         <limit lower="-1.570796325" upper="1.570796325" effort="150" velocity="3.15" />
     </joint>
-
-     <link name='camera'>
+    <link name='camera'>
         <visual name='camera_visual'>
-          <origin xyz="0 0 0" rpy=" 0 0 0"/>
-          <geometry>
-            <box size=".05 .05 .05"/>
-          </geometry>
-          <material name="gray"/>
+            <origin xyz="0 0 0" rpy=" 0 0 0"/>
+            <geometry>
+                <box size=".01 .01 .01"/>
+            </geometry>
         </visual>
-     </link>
-
-     <joint type="fixed" name="camera_joint">
-        <origin xyz="0.3 0 0" rpy="0 0 0"/>
+    </link>
+    <joint type="fixed" name="camera_joint">
+        <origin xyz="0.06 -0.0212 0.0205" rpy="0 0 0"/>
         <child link="camera"/>
-        <parent link="base_link"/>
+        <parent link="link_end"/>
     </joint>
-
-<transmission name="trans_joint_1">
+    <gazebo reference="camera">
+      <material>Gazebo/Black</material>
+      <sensor type="camera" name="camera2">
+        <update_rate>30.0</update_rate>
+        <camera name="head">
+          <pose>0 0 0 -1.570796325 0 -1.570796325</pose>
+          <horizontal_fov>1.3962634</horizontal_fov>
+          <image>
+            <width>600</width>
+            <height>500</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.02</near>
+            <far>300</far>
+          </clip>
+        </camera>
+        <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+          <alwaysOn>true</alwaysOn>
+          <updateRate>0.0</updateRate>
+          <cameraName>armbot/camera2</cameraName>
+          <imageTopicName>image_raw</imageTopicName>
+          <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+          <frameName>camera</frameName>
+          <hackBaseline>0.07</hackBaseline>
+          <distortionK1>0.0</distortionK1>
+          <distortionK2>0.0</distortionK2>
+          <distortionK3>0.0</distortionK3>
+          <distortionT1>0.0</distortionT1>
+          <distortionT2>0.0</distortionT2>
+        </plugin>
+      </sensor>
+    </gazebo>
+    <transmission name="trans_joint_1">
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="joint_1">
             <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>

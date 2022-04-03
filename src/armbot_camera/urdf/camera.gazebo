@@ -1,23 +1,5 @@
 <?xml version="1.0"?>
 <robot>
-
-  <gazebo>
-    <plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
-      <legacyMode>false</legacyMode>
-      <alwaysOn>true</alwaysOn>
-      <updateRate>30</updateRate>
-      <leftJoint>left_wheel_hinge</leftJoint>
-      <rightJoint>right_wheel_hinge</rightJoint>
-      <wheelSeparation>0.4</wheelSeparation>
-      <wheelDiameter>0.1</wheelDiameter>
-      <wheelTorque>20</wheelTorque>
-      <commandTopic>cmd_vel</commandTopic>
-      <odometryTopic>odom</odometryTopic>
-      <odometryFrame>odom</odometryFrame>
-      <robotBaseFrame>base</robotBaseFrame>
-    </plugin>
-  </gazebo>
-
   <gazebo reference="base">
       <material>Gazebo/Orange</material>
   </gazebo>
@@ -30,7 +12,7 @@
           <horizontal_fov>1.3962634</horizontal_fov>
           <image>
             <width>600</width>
-            <height>400</height>
+            <height>500</height>
             <format>R8G8B8</format>
           </image>
           <clip>
@@ -41,7 +23,7 @@
         <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
           <alwaysOn>true</alwaysOn>
           <updateRate>0.0</updateRate>
-          <cameraName>diff_drive_robot/camera1</cameraName>
+          <cameraName>armbot/camera1</cameraName>
           <imageTopicName>image_raw</imageTopicName>
           <cameraInfoTopicName>camera_info</cameraInfoTopicName>
           <frameName>camera</frameName>
@@ -54,5 +36,7 @@
         </plugin>
       </sensor>
     </gazebo>
-
+    <gazebo>
+        <static>true</static>
+    </gazebo>
 </robot>
