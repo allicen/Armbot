@@ -1,0 +1,57 @@
+<?xml version='1.0'?>
+
+<robot name="robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:property name="M_PI" value="3.1415926535897931" />
+  <static>true</static>
+  <origin xyz="0 0 1.0" rpy=" 0 1.57079633 0"/>
+
+  <xacro:include filename="$(find armbot_camera)/urdf/camera.gazebo" />
+  <xacro:include filename="$(find armbot_description)/urdf/materials/materials.xacro" />
+
+
+
+  <link name='base'>
+    <pose>0 0 1.5 0 0 0</pose>
+    <inertial>
+      <mass value="1.0"/>
+      <origin xyz="0.0 0 0.0" rpy=" 0 0 0"/>
+      <inertia
+          ixx="0.5" ixy="0" ixz="0"
+          iyy="1.0" iyz="0"
+          izz="0.1"
+      />
+    </inertial>
+
+    <collision name='collision'>
+      <origin xyz="0 0 0.0" rpy=" 0 0 0"/>
+      <geometry>
+        <box size=".2 .2 .2"/>
+      </geometry>
+    </collision>
+
+    <visual name='base_visual'>
+      <origin xyz="0 0 0.0" rpy=" 0 0 0"/>
+      <geometry>
+        <box size=".2 .6 .6"/>
+      </geometry>
+      <material name="green"/>
+    </visual>
+  </link>
+
+  <link name='camera'>
+    <visual name='camera_visual'>
+      <origin xyz="0 0 0" rpy=" 0 0 0"/>
+      <geometry>
+        <box size=".05 .05 .05"/>
+      </geometry>
+      <material name="gray"/>
+    </visual>
+  </link>
+
+  <joint type="fixed" name="camera_joint">
+    <origin xyz="0.15 0 0" rpy="0 0 0"/>
+    <child link="camera"/>
+    <parent link="base"/>
+  </joint>
+
+</robot>

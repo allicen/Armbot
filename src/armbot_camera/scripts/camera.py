@@ -18,7 +18,7 @@ class Camera():
         self.cv_bridge = CvBridge()
         self.Image1 = None
         self.Image2 = None
-        rospy.Subscriber("armbot_camera/camera/image_raw", Image, self.camera_cb)
+        rospy.Subscriber("armbot/camera1/image_raw", Image, self.camera_cb)
         self.rate = rospy.Rate(30)
 
         rospy.on_shutdown(self.shutdown)
