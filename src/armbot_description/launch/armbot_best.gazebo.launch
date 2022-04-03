@@ -3,6 +3,8 @@
 
   <param name="robot_description" textfile="$(find armbot_description)/urdf/model_best/armbot.gazebo.urdf" />
 
+  <param name="keyboard_description" textfile="$(find keyboard_description)/urdf/keyboard.xacro" />
+
   <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" output="screen" >
     <param name="publish_frequency" type="double" value="40.0" />
     <remap from="/joint_states" to="/arm/joint_states" />
@@ -24,5 +26,7 @@
 
 
   <node name="armbot" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model armbot -param robot_description"/>
+
+  <node name="keyboard" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model keyboard -param keyboard_description"/>
 
 </launch>
