@@ -179,7 +179,7 @@
         <child link="link_end" />
         <axis xyz="0 0 0" />
     </joint>
-    <link name="link_grip">
+    <!--<link name="link_grip">
         <inertial>
             <origin xyz="0.00255411407865992 -0.000617197035658913 -0.0189247801905327" rpy="0 0 0" />
             <mass value="0.0557728067893351" />
@@ -207,7 +207,7 @@
         <child link="link_grip" />
         <axis xyz="0 0 -1" />
         <limit lower="-1.570796325" upper="1.570796325" effort="150" velocity="3.15" />
-    </joint>
+    </joint>-->
     <link name='camera'>
         <visual name='camera_visual'>
             <origin xyz="0 0 0" rpy=" 0 0 0"/>
@@ -294,7 +294,7 @@
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
     </transmission>
-    <transmission name="trans_joint_grip">
+<!--     <transmission name="trans_joint_grip">
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="joint_grip">
             <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
@@ -303,10 +303,10 @@
             <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
-    </transmission>
+    </transmission> -->
     <gazebo>
         <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-            <robotNamespace>/</robotNamespace>
+            <robotNamespace>/armbot</robotNamespace>
         </plugin>
     </gazebo>
 </robot>
