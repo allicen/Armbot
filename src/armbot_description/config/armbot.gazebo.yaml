@@ -1,36 +1,27 @@
 armbot:
-  gazebo_ros_control:   
-    type: position_controllers/JointPositionController
-    joints:
-      - joint_1
-      - joint_2
-      - joint_3
-      - joint_4
-      - joint_end
-      - joint_grip
-    pid_gains:
-      joint_1:
-        p: 100
-        d: 1
-        i: 1
-        i_clamp: 1
-      joint_2:
-        p: 100
-        d: 1
-        i: 1
-        i_clamp: 1
-      joint_3:
-        p: 100
-        d: 1
-        i: 1
-        i_clamp: 1
-      joint_4:
-        p: 100
-        d: 1
-        i: 1
-        i_clamp: 1
-      joint_end:
-        p: 100
-        d: 1
-        i: 1
-        i_clamp: 1
+  # Publish all joint states -----------------------------------
+  joint_state_controller:
+    type: joint_state_controller/JointStateController
+    publish_rate: 50  
+  
+  # Position Controllers ---------------------------------------
+  joint_1_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: joint_1
+    pid: {p: 5000.0, i: 0.0, d: 0.0}
+  joint_2_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: joint_2
+    pid: {p: 4000.0, i: 0.0, d: 0.0}
+  joint_3_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: joint_3
+    pid: {p: 4000.0, i: 0.0, d: 0.0}
+  joint_4_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: joint_4
+    pid: {p: -4000.0, i: 0.0, d: 0.0}
+  joint_grip_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: joint_grip
+    pid: {p: 0.0, i: 0.0, d: 0.0} 
