@@ -56,7 +56,7 @@
     <arg name="moveit_manage_controllers" value="true" />
     <arg name="moveit_controller_manager" value="armbot" unless="$(arg fake_execution)"/>
     <arg name="moveit_controller_manager" value="fake" if="$(arg fake_execution)"/>
-    <arg name="execution_type" value="$(arg execution_type)" />
+    <!-- <arg name="execution_type" value="$(arg execution_type)" /> -->
   </include>
 
   <!-- Sensors Functionality -->

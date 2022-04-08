@@ -1,5 +1,6 @@
 <launch>
 
+  <rosparam command="load" file="$(find armbot_description)/config/armbot.gazebo.yaml" />
   <!-- By default, we do not start a database (it can be large) -->
   <arg name="db" default="false" />
   <!-- Allow user to specify database location -->
@@ -25,7 +26,7 @@
   <arg name="gazebo_gui" default="true"/>
   <arg name="paused" default="false"/>
   <!-- By default, use the urdf location provided from the package -->
-  <arg name="urdf_path" default="$(find armbot_description)/urdf/model_best/armbot.urdf"/>
+  <arg name="urdf_path" default="$(find armbot_description)/urdf/model_best/armbot.gazebo.urdf"/>
 
   <!-- launch the gazebo simulator and spawn the robot -->
   <include file="$(find moveit_config_armbot_best)/launch/gazebo.launch" >
