@@ -5,7 +5,6 @@
 <robot name="armbot" xmlns:xacro="http://www.ros.org/wiki/xacro">
     <xacro:include filename="$(find armbot_description)/urdf/model_best/camera.gazebo" />
     <xacro:include filename="$(find armbot_description)/urdf/materials/materials.xacro" />
-
     <link name="world" />
     <joint name="joint1_world" type="fixed">
         <parent link="world" />
@@ -66,7 +65,7 @@
     <link name="link_2">
         <inertial>
             <origin xyz="0.0860772263679253 0.00481374339791762 0.0170516442881634" rpy="0 0 0" />
-            <mass value="0.270091528613745" />
+            <mass value="1.2" />
             <inertia ixx="0.000110751048574797" ixy="9.16010403480173E-05" ixz="1.04403380254391E-11" iyy="0.000514671801468967" iyz="1.34376439423107E-12" izz="0.000606312552798777" />
         </inertial>
         <visual>
@@ -122,11 +121,11 @@
         <axis xyz="0 0 1" />
         <limit lower="-1.5708" upper="0" effort="150" velocity="3.15" />
     </joint>
-    <link name="link_4">
+   <link name="link_4">
         <inertial>
             <origin xyz="0.0252665043259715 -0.00292723331935488 0.0213987090714586" rpy="0 0 0" />
-            <mass value="0.0428002294983427" />
-            <inertia ixx="5.61420284677293E-06" ixy="2.98503982130507E-06" ixz="-1.49030701731882E-14" iyy="1.031136516409E-05" iyz="1.9807022005668E-21" izz="1.51155017105663E-05" />
+            <mass value="0.08" />
+            <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0" />
         </inertial>
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
@@ -154,8 +153,8 @@
     <link name="link_end">
         <inertial>
             <origin xyz="0.0426390524583918 -0.00265741118661039 0.0213989196125615" rpy="0 0 0" />
-            <mass value="0.0563600278018003" />
-            <inertia ixx="3.93235368638855E-06" ixy="-3.15138585201784E-07" ixz="-1.53808854606612E-11" iyy="3.24845632092875E-06" iyz="-9.57169865947569E-11" izz="5.8909074621393E-06" />
+            <mass value="0.040" />
+            <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0" />
         </inertial>
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
@@ -169,6 +168,7 @@
                 <mesh filename="package://armbot_description/meshes/model_best/link_end.STL" />
             </geometry>
         </collision>
+
     </link>
     <gazebo reference="link_end">
         <material>Gazebo/FlatBlack</material>
@@ -182,8 +182,8 @@
     <link name="link_grip">
         <inertial>
             <origin xyz="0.00255411407865992 -0.000617197035658913 -0.0189247801905327" rpy="0 0 0" />
-            <mass value="0.0557728067893351" />
-            <inertia ixx="3.92728176216146E-06" ixy="-2.61102891000333E-12" ixz="3.15138580124161E-07" iyy="5.88583553323269E-06" iyz="9.57169867073918E-11" izz="3.24790074280288E-06" />
+            <mass value="0.01" />
+            <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0" />
         </inertial>
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
@@ -197,8 +197,8 @@
                 <cylinder length="0.10" radius="0.0025" />
             </geometry>
         </collision>
-    </link>
-    <gazebo reference="link_grip">
+    </link> 
+     <gazebo reference="link_grip">
         <material>Gazebo/FlatBlack</material>
     </gazebo>
     <joint name="joint_grip" type="revolute">
@@ -253,57 +253,57 @@
           <distortionT2>0.0</distortionT2>
         </plugin>
       </sensor>
-    </gazebo>
+    </gazebo> 
     <transmission name="trans_joint_1">
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="joint_1">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
         </joint>
         <actuator name="joint_1_motor">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
     </transmission>
     <transmission name="trans_joint_2">
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="joint_2">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
         </joint>
         <actuator name="joint_2_motor">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
     </transmission>
     <transmission name="trans_joint_3">
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="joint_3">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
         </joint>
         <actuator name="joint_3_motor">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
     </transmission>
     <transmission name="trans_joint_4">
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="joint_4">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
         </joint>
         <actuator name="joint_4_motor">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
-    </transmission>
+    </transmission> 
     <transmission name="trans_joint_grip">
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="joint_grip">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
         </joint>
         <actuator name="joint_grip_motor">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
-    </transmission>
+    </transmission> 
     <gazebo>
         <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
             <robotNamespace>/armbot</robotNamespace>
