@@ -7,25 +7,35 @@ armbot:
   gazebo_ros_control:
     pid_gains:
       joint_1:
-        p: 100.0
-        i: 0.0
-        d: 0.0
+        p: 100
+        d: 0
+        i: 0
+        i_clamp: 100
       joint_2:
-        p: 100.0
-        i: 0.0
-        d: 0.0
+        p: 100
+        d: 0
+        i: 0
+        i_clamp: 100
       joint_3:
-        p: 100.0
-        i: 0.0
-        d: 0.0
+        p: 100
+        d: 0
+        i: 0
+        i_clamp: 100
       joint_4:
-        p: 100.0
-        i: 0.0
-        d: 0.0
+        p: 100
+        d: 0
+        i: 0
+        i_clamp: 1
+      joint_end:
+        p: 100
+        d: 0
+        i: 0
+        i_clamp: 100
       joint_grip:
-        p: 100.0
-        i: 0.0
-        d: 0.0
+        p: 100
+        d: 0
+        i: 0
+        i_clamp: 100
   
   # Position Controllers ---------------------------------------
   arm_controller:
@@ -36,37 +46,6 @@ armbot:
       - joint_3
       - joint_4
       - joint_grip
-    gains:
-      joint_1:
-        p: 100
-        d: 1
-        i: 1
-        i_clamp: 1
-      joint_2:
-        p: 100
-        d: 1
-        i: 1
-        i_clamp: 1
-      joint_3:
-        p: 100
-        d: 1
-        i: 1
-        i_clamp: 1
-      joint_4:
-        p: 100
-        d: 1
-        i: 1
-        i_clamp: 1
-      joint_end:
-        p: 100
-        d: 1
-        i: 1
-        i_clamp: 1
-      joint_grip:
-        p: 100
-        d: 1
-        i: 1
-        i_clamp: 1
   controller_list:
     - name: armbot/arm_controller
       action_ns: follow_joint_trajectory
@@ -78,25 +57,3 @@ armbot:
         - joint_3
         - joint_4
         - joint_grip
-
-
-
-#    type: position_controllers/JointPositionController
-#    joint: joint_1
-#    pid: {p: 1000.0, i: 0.0, d: 0.0}
-#  joint_2_position_controller:
-#    type: position_controllers/JointPositionController
-#    joint: joint_2
-#    pid: {p: 500.0, i: 0.0, d: 0.0}
-#  joint_3_position_controller:
-#    type: position_controllers/JointPositionController
-#    joint: joint_3
-#    pid: {p: 300.0, i: 0.0, d: 0.0}
-#  joint_4_position_controller:
-#    type: position_controllers/JointPositionController
-#    joint: joint_4
-#    pid: {p: 100.0, i: 0.0, d: 0.0}
-#  joint_grip_position_controller:
-#    type: position_controllers/JointPositionController
-#    joint: joint_grip
-#    pid: {p: 0.0, i: 0.0, d: 0.0}
