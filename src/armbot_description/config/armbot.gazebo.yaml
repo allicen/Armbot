@@ -7,32 +7,32 @@ armbot:
   gazebo_ros_control:
     pid_gains:
       joint_1:
-        p: 100
+        p: 1000
         d: 0
         i: 0
         i_clamp: 100
       joint_2:
-        p: 100
+        p: 1000
         d: 0
         i: 0
         i_clamp: 100
       joint_3:
-        p: 100
+        p: 1000
         d: 0
         i: 0
         i_clamp: 100
       joint_4:
-        p: 100
+        p: 1000
         d: 0
         i: 0
         i_clamp: 1
       joint_end:
-        p: 100
+        p: 1000
         d: 0
         i: 0
-        i_clamp: 100
+        i_clamp: 1000
       joint_grip:
-        p: 100
+        p: 50
         d: 0
         i: 0
         i_clamp: 100

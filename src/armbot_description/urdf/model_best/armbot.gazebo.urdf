@@ -193,13 +193,13 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <cylinder length="0.10" radius="0.0025" />
+                <cylinder length="0.07" radius="0.0025" />
             </geometry>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <cylinder length="0.10" radius="0.0025" />
+                <cylinder length="0.07" radius="0.0025" />
             </geometry>
         </collision>
     </link> 
@@ -208,7 +208,7 @@
         <dynamics damping="0.5" friction="0.0"/>
     </gazebo>
     <joint name="joint_grip" type="revolute">
-        <origin xyz="0.038079 -0.0716 0.021516" rpy="1.5708 0 0" />
+        <origin xyz="0.038079 -0.057 0.021516" rpy="1.5708 0 0" />
         <parent link="link_end" />
         <child link="link_grip" />
         <axis xyz="0 0 -1" />
