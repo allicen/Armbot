@@ -394,13 +394,16 @@ bool setPosition(armbot_move::SetPosition::Request &req,
         pose.orientation.w = defaultOrientation_w;
 
         move_group->move->setApproximateJointValueTarget(pose,"link_grip");
-        success = (move_group->move->move() == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+        moveit::planning_interface::MoveGroupInterface::Plan plan;
+
+        success = (move_group->move->plan(plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
 
         ROS_INFO("Visualizing move 1 (pose goal) %s", success ? "" : "FAILED");
     }
 
     if (success) {
         std::cout<<"Start move"<<std::endl;
+        move_group->move->move();
         start_state.setFromIK(joint_model_group, pose);
         move_group->move->setStartState(start_state);
 
@@ -412,9 +415,9 @@ bool setPosition(armbot_move::SetPosition::Request &req,
         logs.logSimple("Command execution result: ", result.c_str(), FILENAME);
 
         // Отправляет значения joints в Gazebo
-        std_msgs::Float64MultiArray j_msg;
-        j_msg.data = joints;
-        gazeboJoints.publish(j_msg);
+//        std_msgs::Float64MultiArray j_msg;
+//        j_msg.data = joints;
+//        gazeboJoints.publish(j_msg);
 
 	    // Отправляет значения joints на Arduino
         ros::NodeHandle nh;

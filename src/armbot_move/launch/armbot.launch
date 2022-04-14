@@ -2,9 +2,11 @@
 
     <arg name="model" default="npoa" />
 
+    <rosparam command="load" file="$(find moveit_config_armbot_best)/config/joints_name.yaml" if="$(eval model=='best')"/>
+
     <!-- specify the planning pipeline -->
     <arg name="pipeline" default="ompl" />
-
+ 
     <!-- By default, we will load or override the robot_description -->
     <arg name="load_robot_description" default="true"/>
 
@@ -14,10 +16,10 @@
 
     <!-- We do not have a robot connected, so publish fake joint states -->
     <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" unless="$(arg use_gui)">
-        <rosparam param="source_list">[move_group/fake_controller_joint_states]</rosparam>
+        <rosparam param="source_list">[/joint_states]</rosparam>
     </node>
     <node name="joint_state_publisher" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" if="$(arg use_gui)">
-        <rosparam param="source_list">[move_group/fake_controller_joint_states]</rosparam>
+        <rosparam param="source_list">[/move_group/fake_controller_joint_states]</rosparam>
     </node>
 
     <!-- Given the published joint states, publish tf for the robot links -->
@@ -34,6 +36,7 @@
         <arg name="debug" value="false"/>
         <arg name="pipeline" value="$(arg pipeline)"/>
         <arg name="load_robot_description" value="$(arg load_robot_description)"/>
+        <arg name="publish_monitored_planning_scene" value="true" />
     </include>
 
     <!-- Конфиги Moveit для BEST -->
