@@ -415,9 +415,9 @@ bool setPosition(armbot_move::SetPosition::Request &req,
         logs.logSimple("Command execution result: ", result.c_str(), FILENAME);
 
         // Отправляет значения joints в Gazebo
-//        std_msgs::Float64MultiArray j_msg;
-//        j_msg.data = joints;
-//        gazeboJoints.publish(j_msg);
+       // std_msgs::Float64MultiArray j_msg;
+       // j_msg.data = joints;
+       // gazeboJoints.publish(j_msg);
 
 	    // Отправляет значения joints на Arduino
         ros::NodeHandle nh;
