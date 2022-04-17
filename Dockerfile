@@ -44,7 +44,6 @@ RUN sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main"
             ros-melodic-rosserial \
             ros-melodic-moveit-planners-chomp \
             ros-melodic-rosbridge-server \
-            ros-melodic*joint-trajectory-controller* \
             ros-melodic-visp* && \
     rosdep init && rosdep update && \
     echo "source /opt/ros/melodic/setup.bash"  >> ~/.bashrc && \
@@ -56,3 +55,4 @@ RUN pip install pathlib statistics scipy
 
 RUN apt-get install ros-melodic-joint-state-publisher-gui
 RUN apt-get install ros-melodic-franka-description
+RUN apt-get install ros-melodic*joint-trajectory-controller*

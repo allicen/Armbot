@@ -2,8 +2,6 @@
 
     <arg name="model" default="npoa" />
 
-    <rosparam command="load" file="$(find moveit_config_armbot_best)/config/joints_name.yaml" if="$(eval model=='best')"/>
-
     <!-- specify the planning pipeline -->
     <arg name="pipeline" default="ompl" />
  

@@ -9,7 +9,7 @@
 #include <armbot_move/RunMotorStart.h>
 #include <rosserial_arduino/Test.h>
 #include <std_msgs/String.h>
-#include <std_msgs/Float64MultiArray.h>
+#include <trajectory_msgs/JointTrajectoryPoint.h>
 
 #include <tf/transform_listener.h>
 
@@ -360,8 +360,7 @@ bool setPosition(armbot_move::SetPosition::Request &req,
                 armbot_move::SetPosition::Response &res,
                 MoveOperationClass *move_group,
                 robot_state::RobotState start_state,
-                const robot_state::JointModelGroup *joint_model_group,
-                ros::Publisher gazeboJoints) {
+                const robot_state::JointModelGroup *joint_model_group) {
 
     std::string result = "ERROR";
 
@@ -522,11 +521,11 @@ int main(int argc, char *argv[]) {
 
 
     // Передает значение joint в Gazebo
-    ros::Publisher gazeboJoints = n.advertise<std_msgs::Float64MultiArray>("/armbot/arm_controller/command", 1000);
+    // ros::Publisher gazeboJoints = n.advertise<trajectory_msgs::JointTrajectoryPoint>("/armbot/arm_controller/command", 1000);
 
     // Получает позицию из position
     ros::ServiceServer setPositionService = n.advertiseService<armbot_move::SetPosition::Request, armbot_move::SetPosition::Response>
-                                ("set_position", boost::bind(setPosition, _1, _2, move_group, start_state, joint_model_group, gazeboJoints));
+                                ("set_position", boost::bind(setPosition, _1, _2, move_group, start_state, joint_model_group));
 
     // Запуск робота из UI
     ros::ServiceServer armbotRunService = n.advertiseService("armbot_run", runArmbot);
