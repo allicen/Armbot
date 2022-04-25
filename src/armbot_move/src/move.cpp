@@ -359,7 +359,6 @@ bool writeJointsToArduino(ros::ServiceClient arduinoClient, rosserial_arduino::T
 bool setPosition(armbot_move::SetPosition::Request &req, 
                 armbot_move::SetPosition::Response &res,
                 MoveOperationClass *move_group,
-                robot_state::RobotState start_state,
                 const robot_state::JointModelGroup *joint_model_group) {
 
     std::string result = "ERROR";
@@ -372,6 +371,7 @@ bool setPosition(armbot_move::SetPosition::Request &req,
     // Возврат в исходную позицию не расчитываем
     // Предполагается, что исходная позиция всегда достижима
     if (returnDefaultPosition) {
+        robot_state::RobotState start_state(*(move_group->move)->getCurrentState());
         setJoints(0, 0, 0, 0, 0, move_group, start_state);
 
     } else {
@@ -395,6 +395,8 @@ bool setPosition(armbot_move::SetPosition::Request &req,
         move_group->move->setApproximateJointValueTarget(pose,"link_grip");
         moveit::planning_interface::MoveGroupInterface::Plan plan;
 
+        robot_state::RobotState current_state(*(move_group->move)->getCurrentState());
+        move_group->move->setStartState(current_state);
         success = (move_group->move->plan(plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
 
         ROS_INFO("Visualizing move 1 (pose goal) %s", success ? "" : "FAILED");
@@ -402,9 +404,10 @@ bool setPosition(armbot_move::SetPosition::Request &req,
 
     if (success) {
         std::cout<<"Start move"<<std::endl;
+
+        robot_state::RobotState current_state(*(move_group->move)->getCurrentState());
+        move_group->move->setStartState(current_state);
         move_group->move->move();
-        start_state.setFromIK(joint_model_group, pose);
-        move_group->move->setStartState(start_state);
 
         std::vector<double> joints = move_group->move->getCurrentJointValues();
         logs.logPrintJoints(joints, FILENAME);
@@ -412,11 +415,6 @@ bool setPosition(armbot_move::SetPosition::Request &req,
 
         result = "SUCCESS. Position: " + req.position;
         logs.logSimple("Command execution result: ", result.c_str(), FILENAME);
-
-        // Отправляет значения joints в Gazebo
-       // std_msgs::Float64MultiArray j_msg;
-       // j_msg.data = joints;
-       // gazeboJoints.publish(j_msg);
 
 	    // Отправляет значения joints на Arduino
         ros::NodeHandle nh;
@@ -525,7 +523,7 @@ int main(int argc, char *argv[]) {
 
     // Получает позицию из position
     ros::ServiceServer setPositionService = n.advertiseService<armbot_move::SetPosition::Request, armbot_move::SetPosition::Response>
-                                ("set_position", boost::bind(setPosition, _1, _2, move_group, start_state, joint_model_group));
+                                ("set_position", boost::bind(setPosition, _1, _2, move_group, joint_model_group));
 
     // Запуск робота из UI
     ros::ServiceServer armbotRunService = n.advertiseService("armbot_run", runArmbot);

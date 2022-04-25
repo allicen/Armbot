@@ -73,7 +73,7 @@
     <include>
       <uri>model://ground_plane</uri>
     </include>
-    <!--<model name="my_lightmap_table">
+    <model name="my_lightmap_table">
       <static>true</static>
       <pose>0 0 0.648 0 0 0</pose>
       <allow_auto_disable>1</allow_auto_disable>
@@ -102,6 +102,6 @@
           </material>
         </visual>
       </link>
-    </model>-->
+    </model>
   </world>
 </sdf>

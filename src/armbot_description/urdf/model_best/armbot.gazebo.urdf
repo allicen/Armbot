@@ -32,7 +32,7 @@
     </link>
     <gazebo reference="base_link">
         <material>Gazebo/DarkGrey</material>
-        <!-- <dynamics damping="0.5" friction="0.0"/> -->
+        <dynamics damping="0.5" friction="0.0"/>
     </gazebo>
     <link name="link_1">
         <inertial>
@@ -55,7 +55,7 @@
     </link>
     <gazebo reference="link_1">
         <material>Gazebo/Grey</material>
-        <!-- <dynamics damping="0.5" friction="0.0"/> -->
+        <dynamics damping="0.5" friction="0.0"/>
     </gazebo>
     <joint name="joint_1" type="revolute">
         <origin xyz="0 0 0.023" rpy="0 0 0" />
@@ -67,7 +67,7 @@
     <link name="link_2">
         <inertial>
             <origin xyz="0.0860772263679253 0.00481374339791762 0.0170516442881634" rpy="0 0 0" />
-            <mass value="1.2" />
+            <mass value="0.270091528613745" />
             <inertia ixx="0.000110751048574797" ixy="9.16010403480173E-05" ixz="1.04403380254391E-11" iyy="0.000514671801468967" iyz="1.34376439423107E-12" izz="0.000606312552798777" />
         </inertial>
         <visual>
@@ -86,7 +86,7 @@
     </link>
     <gazebo reference="link_2">
         <material>Gazebo/Grey</material>
-        <!-- <dynamics damping="0.5" friction="0.0"/> -->
+        <dynamics damping="0.5" friction="0.0"/>
     </gazebo>
     <joint name="joint_2" type="revolute">
         <origin xyz="0 0.017 0.126" rpy="1.5708 -1.5708 0" />
@@ -116,7 +116,7 @@
     </link>
     <gazebo reference="link_3">
         <material>Gazebo/Grey</material>
-        <!-- <dynamics damping="0.5" friction="0.0"/> -->
+        <dynamics damping="0.5" friction="0.0"/>
     </gazebo>
     <joint name="joint_3" type="revolute">
         <origin xyz="0.13278 -0.024396 -0.011298" rpy="3.1416 0 -2.8607" />
@@ -128,7 +128,7 @@
    <link name="link_4">
         <inertial>
             <origin xyz="0.0252665043259715 -0.00292723331935488 0.0213987090714586" rpy="0 0 0" />
-            <mass value="0.08" />
+            <mass value="0.0428002294983427" />
             <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0" />
         </inertial>
         <visual>
@@ -153,12 +153,12 @@
     </joint>
     <gazebo reference="link_4">
         <material>Gazebo/Grey</material>
-        <!-- <dynamics damping="0.5" friction="0.0"/> -->
+        <dynamics damping="0.5" friction="0.0"/>
     </gazebo>
     <link name="link_end">
         <inertial>
             <origin xyz="0.0426390524583918 -0.00265741118661039 0.0213989196125615" rpy="0 0 0" />
-            <mass value="0.040" />
+            <mass value="0.0563600278018004" />
             <inertia ixx="0.002" ixy="0.0" ixz="0.0" iyy="0.02" iyz="0.0" izz="0.002"/>
         </inertial>
         <visual>
@@ -176,7 +176,7 @@
     </link>
     <gazebo reference="link_end">
         <material>Gazebo/FlatBlack</material>
-        <!-- <dynamics damping="0.5" friction="0.0"/> -->
+        <dynamics damping="0.5" friction="0.0"/>
     </gazebo>
     <joint name="joint_end" type="fixed">
         <origin xyz="0 0 0" rpy="0 0 0" />
@@ -193,22 +193,22 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <cylinder length="0.07" radius="0.0025" />
+                <cylinder length="0.05" radius="0.0025" />
             </geometry>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <cylinder length="0.07" radius="0.0025" />
+                <cylinder length="0.05" radius="0.0025" />
             </geometry>
         </collision>
     </link> 
      <gazebo reference="link_grip">
         <material>Gazebo/FlatBlack</material>
-        <!-- <dynamics damping="0.5" friction="0.0"/> -->
+        <dynamics damping="0.5" friction="0.0"/>
     </gazebo>
     <joint name="joint_grip" type="revolute">
-        <origin xyz="0.038079 -0.057 0.021516" rpy="1.5708 0 0" />
+        <origin xyz="0.038079 -0.037 0.021516" rpy="1.5708 0 0" />
         <parent link="link_end" />
         <child link="link_grip" />
         <axis xyz="0 0 -1" />
