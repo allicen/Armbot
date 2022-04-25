@@ -6,35 +6,35 @@ armbot:
   gazebo_ros_control:
     pid_gains:
       joint_1:
-        p: 1000
-        d: 0
-        i: 0
-        i_clamp: 0
+        p: 100
+        d: 1
+        i: 1
+        i_clamp: 1
       joint_2:
-        p: 1000
-        d: 0
-        i: 0
-        i_clamp: 0
+        p: 100
+        d: 1
+        i: 1
+        i_clamp: 1
       joint_3:
-        p: 1000
-        d: 0
-        i: 0
-        i_clamp: 0
+        p: 100
+        d: 1
+        i: 1
+        i_clamp: 1
       joint_4:
-        p: 1000
-        d: 0
-        i: 0
-        i_clamp: 0
+        p: 100
+        d: 1
+        i: 1
+        i_clamp: 1
       joint_end:
-        p: 1000
-        d: 0
-        i: 0
-        i_clamp: 0
+        p: 100
+        d: 1
+        i: 1
+        i_clamp: 1
       joint_grip:
-        p: 1000
-        d: 0
-        i: 0
-        i_clamp: 0
+        p: 100
+        d: 1
+        i: 1
+        i_clamp: 1
   
   arm_controller:
     type: position_controllers/JointTrajectoryController
@@ -45,11 +45,11 @@ armbot:
       - joint_4
       - joint_grip
     gains:
-      joint_1: { p: 1000, i: 0, d: 0, i_clamp: 0}
-      joint_2: { p: 10000, i: 0, d: 0, i_clamp: 0}
-      joint_3: { p: 1000, i: 0, d: 0, i_clamp: 0}
-      joint_4: { p: 1000, i: 0, d: 0, i_clamp: 0}
-      joint_grip: { p: 1000, i: 0, d: 0, i_clamp: 0}
+      joint_1: { p: 100, i: 1, d: 1, i_clamp: 1}
+      joint_2: { p: 100, i: 1, d: 1, i_clamp: 1}
+      joint_3: { p: 100, i: 1, d: 1, i_clamp: 1}
+      joint_4: { p: 100, i: 1, d: 1, i_clamp: 1}
+      joint_grip: { p: 100, i: 1, d: 1, i_clamp: 1}
 
 controller_list:
   - name: armbot/arm_controller
