@@ -15,7 +15,6 @@
 <p>Узнать информацию о топике: <code>rostopic info /turtle1/cmd_vel</code></p>
 <p>Узнать информацию о типе топика: <code>rosmsg show geometry_msgs/Twist</code></p>
 <p>Распечатать сообщение из топика: <code>rostopic echo /turtle1/cmd_vel</code></p>
-<p>Построить RQT-граф связи нод: <code>rosrun rqt_graph rqt_graph</code></p>
 <p>Топик - сообщение от одного ко многим. Не ожидает подтверждения подписчика.</p>
 <p>Сервис - сообщение от одного к одному. Ожидает подтверждения от подписчика.</p>
 <p>Посмотреть список сервисов: <code>rosservice list</code></p>
@@ -61,3 +60,10 @@
 <h2>rViz</h2>
 <p>Запустить ноду <code>rosrun rviz rviz</code></p>
 <p>Shift+мышь - перемещение вверх/вниз</p>
+<p><br /></p>
+
+<h2>Вспомогательные элементы для визуализации</h2>
+<p>Построить RQT-граф связи нод: <code>rosrun rqt_graph rqt_graph</code></p>
+<p>Интерфейс для визуальной настройки плагинов и т.д.: <code>rosrun rqt_gui rqt_gui</code></p>
+<p>Посмотреть топики moveIt: <code>rostopic list | grep goal</code></p>
+

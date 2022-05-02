@@ -55,3 +55,5 @@ RUN pip install pathlib statistics scipy
 
 RUN apt-get install ros-melodic-joint-state-publisher-gui
 RUN apt-get install ros-melodic-franka-description
+RUN apt-get install ros-melodic*joint-trajectory-controller*
+RUN apt-get install gedit

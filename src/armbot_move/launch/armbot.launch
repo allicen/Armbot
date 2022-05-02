@@ -4,7 +4,7 @@
 
     <!-- specify the planning pipeline -->
     <arg name="pipeline" default="ompl" />
-
+ 
     <!-- By default, we will load or override the robot_description -->
     <arg name="load_robot_description" default="true"/>
 
@@ -34,6 +34,7 @@
         <arg name="debug" value="false"/>
         <arg name="pipeline" value="$(arg pipeline)"/>
         <arg name="load_robot_description" value="$(arg load_robot_description)"/>
+        <arg name="publish_monitored_planning_scene" value="true" />
     </include>
 
     <!-- Конфиги Moveit для BEST -->

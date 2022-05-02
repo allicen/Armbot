@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="keyboard">
+  <link
+    name="base">
+    <inertial>
+      <origin
+        xyz="0.20298913431108743 0.004842857231127 -0.00965568277916037"
+        rpy="0 0 -1.570796325" />
+      <mass
+        value="0.600478305590293" />
+      <inertia
+        ixx="0.000998570477714973"
+        ixy="-6.45011254701907E-06"
+        ixz="2.21581605764142E-05"
+        iyy="0.00680233708746064"
+        iyz="-2.33214552616074E-05"
+        izz="0.00581941436503155" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0.2 0 0"
+        rpy="0 0 -1.570796325" />
+      <geometry>
+        <mesh
+          filename="package://keyboard_description/meshes/keyboard_gazebo.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0.2 0 0"
+        rpy="0 0 -1.570796325" />
+      <geometry>
+        <mesh
+          filename="package://keyboard_description/meshes/keyboard_gazebo.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <gazebo reference="base">
+      <material>Gazebo/BlackTransparent</material>
+  </gazebo>
+</robot>

@@ -9,6 +9,7 @@
 #include <armbot_move/RunMotorStart.h>
 #include <rosserial_arduino/Test.h>
 #include <std_msgs/String.h>
+#include <trajectory_msgs/JointTrajectoryPoint.h>
 
 #include <tf/transform_listener.h>
 
@@ -358,7 +359,6 @@ bool writeJointsToArduino(ros::ServiceClient arduinoClient, rosserial_arduino::T
 bool setPosition(armbot_move::SetPosition::Request &req, 
                 armbot_move::SetPosition::Response &res,
                 MoveOperationClass *move_group,
-                robot_state::RobotState start_state,
                 const robot_state::JointModelGroup *joint_model_group) {
 
     std::string result = "ERROR";
@@ -371,6 +371,7 @@ bool setPosition(armbot_move::SetPosition::Request &req,
     // Возврат в исходную позицию не расчитываем
     // Предполагается, что исходная позиция всегда достижима
     if (returnDefaultPosition) {
+        robot_state::RobotState start_state(*(move_group->move)->getCurrentState());
         setJoints(0, 0, 0, 0, 0, move_group, start_state);
 
     } else {
@@ -392,15 +393,21 @@ bool setPosition(armbot_move::SetPosition::Request &req,
         pose.orientation.w = defaultOrientation_w;
 
         move_group->move->setApproximateJointValueTarget(pose,"link_grip");
-        success = (move_group->move->move() == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+        moveit::planning_interface::MoveGroupInterface::Plan plan;
+
+        robot_state::RobotState current_state(*(move_group->move)->getCurrentState());
+        move_group->move->setStartState(current_state);
+        success = (move_group->move->plan(plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
 
         ROS_INFO("Visualizing move 1 (pose goal) %s", success ? "" : "FAILED");
     }
 
     if (success) {
         std::cout<<"Start move"<<std::endl;
-        start_state.setFromIK(joint_model_group, pose);
-        move_group->move->setStartState(start_state);
+
+        robot_state::RobotState current_state(*(move_group->move)->getCurrentState());
+        move_group->move->setStartState(current_state);
+        move_group->move->move();
 
         std::vector<double> joints = move_group->move->getCurrentJointValues();
         logs.logPrintJoints(joints, FILENAME);
@@ -408,7 +415,6 @@ bool setPosition(armbot_move::SetPosition::Request &req,
 
         result = "SUCCESS. Position: " + req.position;
         logs.logSimple("Command execution result: ", result.c_str(), FILENAME);
-
 
 	    // Отправляет значения joints на Arduino
         ros::NodeHandle nh;
@@ -511,9 +517,13 @@ int main(int argc, char *argv[]) {
     // Передает значение скорости моторов
     ros::Publisher motorSpeedPub = n.advertise<std_msgs::String>("set_motor_speed", 1000);
 
+
+    // Передает значение joint в Gazebo
+    // ros::Publisher gazeboJoints = n.advertise<trajectory_msgs::JointTrajectoryPoint>("/armbot/arm_controller/command", 1000);
+
     // Получает позицию из position
     ros::ServiceServer setPositionService = n.advertiseService<armbot_move::SetPosition::Request, armbot_move::SetPosition::Response>
-                                ("set_position", boost::bind(setPosition, _1, _2, move_group, start_state, joint_model_group));
+                                ("set_position", boost::bind(setPosition, _1, _2, move_group, joint_model_group));
 
     // Запуск робота из UI
     ros::ServiceServer armbotRunService = n.advertiseService("armbot_run", runArmbot);

@@ -21,7 +21,7 @@
 
   <!-- Старт конфигов moveit -->
   <include file="$(find armbot_move)/launch/armbot.launch">
-    <arg name="use_gui" value="true"/>
+    <arg name="use_gui" value="false"/>
     <arg name="model" value="$(arg model)"/>
   </include>
 
