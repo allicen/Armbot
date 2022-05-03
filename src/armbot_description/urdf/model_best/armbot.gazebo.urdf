@@ -170,7 +170,8 @@
         </collision>
     </link>
     <gazebo reference="link_end">
-        <material>Gazebo/FlatBlack</material>
+        <!-- <material>Gazebo/FlatBlack</material> -->
+        <material>Gazebo/Blue</material>
     </gazebo>
     <joint name="joint_end" type="fixed">
         <origin xyz="0 0 0" rpy="0 0 0" />
@@ -198,7 +199,8 @@
         </collision>
     </link> 
      <gazebo reference="link_grip">
-        <material>Gazebo/FlatBlack</material>
+        <!-- <material>Gazebo/FlatBlack</material> -->
+        <material>Gazebo/Blue</material>
     </gazebo>
     <joint name="joint_grip" type="revolute">
         <origin xyz="0.038079 -0.037 0.021516" rpy="1.5708 0 0" />
