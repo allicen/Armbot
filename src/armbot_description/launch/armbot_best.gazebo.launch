@@ -29,7 +29,7 @@
     <arg name="debug" value="false"/>
   </include>
 
-  <node name="armbot" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model armbot -param robot_description -z 0.967"/>
+  <node name="armbot" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model armbot -param robot_description -z 0.965"/>
 
   <node name="keyboard" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model keyboard -param keyboard_description -x 0.05 -z 0.967"/>
 
