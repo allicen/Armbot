@@ -47,6 +47,7 @@ export class RobotAreaComponent implements OnInit {
     diameterPoint: number = 6;
 
     createNewCommand: boolean = true;
+    robotAreaHide: boolean = false;
 
     @Input() workOptionChecked: string = '';
 
@@ -259,5 +260,9 @@ export class RobotAreaComponent implements OnInit {
         this.sessionService.addLaunchFileRowList(launchFileRow);
 
         this.timerLastValue = now;
+    }
+
+    changeRobotAreaVis() {
+        this.robotAreaHide = !this.robotAreaHide;
     }
 }

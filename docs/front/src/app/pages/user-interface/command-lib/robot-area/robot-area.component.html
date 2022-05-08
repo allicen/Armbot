@@ -1,4 +1,5 @@
-<div *ngIf="!editingAllowed" class="play-buttons">
+<p (click)="changeRobotAreaVis()" class="robot-area-link">{{robotAreaHide ? 'Показать' : 'Скрыть'}} рабочую область</p>
+<div *ngIf="!editingAllowed && !robotAreaHide" class="play-buttons">
   <div>
     Начать запись:
     <button mat-icon-button color="warn" [disabled]="autoGenerateFileOn" (click)="autoGenerateFileStart()">
@@ -51,8 +52,7 @@
   </div>
 </div>
 
-
-<div class="robot-area" #robotArea (click)="saveCoordinate($event)">
+<div class="robot-area" #robotArea (click)="saveCoordinate($event)" *ngIf="!robotAreaHide">
   <div class="point" *ngFor="let item of dataSource;"
        (click)="copyCoordinate(item)"
        [style.width]="diameterPoint+'px'"
