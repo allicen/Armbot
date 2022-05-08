@@ -5,6 +5,7 @@
 #include <armbot_move/SetPosition.h>
 #include <armbot_move/SavePosition.h>
 #include <armbot_move/RunArmbot.h>
+#include <armbot_move/DefaultService.h>
 #include <armbot_move/RunMotor.h>
 #include <armbot_move/RunMotorStart.h>
 #include <rosserial_arduino/Test.h>
@@ -274,6 +275,12 @@ bool runArmbot(armbot_move::RunArmbot::Request &req, armbot_move::RunArmbot::Res
 }
 
 
+bool returnDefaultPositionModel(armbot_move::DefaultService::Request &req, armbot_move::DefaultService::Response &res) {
+    system ("rosrun armbot_move position _param:=\"return_default_position\"");
+    return true;
+}
+
+
 bool runMotor(armbot_move::RunMotor::Request &req, armbot_move::RunMotor::Response &res, ros::Publisher &motorMovePub) {
     char command[50];
     strcpy(command, boost::lexical_cast<std::string>(req.motorNumber).c_str());
@@ -538,6 +545,9 @@ int main(int argc, char *argv[]) {
 
     // Запуск робота из UI
     ros::ServiceServer armbotRunService = n.advertiseService("armbot_run", runArmbot);
+
+    // Возврат модели в исходное положение
+    ros::ServiceServer goDefaultPositionModel = n.advertiseService("return_default_position_model", returnDefaultPositionModel);
 
     // Запуск моторов из UI
     ros::Publisher motorMovePub = n.advertise<std_msgs::String>("move_motor", 1000);

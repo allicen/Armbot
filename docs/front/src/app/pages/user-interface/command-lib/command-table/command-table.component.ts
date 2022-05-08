@@ -12,6 +12,7 @@ import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 import {SessionService} from "../../../../serviсes/session.service";
 import {ArmbotService} from "../../../../serviсes/armbot.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {RosArmbotService} from "../../../../serviсes/roslib.service";
 
 @UntilDestroy()
 @Component({
@@ -247,5 +248,9 @@ export class CommandTableComponent implements OnInit {
 
     connectWS() {
         this.wsService.tryConnect();
+    }
+
+    returnDefaultPosition() {
+        this.armbotService.returnDefaultPosition();
     }
 }

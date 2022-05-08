@@ -68,6 +68,7 @@ add_service_files(
    RunArmbot.srv
    RunMotor.srv
    RunMotorStart.srv
+   DefaultService.srv
 )
 
 ## Generate actions in the 'action' folder

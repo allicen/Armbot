@@ -111,4 +111,19 @@ export class RosArmbotService {
             this.setArmbotStatus(this.config.robotStatus.ready);
         });
     }
+
+    /**
+     * Вернуть модель робота в исходное положение
+     * */
+    returnDefaultPosition(): void  {
+        const service = new RosService<{},{ topics: string[]; types: string[]; }>({
+            ros: this.rbServer,
+            name: '/return_default_position_model',
+            serviceType: 'armbot_move/DefaultService',
+        });
+        service.call({}, (msg) => {
+            console.log(`ROS MODEL FINISH. RESULT`);
+            this.setArmbotStatus(this.config.robotStatus.ready);
+        });
+    }
 }

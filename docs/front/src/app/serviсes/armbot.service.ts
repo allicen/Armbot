@@ -70,4 +70,8 @@ export class ArmbotService {
     runMotorStart(): void {
         this.rosArmbotService.runMotorStart();
     }
+
+    returnDefaultPosition() {
+        this.rosArmbotService.returnDefaultPosition();
+    }
 }
