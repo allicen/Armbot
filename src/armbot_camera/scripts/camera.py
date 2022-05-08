@@ -12,6 +12,7 @@ import cv2
 from cv_bridge import CvBridge, CvBridgeError
 
 from std_msgs.msg import String
+from armbot_camera.srv import DefaultService, DefaultServiceResponse
 
 class Camera():
 
@@ -22,13 +23,24 @@ class Camera():
         self.Image1 = None
         self.Image2 = None
 
-        self.start_position = [600, 500, 0, 0]
+        #### known sizes
+        self.servo_width_real = 0
+        self.robot_width = 0
+        self.image_width = 600
+        self.image_height = 600
+
+        self.start_position = [self.image_width, self.image_height, 0, 0]
         self.line_position_prev = (0, 0)
         self.permissible_error = 0.0005
 
         rospy.Subscriber("armbot/camera1/image_raw", Image, self.camera_cb)
         rospy.Subscriber("armbot/camera2/image_raw", Image, self.camera_cb2)
         rospy.Subscriber("/return_default_position", String, self.return_default_position)
+
+        self.pub = rospy.Publisher('room_camera_one', Image, queue_size=10)
+
+        rospy.Service('return_default_pos_camera', DefaultService, self.return_default_pos_camera)
+
 
         self.rate = rospy.Rate(30)
 
@@ -47,6 +59,9 @@ class Camera():
 
         if self.start_position == [600, 500, 0, 0]:
             self.start_position = image_info[1]
+
+        if self.Image1 is not None:
+            self.pub.publish(self.cv_bridge.cv2_to_imgmsg(self.Image1))
 
 
 
@@ -109,6 +124,12 @@ class Camera():
         print(self.start_position)
         print(pos)
 
+
+    def return_default_pos_camera(self, req):
+        pos = self.get_position_arm_tool(self.Image1)[1]
+        print(self.start_position)
+        print(pos)
+        return DefaultServiceResponse("RESP")
 
 
     def spin(self):

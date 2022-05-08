@@ -1,9 +1,9 @@
-import {Injectable} from "@angular/core";
+import {Injectable, OnInit} from "@angular/core";
 import {BehaviorSubject, Observable} from "rxjs";
 import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 import {RosArmbotService} from "./roslib.service";
 import {Config} from "../config/config";
-import {Coordinate} from "../model/models";
+import {CameraImage, Coordinate} from "../model/models";
 
 @UntilDestroy()
 @Injectable({ providedIn: 'root' })
@@ -12,6 +12,12 @@ export class ArmbotService {
     private armbotMessage$: BehaviorSubject<string> = new BehaviorSubject<string>('');
     private armbotStatus$: BehaviorSubject<string> = new BehaviorSubject<string>('');
     private armbotButtonDisabled$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    private armbotCameraImage$: BehaviorSubject<CameraImage> = new BehaviorSubject<CameraImage>({
+        data: null,
+        encoding: null,
+        width: 600,
+        height: 300
+    });
 
     constructor(public rosArmbotService: RosArmbotService, private config: Config) {
         this.rosArmbotService.getArmbotStatus().pipe(untilDestroyed(this)).subscribe(status => {
@@ -25,6 +31,8 @@ export class ArmbotService {
                 this.setArmbotMessage('Робот свободен');
             }
         });
+
+        this.rosArmbotService.getImageFromCamera().pipe(untilDestroyed(this)).subscribe(data => this.armbotCameraImage$.next(data));
     }
 
     armbotOn(): void {
@@ -73,5 +81,13 @@ export class ArmbotService {
 
     returnDefaultPosition() {
         this.rosArmbotService.returnDefaultPosition();
+    }
+
+    returnDefaultPositionCamera() {
+        this.rosArmbotService.returnDefaultPositionCamera();
+    }
+
+    getImageFromCamera(): Observable<any> {
+        return this.armbotCameraImage$.asObservable();
     }
 }

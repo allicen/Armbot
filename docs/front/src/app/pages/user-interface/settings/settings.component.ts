@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 import {HttpService} from "../../../serviсes/http.service";
 import {Config} from "../../../config/config";
+import {ArmbotService} from "../../../serviсes/armbot.service";
+import {CameraImage} from "../../../model/models";
 
 @UntilDestroy()
 @Component({
@@ -11,12 +13,23 @@ import {Config} from "../../../config/config";
 })
 export class SettingsComponent implements OnInit {
 
-    constructor(private httpService: HttpService, private config: Config) { }
+    constructor(private httpService: HttpService, private config: Config, private armbotService: ArmbotService) { }
 
     settings: any;
+    panelOpenState: boolean = false;
+    imageCamera: CameraImage = {
+        data: null,
+        encoding: null,
+        width: 600,
+        height: 300
+    };
 
     ngOnInit(): void {
         this.httpService.getArmbotConfigs().pipe(untilDestroyed(this)).subscribe(data => this.loadConfig(data));
+        this.armbotService.getImageFromCamera().pipe(untilDestroyed(this)).subscribe(data =>  {
+          this.imageCamera = data;
+          // console.log(data)
+        });
     }
 
     configUpdate() {
@@ -34,5 +47,9 @@ export class SettingsComponent implements OnInit {
             });
         }
         this.settings = this.config.robotConfig;
+    }
+
+    returnDefaultPositionCamera() {
+        this.armbotService.returnDefaultPositionCamera();
     }
 }

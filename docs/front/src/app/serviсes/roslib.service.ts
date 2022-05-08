@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import {NgxRoslibService, Rosbridge, RosService} from 'ngx-roslib';
+import {NgxRoslibService, Rosbridge, RosoutMessage, RosService, RosTopic} from 'ngx-roslib';
 import {BehaviorSubject, Observable} from "rxjs";
 import {Config} from "../config/config";
-import {Coordinate} from "../model/models";
+import {CameraImage, Coordinate} from "../model/models";
 
 @Injectable({
   providedIn: 'root',
@@ -12,6 +12,12 @@ export class RosArmbotService {
     armbotIsConnected: boolean = false;
 
     private armbotStatus$: BehaviorSubject<string> = new BehaviorSubject<string>(this.config.robotStatus.disconnect);
+    private armbotCameraImage$: BehaviorSubject<CameraImage> = new BehaviorSubject<CameraImage>({
+        data: null,
+        encoding: null,
+        width: 600,
+        height: 300
+    });
 
     constructor(public roslibService: NgxRoslibService, private config: Config) {
         this.rbServer = this.roslibService.connect(this.config.webSocketRosUrl);
@@ -126,4 +132,43 @@ export class RosArmbotService {
             this.setArmbotStatus(this.config.robotStatus.ready);
         });
     }
+
+    /**
+     * Вернуться в исходное положение по камере
+     * */
+    returnDefaultPositionCamera() {
+        const service = new RosService<{},{ topics: string[]; types: string[]; }>({
+            ros: this.rbServer,
+            name: '/return_default_pos_camera',
+            serviceType: 'armbot_camera/DefaultService',
+        });
+        service.call({}, (msg) => {
+            console.log(`ROS MODEL CAMERA FINISH. RESULT`);
+            console.log(msg)
+        });
+    }
+
+    /**
+     * Получить изображение с камеры
+     * */
+     getImageFromCamera(): Observable<any> {
+
+         const rosout = new RosTopic<RosoutMessage>({
+             ros: this.rbServer,
+             name: '/room_camera_one',
+             messageType: 'sensor_msgs/Image',
+         });
+         rosout.subscribe((msg: any) => {
+             if (msg) {
+                 this.armbotCameraImage$.next({
+                     data: msg.data,
+                     encoding: msg.encoding,
+                     width: msg.width,
+                     height: msg.height
+                 })
+             }
+         });
+
+         return this.armbotCameraImage$.asObservable();
+     }
 }

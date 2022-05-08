@@ -1,28 +1,73 @@
 <h1>Настройки</h1>
-<div class="header-row">
-  <h2>Конфиги робота</h2>
-  <div>
-    <button mat-raised-button color="warn" (click)="configUpdate()"  class="button">Обновить</button>
-  </div>
-</div>
-<p>Конфиги берутся из файла /home/armbot-info/Armbot.txt.</p>
-<p><strong>Важно!</strong> Чтобы конфиги применились после обновления на роботе, надо перезапустить move.</p>
-<table>
-  <ng-container *ngFor="let item of settings">
-    <ng-container *ngIf="item.value">
-      <tr>
-        <td class="right">
-          {{item.name}}
-        </td>
-        <td>
-          <mat-form-field appearance="fill">
-            <mat-label>{{item.type}}</mat-label>
-            <ng-container>
-              <input type="text" matInput [value]="item.value" [disabled]="true">
-            </ng-container>
-          </mat-form-field>
-        </td>
-      </tr>
-    </ng-container>
-  </ng-container>
-</table>
+<mat-accordion>
+  <mat-expansion-panel (opened)="panelOpenState = true"
+                       (closed)="panelOpenState = false">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Настроить робота по камере
+      </mat-panel-title>
+      <mat-panel-description>
+        Настройка робота по камерам
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <div class="header-row">
+      <div>
+        <h2>Настроить робота по камере</h2>
+      </div>
+    </div>
+    <div class="camera-content">
+      <div class="camera-block" [style.width]="imageCamera.width+'px'" [style.height]="imageCamera.height+'px'">
+        <div *ngIf="!imageCamera.encoding || !imageCamera.data" class="info">Камера не подключена</div>
+      </div>
+      <div class="camera-info">
+        <button mat-raised-button color="primary"
+                (click)="returnDefaultPositionCamera()"  class="button"
+                [disabled]="!imageCamera.encoding || !imageCamera.data">Сделать как стартовую позицию</button>
+        <button mat-raised-button color="primary"
+                (click)="returnDefaultPositionCamera()"  class="button"
+                [disabled]="!imageCamera.encoding || !imageCamera.data">Получить информацию</button>
+        <button mat-raised-button color="primary" (click)="returnDefaultPositionCamera()"
+                class="button" [disabled]="!imageCamera.encoding || !imageCamera.data">Вернуть в начало по камере</button>
+        <span *ngIf="!imageCamera.encoding || !imageCamera.data">
+          Необходимо подключить камеру для дальнейшей работы с изображением с камеры
+        </span>
+      </div>
+    </div>
+  </mat-expansion-panel>
+  <mat-expansion-panel (opened)="panelOpenState = true"
+                       (closed)="panelOpenState = false">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Конфиги робота
+      </mat-panel-title>
+      <mat-panel-description>
+        Просмотр и обновление конфигов робота из файла
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <div class="header-row">
+      <h2>Конфиги робота</h2>
+      <button mat-raised-button color="warn" (click)="configUpdate()"  class="button">Обновить</button>
+    </div>
+    <p>Конфиги берутся из файла /home/armbot-info/Armbot.txt.</p>
+    <p><strong>Важно!</strong> Чтобы конфиги применились после обновления на роботе, надо перезапустить move.</p>
+    <table>
+      <ng-container *ngFor="let item of settings">
+        <ng-container *ngIf="item.value">
+          <tr>
+            <td class="right">
+              {{item.name}}
+            </td>
+            <td>
+              <mat-form-field appearance="fill">
+                <mat-label>{{item.type}}</mat-label>
+                <ng-container>
+                  <input type="text" matInput [value]="item.value" [disabled]="true">
+                </ng-container>
+              </mat-form-field>
+            </td>
+          </tr>
+        </ng-container>
+      </ng-container>
+    </table>
+  </mat-expansion-panel>
+</mat-accordion>

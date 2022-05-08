@@ -40,3 +40,10 @@ export interface Motor {
   forwardDirection: string,
   inverseDirection: string
 }
+
+export interface CameraImage {
+  data: string | null,
+  encoding: string | null,
+  width: number,
+  height: number
+}

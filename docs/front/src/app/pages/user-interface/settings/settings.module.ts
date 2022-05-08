@@ -12,6 +12,7 @@ import {ReactiveFormsModule} from "@angular/forms";
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {MatButtonModule} from "@angular/material/button";
 import {MatInputModule} from "@angular/material/input";
+import {MatExpansionModule} from "@angular/material/expansion";
 
 @NgModule({
   declarations: [
@@ -33,6 +34,7 @@ import {MatInputModule} from "@angular/material/input";
         DragDropModule,
         MatButtonModule,
         MatInputModule,
+        MatExpansionModule,
     ],
   exports: [SettingsComponent],
   providers: [],
