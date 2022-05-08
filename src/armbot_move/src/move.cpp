@@ -359,7 +359,8 @@ bool writeJointsToArduino(ros::ServiceClient arduinoClient, rosserial_arduino::T
 bool setPosition(armbot_move::SetPosition::Request &req, 
                 armbot_move::SetPosition::Response &res,
                 MoveOperationClass *move_group,
-                const robot_state::JointModelGroup *joint_model_group) {
+                const robot_state::JointModelGroup *joint_model_group,
+                ros::Publisher setPositionService) {
 
     std::string result = "ERROR";
 
@@ -442,6 +443,12 @@ bool setPosition(armbot_move::SetPosition::Request &req,
             writeJointsToArduino(arduinoClient, srv);
             strcpy(positionInfo, "");
 
+            if (returnDefaultPosition) {
+                std_msgs::String msg;
+                msg.data = "RETURN";
+                setPositionService.publish(msg);
+            }
+
             allCommands.clear();
             commandDelay.clear();
 
@@ -521,9 +528,13 @@ int main(int argc, char *argv[]) {
     // Передает значение joint в Gazebo
     // ros::Publisher gazeboJoints = n.advertise<trajectory_msgs::JointTrajectoryPoint>("/armbot/arm_controller/command", 1000);
 
+
+    // Робот вернулся в исходную позицию
+    ros::Publisher robotReturnDefaultPosition = n.advertise<std_msgs::String>("return_default_position", 1000);
+
     // Получает позицию из position
     ros::ServiceServer setPositionService = n.advertiseService<armbot_move::SetPosition::Request, armbot_move::SetPosition::Response>
-                                ("set_position", boost::bind(setPosition, _1, _2, move_group, joint_model_group));
+                                ("set_position", boost::bind(setPosition, _1, _2, move_group, joint_model_group, robotReturnDefaultPosition));
 
     // Запуск робота из UI
     ros::ServiceServer armbotRunService = n.advertiseService("armbot_run", runArmbot);
