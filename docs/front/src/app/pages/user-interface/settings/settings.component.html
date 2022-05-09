@@ -1,7 +1,8 @@
 <h1>Настройки</h1>
 <mat-accordion>
-  <mat-expansion-panel (opened)="panelOpenState = true"
-                       (closed)="panelOpenState = false">
+  <mat-expansion-panel (opened)="cameraImageShow = true"
+                       (closed)="cameraImageShow = false"
+                       [expanded]="true">
     <mat-expansion-panel-header>
       <mat-panel-title>
         Настроить робота по камере
