@@ -60,9 +60,6 @@ class Camera():
         if self.start_position == [600, 500, 0, 0]:
             self.start_position = image_info[1]
 
-        if self.Image1 is not None:
-            self.pub.publish(self.cv_bridge.cv2_to_imgmsg(self.Image1))
-
 
 
     def camera_cb2(self, msg):
@@ -142,6 +139,9 @@ class Camera():
                 cv2.imshow("Room camera", self.Image1)
                 cv2.imshow("Robot camera", self.Image2)
                 cv2.waitKey(3)
+
+            if self.Image1 is not None:
+                self.pub.publish(self.cv_bridge.cv2_to_imgmsg(self.Image1))
 
 
     def shutdown(self):
