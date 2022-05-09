@@ -18,6 +18,10 @@
     <div class="camera-content">
       <div class="camera-block" [style.width]="imageCamera.width+'px'" [style.height]="imageCamera.height+'px'">
         <div *ngIf="!imageCamera.encoding || !imageCamera.data" class="info">Камера не подключена</div>
+        <img *ngIf="imagePath"
+             [src]="imagePath"
+             alt="Image from camera"
+             [style.width]="imageCamera.width+'px'" [style.height]="imageCamera.height+'px'"/>
       </div>
       <div class="camera-info">
         <button mat-raised-button color="primary"

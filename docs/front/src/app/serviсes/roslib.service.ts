@@ -156,7 +156,7 @@ export class RosArmbotService {
          const rosout = new RosTopic<RosoutMessage>({
              ros: this.rbServer,
              name: '/room_camera_one',
-             messageType: 'sensor_msgs/Image',
+             messageType: 'armbot_camera/ImageCamera',
          });
          rosout.subscribe((msg: any) => {
              if (msg) {

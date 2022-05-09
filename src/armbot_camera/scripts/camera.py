@@ -9,10 +9,12 @@ from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Image
 
 import cv2
+import base64
 from cv_bridge import CvBridge, CvBridgeError
 
 from std_msgs.msg import String
 from armbot_camera.srv import DefaultService, DefaultServiceResponse
+from armbot_camera.msg import ImageCamera
 
 class Camera():
 
@@ -22,6 +24,7 @@ class Camera():
         self.cv_bridge = CvBridge()
         self.Image1 = None
         self.Image2 = None
+        self.msg_img = ImageCamera()
 
         #### known sizes
         self.servo_width_real = 0
@@ -37,7 +40,7 @@ class Camera():
         rospy.Subscriber("armbot/camera2/image_raw", Image, self.camera_cb2)
         rospy.Subscriber("/return_default_position", String, self.return_default_position)
 
-        self.pub = rospy.Publisher('room_camera_one', Image, queue_size=10)
+        self.pub = rospy.Publisher('room_camera_one', ImageCamera, queue_size=10)
 
         rospy.Service('return_default_pos_camera', DefaultService, self.return_default_pos_camera)
 
@@ -141,7 +144,18 @@ class Camera():
                 cv2.waitKey(3)
 
             if self.Image1 is not None:
-                self.pub.publish(self.cv_bridge.cv2_to_imgmsg(self.Image1))
+                img = self.cv_bridge.cv2_to_imgmsg(self.Image1)
+
+                _, buffer_img= cv2.imencode('.jpg', self.Image1)
+
+                self.msg_img.data = base64.b64encode(buffer_img).decode("utf-8")
+                self.msg_img.encoding = 'base64'
+                self.msg_img.width = img.width
+                self.msg_img.height = img.height
+
+                # print(self.msg_img.data)
+
+                self.pub.publish(self.msg_img)
 
 
     def shutdown(self):
