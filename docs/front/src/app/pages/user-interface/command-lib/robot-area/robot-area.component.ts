@@ -100,6 +100,7 @@ export class RobotAreaComponent implements OnInit {
 
         this.sessionService.getNextFileRowId().pipe(untilDestroyed(this)).subscribe(data => this.maxId = data);
         this.sessionService.getDiameterPoint().pipe(untilDestroyed(this)).subscribe(data => this.diameterPoint = data);
+        this.storage.getRobotAreaHide().pipe(untilDestroyed(this)).subscribe(data => this.robotAreaHide = data);
     }
 
     ngAfterViewChecked() {
@@ -263,6 +264,6 @@ export class RobotAreaComponent implements OnInit {
     }
 
     changeRobotAreaVis() {
-        this.robotAreaHide = !this.robotAreaHide;
+        this.storage.setRobotAreaHide(!this.robotAreaHide);
     }
 }

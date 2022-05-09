@@ -5,6 +5,7 @@ import {Config} from "../../../config/config";
 import {ArmbotService} from "../../../serviсes/armbot.service";
 import {CameraImage} from "../../../model/models";
 import { DomSanitizer } from '@angular/platform-browser';
+import {StorageService} from "../../../serviсes/storage.service";
 
 @UntilDestroy()
 @Component({
@@ -17,7 +18,8 @@ export class SettingsComponent implements OnInit {
     constructor(private httpService: HttpService,
                 private config: Config,
                 private armbotService: ArmbotService,
-                private _sanitizer: DomSanitizer) { }
+                private _sanitizer: DomSanitizer,
+                private storage: StorageService) { }
 
     settings: any;
     panelOpenState: boolean = false;
@@ -28,6 +30,7 @@ export class SettingsComponent implements OnInit {
         height: 300
     };
     imagePath: any;
+    cameraImageShow: boolean = true;
 
     ngOnInit(): void {
         this.httpService.getArmbotConfigs().pipe(untilDestroyed(this)).subscribe(data => this.loadConfig(data));
@@ -37,6 +40,7 @@ export class SettingsComponent implements OnInit {
                 this.imagePath = this._sanitizer.bypassSecurityTrustResourceUrl('data:image/jpg;base64,' + this.imageCamera.data);
             }
         });
+        this.storage.getCameraImageShow().pipe(untilDestroyed(this)).subscribe(data => this.cameraImageShow = data);
     }
 
     configUpdate() {

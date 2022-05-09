@@ -21,6 +21,8 @@ export class StorageService {
     private coordinateDeleteError$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     private coordinateDeleteMessage$: BehaviorSubject<string> = new BehaviorSubject<string>('');
     private clickCoordinate$: BehaviorSubject<Coordinate> = new BehaviorSubject<Coordinate>(this.config.coordinateDefault);
+    private robotAreaHide$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    private cameraImageShow$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
     urlArr = this.router.url.split('/');
 
@@ -104,6 +106,22 @@ export class StorageService {
 
     setCurrentStep(step: number): void {
         this.currentStep$.next(step);
+    }
+
+    getRobotAreaHide(): Observable<boolean> {
+        return this.robotAreaHide$.asObservable();
+    }
+
+    setRobotAreaHide(value: boolean): void {
+        this.robotAreaHide$.next(value);
+    }
+
+    getCameraImageShow(): Observable<boolean> {
+        return this.cameraImageShow$.asObservable();
+    }
+
+    setCameraImageShow(value: boolean): void {
+        this.cameraImageShow$.next(value);
     }
 
     clearVariable(): void {
