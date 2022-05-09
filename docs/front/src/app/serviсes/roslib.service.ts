@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {NgxRoslibService, Rosbridge, RosoutMessage, RosService, RosTopic} from 'ngx-roslib';
 import {BehaviorSubject, Observable} from "rxjs";
 import {Config} from "../config/config";
-import {CameraImage, Coordinate} from "../model/models";
+import {CameraImage, Coordinate, RobotInfoFromCamera} from "../model/models";
 
 @Injectable({
   providedIn: 'root',
@@ -18,6 +18,16 @@ export class RosArmbotService {
         width: 600,
         height: 300
     });
+    private robotDiagnosticInfo$: BehaviorSubject<RobotInfoFromCamera> = new BehaviorSubject<RobotInfoFromCamera>({
+        resultExists: null,
+        info:  null,
+        isStartPosition: null,
+        xError: null,
+        yError: null,
+        zError: null
+    });
+
+    private robotReturnDefaultPosition$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
     constructor(public roslibService: NgxRoslibService, private config: Config) {
         this.rbServer = this.roslibService.connect(this.config.webSocketRosUrl);
@@ -144,8 +154,20 @@ export class RosArmbotService {
         });
         service.call({}, (msg) => {
             console.log(`ROS MODEL CAMERA FINISH. RESULT`);
-            console.log(msg)
+            this.setRobotDiagnosticInfo({
+                resultExists: null,
+                info: null,
+                isStartPosition: null,
+                xError: null,
+                yError: null,
+                zError: null
+            });
+            this.robotReturnDefaultPosition$.next(true);
         });
+    }
+
+    getRobotReturnDefaultPosition(): Observable<boolean> {
+        return this.robotReturnDefaultPosition$.asObservable();
     }
 
     /**
@@ -171,4 +193,33 @@ export class RosArmbotService {
 
          return this.armbotCameraImage$.asObservable();
      }
+
+     getRobotDiagnosticInfo():Observable<RobotInfoFromCamera> {
+        return this.robotDiagnosticInfo$.asObservable();
+     }
+
+     setRobotDiagnosticInfo(msg: any) {
+        this.robotDiagnosticInfo$.next({
+          resultExists: msg.is_start_position || msg.x_error || msg.y_error || msg.z_error,
+          info:  msg.info,
+          isStartPosition: msg.is_start_position,
+          xError: msg.x_error,
+          yError: msg.y_error,
+          zError: msg.z_error,
+        })
+     }
+
+    /**
+     *  Диагностика робота (получить инфу об отклонениях от начальной позиции)
+     * */
+    robotDiagnostics() {
+        const service = new RosService<{},{ topics: string[]; types: string[]; }>({
+            ros: this.rbServer,
+            name: '/robot_info_by_camera',
+            serviceType: 'armbot_camera/RobotInfoService',
+        });
+        service.call({}, (msg) => {
+            this.setRobotDiagnosticInfo(msg);
+        });
+    }
 }

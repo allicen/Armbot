@@ -1,0 +1,7 @@
+string input
+---
+string info
+bool is_start_position
+float32 x_error
+float32 y_error
+float32 z_error

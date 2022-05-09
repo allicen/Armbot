@@ -47,3 +47,12 @@ export interface CameraImage {
   width: number,
   height: number
 }
+
+export interface RobotInfoFromCamera {
+  resultExists: boolean | null; // Результат пришел
+  info: string | null,
+  isStartPosition: boolean | null,
+  xError: number | null,
+  yError: number | null,
+  zError: number | null
+}

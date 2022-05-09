@@ -3,7 +3,7 @@ import {BehaviorSubject, Observable} from "rxjs";
 import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 import {RosArmbotService} from "./roslib.service";
 import {Config} from "../config/config";
-import {CameraImage, Coordinate} from "../model/models";
+import {CameraImage, Coordinate, RobotInfoFromCamera} from "../model/models";
 
 @UntilDestroy()
 @Injectable({ providedIn: 'root' })

@@ -3,9 +3,10 @@ import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 import {HttpService} from "../../../serviсes/http.service";
 import {Config} from "../../../config/config";
 import {ArmbotService} from "../../../serviсes/armbot.service";
-import {CameraImage} from "../../../model/models";
+import {CameraImage, RobotInfoFromCamera} from "../../../model/models";
 import { DomSanitizer } from '@angular/platform-browser';
 import {StorageService} from "../../../serviсes/storage.service";
+import {RosArmbotService} from "../../../serviсes/roslib.service";
 
 @UntilDestroy()
 @Component({
@@ -19,7 +20,8 @@ export class SettingsComponent implements OnInit {
                 private config: Config,
                 private armbotService: ArmbotService,
                 private _sanitizer: DomSanitizer,
-                private storage: StorageService) { }
+                private storage: StorageService,
+                private roslibService: RosArmbotService) { }
 
     settings: any;
     panelOpenState: boolean = false;
@@ -31,6 +33,9 @@ export class SettingsComponent implements OnInit {
     };
     imagePath: any;
     cameraImageShow: boolean = true;
+    robotDiagnosticInfo: RobotInfoFromCamera | undefined;
+    diagnosticMessage: string | undefined;
+    returnDefaultPosition: boolean = false;
 
     ngOnInit(): void {
         this.httpService.getArmbotConfigs().pipe(untilDestroyed(this)).subscribe(data => this.loadConfig(data));
@@ -41,6 +46,18 @@ export class SettingsComponent implements OnInit {
             }
         });
         this.storage.getCameraImageShow().pipe(untilDestroyed(this)).subscribe(data => this.cameraImageShow = data);
+        this.roslibService.getRobotDiagnosticInfo().pipe(untilDestroyed(this)).subscribe(data => {
+            this.robotDiagnosticInfo = data;
+            if (this.robotDiagnosticInfo.resultExists) {
+                this.diagnosticMessage = "Информация получена";
+            }
+        });
+        this.roslibService.getRobotReturnDefaultPosition().pipe(untilDestroyed(this)).subscribe(data => {
+            this.returnDefaultPosition = data;
+            if (!this.robotDiagnosticInfo?.resultExists && this.returnDefaultPosition) {
+                this.diagnosticMessage = "Робот вернулся в исходное положение";
+            }
+        });
     }
 
     configUpdate() {
@@ -62,5 +79,9 @@ export class SettingsComponent implements OnInit {
 
     returnDefaultPositionCamera() {
         this.armbotService.returnDefaultPositionCamera();
+    }
+
+    diagnostics() {
+        this.roslibService.robotDiagnostics();
     }
 }

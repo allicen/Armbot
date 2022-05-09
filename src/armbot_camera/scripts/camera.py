@@ -14,6 +14,7 @@ from cv_bridge import CvBridge, CvBridgeError
 
 from std_msgs.msg import String
 from armbot_camera.srv import DefaultService, DefaultServiceResponse
+from armbot_camera.srv import RobotInfoService, RobotInfoServiceResponse
 from armbot_camera.msg import ImageCamera
 
 class Camera():
@@ -43,6 +44,7 @@ class Camera():
         self.pub = rospy.Publisher('room_camera_one', ImageCamera, queue_size=10)
 
         rospy.Service('return_default_pos_camera', DefaultService, self.return_default_pos_camera)
+        rospy.Service('robot_info_by_camera', RobotInfoService, self.robot_info)
 
 
         self.rate = rospy.Rate(30)
@@ -130,6 +132,19 @@ class Camera():
         print(self.start_position)
         print(pos)
         return DefaultServiceResponse("RESP")
+
+    def robot_info(self, req):
+
+        response = RobotInfoServiceResponse()
+        response.info = "simple text"
+        response.is_start_position = False
+        response.x_error = 10
+        response.y_error = 20
+        response.z_error = 0.5
+
+        print(response)
+
+        return response
 
 
     def spin(self):
