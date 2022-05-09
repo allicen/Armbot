@@ -27,11 +27,12 @@ class Camera():
         self.Image2 = None
         self.msg_img = ImageCamera()
 
-        #### known sizes
+        #### known sizes --- START
         self.servo_width_real = 0
         self.robot_width = 0
         self.image_width = 600
-        self.image_height = 600
+        self.image_height = 500
+        #### known sizes --- END
 
         self.start_position = [self.image_width, self.image_height, 0, 0]
         self.line_position_prev = (0, 0)
@@ -62,7 +63,7 @@ class Camera():
         image_info = self.get_position_arm_tool(cv_image)
         self.Image1 = image_info[0]
 
-        if self.start_position == [600, 500, 0, 0]:
+        if self.start_position == [self.image_width, self.image_height, 0, 0]:
             self.start_position = image_info[1]
 
 
@@ -81,13 +82,13 @@ class Camera():
 
         img_hsv = cv2.cvtColor(cv_image, cv2.COLOR_BGR2HSV)
 
-        lower_blue = np.array([100,150,0], dtype=np.uint8)
-        upper_blue = np.array([140,255,255], dtype=np.uint8)
+        lower_blue = np.array([100, 150, 0], dtype=np.uint8)
+        upper_blue = np.array([140, 255, 255], dtype=np.uint8)
         mask = cv2.inRange(img_hsv, lower_blue, upper_blue)
 
         _, contours, hierarchy = cv2.findContours(mask.copy(), 1, 2)
 
-        rect_x, rect_y, rect_w, rect_h =  600, 500, 0, 0
+        rect_x, rect_y, rect_w, rect_h =  self.image_width, self.image_height, 0, 0
 
         for i in range (len(contours)):
             cnt = contours[i]

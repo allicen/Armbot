@@ -28,16 +28,16 @@
         <div class="button-info">
           <button mat-raised-button color="warn"
                   (click)="diagnostics()"  class="button"
-                  [disabled]="!imagePath">Диагностика</button>
+                  [disabled]="!imagePath">Диагностика положения рабочего органа</button>
           <div class="message">{{diagnosticMessage}}</div>
         </div>
 
         <div *ngIf="robotDiagnosticInfo?.resultExists">
-          <p>Робот находится в исходной позиции: {{robotDiagnosticInfo?.isStartPosition ? "Да" : "Нет"}}</p>
+          <p>Робот находится в исходной позиции: <strong>{{robotDiagnosticInfo?.isStartPosition ? "Да" : "Нет"}}</strong></p>
           <ng-container *ngIf="!robotDiagnosticInfo?.isStartPosition">
-            <p>Отклонение по оси X: {{robotDiagnosticInfo?.xError}} м</p>
-            <p>Отклонение по оси Y: {{robotDiagnosticInfo?.yError}} м</p>
-            <p>Отклонение по оси Z: {{robotDiagnosticInfo?.zError}} м</p>
+            <p>Отклонение по оси X: <strong>{{robotDiagnosticInfo?.xError}} м</strong></p>
+            <p>Отклонение по оси Y: <strong>{{robotDiagnosticInfo?.yError}} м</strong></p>
+            <p>Отклонение по оси Z: <strong>{{robotDiagnosticInfo?.zError}} м</strong></p>
 
             <button mat-raised-button color="primary"
                     (click)="returnDefaultPositionCamera()"  class="button">В исходное положение</button>
