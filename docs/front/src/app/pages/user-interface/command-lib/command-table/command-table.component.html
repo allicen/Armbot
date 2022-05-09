@@ -9,7 +9,7 @@
     <h2 *ngIf="coordinateList.length > 0">Отмеченные точки:</h2>
     <section class="buttons">
       <button mat-raised-button color="primary" (click)="returnDefaultPosition()" [disabled]="armbotButtonDisabled">Вернуться в исходное положение</button>
-      <button mat-raised-button color="warn" (click)="removeAllPoint()">Удалить все</button>
+      <button mat-raised-button color="warn" (click)="removeAllPoint()" *ngIf="coordinateList.length > 0">Удалить все</button>
     </section>
   </div>
   <ng-container *ngIf="coordinateList.length > 0">
