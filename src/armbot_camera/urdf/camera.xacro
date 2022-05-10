@@ -38,19 +38,36 @@
     </visual>
   </link>
 
-  <link name='camera'>
+  <link name='camera_1'>
     <visual name='camera_visual'>
       <origin xyz="0 0 0" rpy=" 0 0 0"/>
       <geometry>
-        <box size=".05 .05 .05"/>
+        <box size=".015 .015 .015"/>
       </geometry>
       <material name="gray"/>
     </visual>
   </link>
 
-  <joint type="fixed" name="camera_joint">
+  <joint type="fixed" name="camera_joint_1">
     <origin xyz="0.15 0 0" rpy="0 0 0"/>
-    <child link="camera"/>
+    <child link="camera_1"/>
+    <parent link="base"/>
+  </joint>
+
+
+  <link name='camera_2'>
+    <visual name='camera_visual'>
+      <origin xyz="0 0 0" rpy=" 0 0 0"/>
+      <geometry>
+        <box size=".015 .015 .015"/>
+      </geometry>
+      <material name="gray"/>
+    </visual>
+  </link>
+
+  <joint type="fixed" name="camera_joint_2">
+    <origin xyz="0.15 0.03 0" rpy="0 0 0"/>
+    <child link="camera_2"/>
     <parent link="base"/>
   </joint>
 

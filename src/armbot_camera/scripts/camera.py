@@ -25,6 +25,7 @@ class Camera():
         self.cv_bridge = CvBridge()
         self.Image1 = None
         self.Image2 = None
+        self.Image3 = None
         self.msg_img = ImageCamera()
 
         #### known sizes --- START
@@ -39,13 +40,17 @@ class Camera():
         self.current_position_marker = [0, 0, 0, 0]
         self.line_position_prev = (0, 0)
         self.line_position = (0, 0)
-        self.marker_radius_model = 1
+        self.marker_radius_model_start = 1
+        self.marker_radius_model_current = 1
+
         self.scale = 1.3 # error = +-0.02
+        self.z_scale = 0.0156294
 
         self.permissible_error = 0.0005
         self.joint_1, self.joint_2, self.joint_3, self.joint_4 = 0, 0, 0, 0
 
         rospy.Subscriber("armbot/camera1/image_raw", Image, self.camera_cb)
+        rospy.Subscriber("armbot/camera3/image_raw", Image, self.camera_cb_depth)
         rospy.Subscriber("armbot/camera2/image_raw", Image, self.camera_cb2)
         rospy.Subscriber("/return_default_position", String, self.return_default_position)
 
@@ -76,7 +81,26 @@ class Camera():
             self.current_position_marker = image_info[1]
 
 
+    def camera_cb_depth(self, msg):
+        try:
+            cv_image = self.cv_bridge.imgmsg_to_cv2(msg, "bgr8")
+        except CvBridgeError, e:
+            rospy.logerr("CvBridge Error: {0}".format(e))
 
+        # img = cv2.imread(cv_image, cv2.IMREAD_GRAYSCALE)
+
+        
+
+        if self.Image1 is not None and self.Image3 is not None:
+            img1 = cv2.cvtColor(self.Image1, cv2.COLOR_BGR2GRAY)
+            img2 = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
+
+            stereo = cv2.StereoBM_create(numDisparities=16, blockSize=15)
+            disparity = stereo.compute(img1, img2)
+
+            self.Image3 = disparity
+        else:
+            self.Image3 = cv_image
 
     def camera_cb2(self, msg):
 
@@ -118,15 +142,39 @@ class Camera():
                 rect_h = y + h
 
         self.line_position = ((rect_x + rect_w) / 2, (rect_y + rect_h) / 2)
+        self.marker_radius_model_current = max(rect_w - rect_x, rect_h - rect_y)
 
         cv2.rectangle(cv_image,(rect_x, rect_y), (rect_w, rect_h), (0, 255, 0), 2)
 
         if (self.line_position_prev == (0, 0)):
             self.line_position_prev = self.line_position
-            self.marker_radius_model = max(rect_w - rect_x, rect_h - rect_y)
+            self.marker_radius_model_start = max(rect_w - rect_x, rect_h - rect_y)
         
         cv2.line(cv_image, self.line_position_prev, self.line_position, (0, 0, 255), 3)
-        
+
+        # font                   = cv2.FONT_HERSHEY_SIMPLEX
+        # bottomLeftCornerOfText = (300,400)
+        # fontScale              = 0.7
+        # fontColor              = (0,0,0)
+        # thickness              = 1
+        # lineType               = 2
+
+        # cv2.putText(cv_image,'radius = ' + str(self.marker_radius_model_current), 
+        #     bottomLeftCornerOfText, 
+        #     font, 
+        #     fontScale,
+        #     fontColor,
+        #     thickness,
+        #     lineType)
+
+        # cv2.putText(cv_image,'pos = ' + str(self.current_position_marker), 
+        #     (150,450), 
+        #     font, 
+        #     fontScale,
+        #     fontColor,
+        #     thickness,
+        #     lineType)
+                
 
         return  [cv_image, [rect_x, rect_y, rect_w, rect_h]]
 
@@ -183,9 +231,10 @@ class Camera():
         while not rospy.is_shutdown():
             self.rate.sleep()
 
-            if self.Image1 is not None and self.Image2 is not None:
+            if self.Image1 is not None and self.Image2 is not None and self.Image3 is not None:
                 cv2.imshow("Room camera", self.Image1)
                 cv2.imshow("Robot camera", self.Image2)
+                cv2.imshow("Room camera Depth", self.Image3)
                 cv2.waitKey(3)
 
             if self.Image1 is not None:
