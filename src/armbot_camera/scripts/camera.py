@@ -28,14 +28,20 @@ class Camera():
         self.msg_img = ImageCamera()
 
         #### known sizes --- START
-        self.servo_width_real = 0
-        self.robot_width = 0
-        self.image_width = 600
-        self.image_height = 500
+        self.room_camera_distanse_table = 0.73
+        self.servo_width = 12      #mm
+        self.robot_width = 234     #mm
+        self.image_width = 600     #px
+        self.image_height = 500    #px
         #### known sizes --- END
 
-        self.start_position = [self.image_width, self.image_height, 0, 0]
+        self.start_position_marker = [self.image_width, self.image_height, 0, 0]
+        self.current_position_marker = [0, 0, 0, 0]
         self.line_position_prev = (0, 0)
+        self.line_position = (0, 0)
+        self.servo_width_model = 12
+        self.scale = 1.28571429
+
         self.permissible_error = 0.0005
 
         rospy.Subscriber("armbot/camera1/image_raw", Image, self.camera_cb)
@@ -63,8 +69,11 @@ class Camera():
         image_info = self.get_position_arm_tool(cv_image)
         self.Image1 = image_info[0]
 
-        if self.start_position == [self.image_width, self.image_height, 0, 0]:
-            self.start_position = image_info[1]
+        if self.start_position_marker == [self.image_width, self.image_height, 0, 0]:
+            self.start_position_marker = image_info[1]
+        else:
+            self.current_position_marker = image_info[1]
+
 
 
 
@@ -107,14 +116,16 @@ class Camera():
             if y + h > rect_h:
                 rect_h = y + h
 
-        line_position = ((rect_x + rect_w) / 2, (rect_y + rect_h) / 2)
+        self.line_position = ((rect_x + rect_w) / 2, (rect_y + rect_h) / 2)
 
         cv2.rectangle(cv_image,(rect_x, rect_y), (rect_w, rect_h), (0, 255, 0), 2)
 
         if (self.line_position_prev == (0, 0)):
-            self.line_position_prev = line_position
+            self.line_position_prev = self.line_position
+            self.servo_width_model = rect_w - rect_x
+            self.servo_height_model = rect_h - rect_y
         
-        cv2.line(cv_image, self.line_position_prev, line_position, (0, 0, 255), 3)
+        cv2.line(cv_image, self.line_position_prev, self.line_position, (0, 0, 255), 3)
         
 
         return  [cv_image, [rect_x, rect_y, rect_w, rect_h]]
@@ -124,23 +135,32 @@ class Camera():
     def return_default_position(self, msg):
         print(msg.data)
         pos = self.get_position_arm_tool(self.Image1)[1]
-        print(self.start_position)
+        print(self.start_position_marker)
         print(pos)
 
 
     def return_default_pos_camera(self, req):
         pos = self.get_position_arm_tool(self.Image1)[1]
-        print(self.start_position)
+        print(self.start_position_marker)
         print(pos)
         return DefaultServiceResponse("RESP")
 
     def robot_info(self, req):
+        x_error = round(abs(self.line_position_prev[1] - self.line_position[1]), 2)
+        y_error = round(abs(self.line_position_prev[0] - self.line_position[0]), 2)
+
+        if self.line_position[1] > self.image_height / 2:
+            x_error = -x_error
+
+        if self.line_position[0] > self.image_width / 2:
+            y_error = -y_error
+
 
         response = RobotInfoServiceResponse()
         response.info = "simple text"
-        response.is_start_position = False
-        response.x_error = 10
-        response.y_error = 20
+        response.is_start_position = x_error == 0 and y_error == 0
+        response.x_error = x_error
+        response.y_error = y_error
         response.z_error = 0.5
 
         print(response)

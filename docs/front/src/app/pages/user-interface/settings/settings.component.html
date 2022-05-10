@@ -35,9 +35,9 @@
         <div *ngIf="robotDiagnosticInfo?.resultExists">
           <p>Робот находится в исходной позиции: <strong>{{robotDiagnosticInfo?.isStartPosition ? "Да" : "Нет"}}</strong></p>
           <ng-container *ngIf="!robotDiagnosticInfo?.isStartPosition">
-            <p>Отклонение по оси X: <strong>{{robotDiagnosticInfo?.xError}} м</strong></p>
-            <p>Отклонение по оси Y: <strong>{{robotDiagnosticInfo?.yError}} м</strong></p>
-            <p>Отклонение по оси Z: <strong>{{robotDiagnosticInfo?.zError}} м</strong></p>
+            <p>Отклонение по оси X: <strong>{{round(robotDiagnosticInfo?.xError)}} мм</strong> (вертикаль)</p>
+            <p>Отклонение по оси Y: <strong>{{round(robotDiagnosticInfo?.yError)}} мм</strong> (горизонталь)</p>
+            <p>Отклонение по оси Z: <strong>{{round(robotDiagnosticInfo?.zError)}} мм</strong> (высота)</p>
 
             <button mat-raised-button color="primary"
                     (click)="returnDefaultPositionCamera()"  class="button">В исходное положение</button>

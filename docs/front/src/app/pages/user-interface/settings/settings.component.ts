@@ -84,4 +84,11 @@ export class SettingsComponent implements OnInit {
     diagnostics() {
         this.roslibService.robotDiagnostics();
     }
+
+    round(val: number | null | undefined): number {
+        if (!val) {
+            return 0;
+        }
+        return Math.round(val * 100) / 100;
+    }
 }
