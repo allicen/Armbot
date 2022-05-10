@@ -89,6 +89,6 @@ export class SettingsComponent implements OnInit {
         if (!val) {
             return 0;
         }
-        return Math.round(val * 100) / 100;
+        return Math.round(val * 10000) / 10000;
     }
 }

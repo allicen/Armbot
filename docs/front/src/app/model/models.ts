@@ -54,5 +54,9 @@ export interface RobotInfoFromCamera {
   isStartPosition: boolean | null,
   xError: number | null,
   yError: number | null,
-  zError: number | null
+  zError: number | null,
+  joint1: number | null,
+  joint2: number | null,
+  joint3: number | null,
+  joint4: number | null
 }

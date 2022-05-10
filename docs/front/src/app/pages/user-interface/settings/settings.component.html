@@ -39,8 +39,17 @@
             <p>Отклонение по оси Y: <strong>{{round(robotDiagnosticInfo?.yError)}} мм</strong> (горизонталь)</p>
             <p>Отклонение по оси Z: <strong>{{round(robotDiagnosticInfo?.zError)}} мм</strong> (высота)</p>
 
-            <button mat-raised-button color="primary"
-                    (click)="returnDefaultPositionCamera()"  class="button">В исходное положение</button>
+            <div class="note">
+              <p>Для возврата рабочего органа в исходное положение необходимо поменять значения joint`ов:</p>
+              <ul>
+                <li>joint_1: <strong>{{round(robotDiagnosticInfo?.joint1)}} rad</strong></li>
+                <li>joint_2: <strong>{{round(robotDiagnosticInfo?.joint2)}} rad</strong></li>
+                <li>joint_3: <strong>{{round(robotDiagnosticInfo?.joint3)}}rad</strong></li>
+                <li>joint_4: <strong>{{round(robotDiagnosticInfo?.joint4)}} rad</strong></li>
+              </ul>
+              <button mat-raised-button color="primary"
+                      (click)="returnDefaultPositionCamera()"  class="button">В исходное положение</button>
+            </div>
           </ng-container>
         </div>
 

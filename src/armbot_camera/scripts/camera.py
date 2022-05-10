@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import time
-from math import sin, cos
+from math import sin, cos, sqrt, atan
 import numpy as np
 
 import rospy
@@ -39,10 +39,11 @@ class Camera():
         self.current_position_marker = [0, 0, 0, 0]
         self.line_position_prev = (0, 0)
         self.line_position = (0, 0)
-        self.servo_width_model = 12
-        self.scale = 1.28571429
+        self.marker_radius_model = 1
+        self.scale = 1.3 # error = +-0.02
 
         self.permissible_error = 0.0005
+        self.joint_1, self.joint_2, self.joint_3, self.joint_4 = 0, 0, 0, 0
 
         rospy.Subscriber("armbot/camera1/image_raw", Image, self.camera_cb)
         rospy.Subscriber("armbot/camera2/image_raw", Image, self.camera_cb2)
@@ -122,8 +123,7 @@ class Camera():
 
         if (self.line_position_prev == (0, 0)):
             self.line_position_prev = self.line_position
-            self.servo_width_model = rect_w - rect_x
-            self.servo_height_model = rect_h - rect_y
+            self.marker_radius_model = max(rect_w - rect_x, rect_h - rect_y)
         
         cv2.line(cv_image, self.line_position_prev, self.line_position, (0, 0, 255), 3)
         
@@ -138,7 +138,6 @@ class Camera():
         print(self.start_position_marker)
         print(pos)
 
-
     def return_default_pos_camera(self, req):
         pos = self.get_position_arm_tool(self.Image1)[1]
         print(self.start_position_marker)
@@ -146,8 +145,11 @@ class Camera():
         return DefaultServiceResponse("RESP")
 
     def robot_info(self, req):
-        x_error = round(abs(self.line_position_prev[1] - self.line_position[1]), 2)
-        y_error = round(abs(self.line_position_prev[0] - self.line_position[0]), 2)
+        w = self.line_position_prev[0] - self.line_position[0]
+        h = self.line_position_prev[1] - self.line_position[1]
+
+        x_error = round(abs(h) * self.scale, 2)
+        y_error = round(abs(w) * self.scale, 2)
 
         if self.line_position[1] > self.image_height / 2:
             x_error = -x_error
@@ -155,6 +157,9 @@ class Camera():
         if self.line_position[0] > self.image_width / 2:
             y_error = -y_error
 
+        if h != 0:
+            h_correct = self.image_height/2 - self.line_position[1]
+            self.joint_1 = atan(w / float(h_correct))
 
         response = RobotInfoServiceResponse()
         response.info = "simple text"
@@ -162,6 +167,10 @@ class Camera():
         response.x_error = x_error
         response.y_error = y_error
         response.z_error = 0.5
+        response.joint_1 = self.joint_1
+        response.joint_2 = self.joint_2
+        response.joint_3 = self.joint_3
+        response.joint_4 = self.joint_4
 
         print(response)
 
@@ -188,8 +197,6 @@ class Camera():
                 self.msg_img.encoding = 'base64'
                 self.msg_img.width = img.width
                 self.msg_img.height = img.height
-
-                # print(self.msg_img.data)
 
                 self.pub.publish(self.msg_img)
 

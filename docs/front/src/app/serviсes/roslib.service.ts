@@ -24,7 +24,11 @@ export class RosArmbotService {
         isStartPosition: null,
         xError: null,
         yError: null,
-        zError: null
+        zError: null,
+        joint1: null,
+        joint2: null,
+        joint3: null,
+        joint4: null,
     });
 
     private robotReturnDefaultPosition$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
@@ -160,7 +164,11 @@ export class RosArmbotService {
                 isStartPosition: null,
                 xError: null,
                 yError: null,
-                zError: null
+                zError: null,
+                joint1: null,
+                joint2: null,
+                joint3: null,
+                joint4: null,
             });
             this.robotReturnDefaultPosition$.next(true);
         });
@@ -206,6 +214,10 @@ export class RosArmbotService {
           xError: msg.x_error,
           yError: msg.y_error,
           zError: msg.z_error,
+          joint1: msg.joint_1,
+          joint2: msg.joint_2,
+          joint3: msg.joint_3,
+          joint4: msg.joint_4
         })
      }
 
