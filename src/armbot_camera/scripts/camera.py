@@ -26,6 +26,7 @@ class Camera():
         self.Image1 = None
         self.Image2 = None
         self.Image3 = None
+        self.Image_table = None
         self.msg_img = ImageCamera()
 
         #### known sizes --- START
@@ -49,9 +50,10 @@ class Camera():
         self.permissible_error = 0.0005
         self.joint_1, self.joint_2, self.joint_3, self.joint_4 = 0, 0, 0, 0
 
-        rospy.Subscriber("armbot/camera1/image_raw", Image, self.camera_cb)
-        rospy.Subscriber("armbot/camera3/image_raw", Image, self.camera_cb_depth)
-        rospy.Subscriber("armbot/camera2/image_raw", Image, self.camera_cb2)
+        rospy.Subscriber("/armbot/camera1/image_raw", Image, self.camera_cb)
+        rospy.Subscriber("/armbot/camera3/image_raw", Image, self.camera_cb_depth)
+        rospy.Subscriber("/armbot/camera_robot/image_raw", Image, self.camera_cb2)
+        rospy.Subscriber("/armbot/camera_table/image_raw", Image, self.camera_table)
         rospy.Subscriber("/return_default_position", String, self.return_default_position)
 
         self.pub = rospy.Publisher('room_camera_one', ImageCamera, queue_size=10)
@@ -86,21 +88,32 @@ class Camera():
             cv_image = self.cv_bridge.imgmsg_to_cv2(msg, "bgr8")
         except CvBridgeError, e:
             rospy.logerr("CvBridge Error: {0}".format(e))
-
-        # img = cv2.imread(cv_image, cv2.IMREAD_GRAYSCALE)
-
-        
+    
 
         if self.Image1 is not None and self.Image3 is not None:
             img1 = cv2.cvtColor(self.Image1, cv2.COLOR_BGR2GRAY)
             img2 = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
 
+            minDisparity = 0
+            numDisparities = 14
+
             stereo = cv2.StereoBM_create(numDisparities=16, blockSize=15)
             disparity = stereo.compute(img1, img2)
+            disparity = disparity.astype(np.float32)
+            disparity = (disparity/16.0 - minDisparity)/numDisparities
 
             self.Image3 = disparity
         else:
             self.Image3 = cv_image
+
+
+    def camera_table(self, msg):
+        try:
+            cv_image = self.cv_bridge.imgmsg_to_cv2(msg, "bgr8")
+            self.Image_table = cv_image
+        except CvBridgeError, e:
+            rospy.logerr("CvBridge Error: {0}".format(e))
+
 
     def camera_cb2(self, msg):
 
@@ -151,29 +164,6 @@ class Camera():
             self.marker_radius_model_start = max(rect_w - rect_x, rect_h - rect_y)
         
         cv2.line(cv_image, self.line_position_prev, self.line_position, (0, 0, 255), 3)
-
-        # font                   = cv2.FONT_HERSHEY_SIMPLEX
-        # bottomLeftCornerOfText = (300,400)
-        # fontScale              = 0.7
-        # fontColor              = (0,0,0)
-        # thickness              = 1
-        # lineType               = 2
-
-        # cv2.putText(cv_image,'radius = ' + str(self.marker_radius_model_current), 
-        #     bottomLeftCornerOfText, 
-        #     font, 
-        #     fontScale,
-        #     fontColor,
-        #     thickness,
-        #     lineType)
-
-        # cv2.putText(cv_image,'pos = ' + str(self.current_position_marker), 
-        #     (150,450), 
-        #     font, 
-        #     fontScale,
-        #     fontColor,
-        #     thickness,
-        #     lineType)
                 
 
         return  [cv_image, [rect_x, rect_y, rect_w, rect_h]]
@@ -231,10 +221,11 @@ class Camera():
         while not rospy.is_shutdown():
             self.rate.sleep()
 
-            if self.Image1 is not None and self.Image2 is not None and self.Image3 is not None:
+            if self.Image1 is not None and self.Image2 is not None and self.Image3 is not None and self.Image_table is not None:
                 cv2.imshow("Room camera", self.Image1)
                 cv2.imshow("Robot camera", self.Image2)
                 cv2.imshow("Room camera Depth", self.Image3)
+                cv2.imshow("Table camera", self.Image_table)
                 cv2.waitKey(3)
 
             if self.Image1 is not None:
