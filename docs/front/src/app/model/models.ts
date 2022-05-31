@@ -40,3 +40,23 @@ export interface Motor {
   forwardDirection: string,
   inverseDirection: string
 }
+
+export interface CameraImage {
+  data: string | null,
+  encoding: string | null,
+  width: number,
+  height: number
+}
+
+export interface RobotInfoFromCamera {
+  resultExists: boolean | null; // Результат пришел
+  info: string | null,
+  isStartPosition: boolean | null,
+  xError: number | null,
+  yError: number | null,
+  zError: number | null,
+  joint1: number | null,
+  joint2: number | null,
+  joint3: number | null,
+  joint4: number | null
+}

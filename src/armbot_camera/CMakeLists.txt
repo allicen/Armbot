@@ -11,9 +11,11 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   sensor_msgs
+  urdf
   cv_bridge
   std_msgs
   image_transport
+  message_generation
 )
 
 find_package(OpenCV REQUIRED)
@@ -52,18 +54,17 @@ find_package(OpenCV REQUIRED)
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
+add_message_files(
+   FILES
+   ImageCamera.msg
+)
 
 ## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
+add_service_files(
+   FILES
+   DefaultService.srv
+   RobotInfoService.srv
+)
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -73,10 +74,10 @@ find_package(OpenCV REQUIRED)
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs  # Or other packages containing msgs
-# )
+generate_messages(
+  DEPENDENCIES
+  std_msgs  # Or other packages containing msgs
+)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -108,6 +109,7 @@ find_package(OpenCV REQUIRED)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
+   CATKIN_DEPENDS message_runtime
 #  INCLUDE_DIRS include
 #  LIBRARIES armbot_camera
 #  CATKIN_DEPENDS roscpp
@@ -124,6 +126,8 @@ include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
 )
+
+add_definitions(-DBOOST_ERROR_CODE_HEADER_ONLY)
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}

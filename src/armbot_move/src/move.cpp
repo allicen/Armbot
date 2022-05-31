@@ -6,6 +6,7 @@
 #include <armbot_move/SavePosition.h>
 #include <armbot_move/RunArmbot.h>
 #include <armbot_move/DefaultService.h>
+#include <armbot_move/SetJoints.h>
 #include <armbot_move/RunMotor.h>
 #include <armbot_move/RunMotorStart.h>
 #include <rosserial_arduino/Test.h>
@@ -280,6 +281,11 @@ bool returnDefaultPositionModel(armbot_move::DefaultService::Request &req, armbo
     return true;
 }
 
+bool setJointsModelValue(armbot_move::SetJoints::Request &req, armbot_move::SetJoints::Response &res) {
+    // Метод-заготовка (сюда надо вставить команду наподобие rostopic pub /armbot/joint_1_position_controller/command std_msgs/Float64 "data: +1.9" )
+    return true;
+}
+
 
 bool runMotor(armbot_move::RunMotor::Request &req, armbot_move::RunMotor::Response &res, ros::Publisher &motorMovePub) {
     char command[50];
@@ -548,6 +554,9 @@ int main(int argc, char *argv[]) {
 
     // Возврат модели в исходное положение
     ros::ServiceServer goDefaultPositionModel = n.advertiseService("return_default_position_model", returnDefaultPositionModel);
+
+    // Установить joints принудительно
+    ros::ServiceServer setJointsValue = n.advertiseService("set_joints_value", setJointsModelValue);
 
     // Запуск моторов из UI
     ros::Publisher motorMovePub = n.advertise<std_msgs::String>("move_motor", 1000);

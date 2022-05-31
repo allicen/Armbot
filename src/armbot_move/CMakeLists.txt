@@ -69,6 +69,7 @@ add_service_files(
    RunMotor.srv
    RunMotorStart.srv
    DefaultService.srv
+   SetJoints.srv
 )
 
 ## Generate actions in the 'action' folder
