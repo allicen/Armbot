@@ -24,7 +24,8 @@ class Camera():
 
         self.cv_bridge = CvBridge()
         self.Image1 = None
-        self.Image2 = None
+        self.ImageRobotLeft = None
+        self.ImageRobotRight = None
         self.Image3 = None
         self.Image_table = None
         self.msg_img = ImageCamera()
@@ -52,7 +53,8 @@ class Camera():
 
         rospy.Subscriber("/armbot/camera1/image_raw", Image, self.camera_cb)
         rospy.Subscriber("/armbot/camera3/image_raw", Image, self.camera_cb_depth)
-        rospy.Subscriber("/armbot/camera_robot/image_raw", Image, self.camera_cb2)
+        rospy.Subscriber("/armbot/camera_robot_left/image_raw", Image, self.camera_robot_left)
+        rospy.Subscriber("/armbot/camera_robot_right/image_raw", Image, self.camera_robot_right)
         rospy.Subscriber("/armbot/camera_table/image_raw", Image, self.camera_table)
         rospy.Subscriber("/return_default_position", String, self.return_default_position)
 
@@ -115,14 +117,24 @@ class Camera():
             rospy.logerr("CvBridge Error: {0}".format(e))
 
 
-    def camera_cb2(self, msg):
+    def camera_robot_left(self, msg):
 
         try:
             cv_image = self.cv_bridge.imgmsg_to_cv2(msg, "bgr8")
         except CvBridgeError, e:
             rospy.logerr("CvBridge Error: {0}".format(e))
 
-        self.Image2 = cv_image
+        self.ImageRobotLeft = cv_image
+
+
+    def camera_robot_right(self, msg):
+
+        try:
+            cv_image = self.cv_bridge.imgmsg_to_cv2(msg, "bgr8")
+        except CvBridgeError, e:
+            rospy.logerr("CvBridge Error: {0}".format(e))
+
+        self.ImageRobotRight = cv_image
 
 
     def get_position_arm_tool(self, cv_image):
@@ -221,12 +233,18 @@ class Camera():
         while not rospy.is_shutdown():
             self.rate.sleep()
 
-            if self.Image1 is not None and self.Image2 is not None and self.Image3 is not None and self.Image_table is not None:
-                cv2.imshow("Room camera", self.Image1)
-                cv2.imshow("Robot camera", self.Image2)
-                cv2.imshow("Room camera Depth", self.Image3)
-                cv2.imshow("Table camera", self.Image_table)
+            # if self.Image1 is not None and self.Image2 is not None and self.Image3 is not None and self.Image_table is not None:
+            #     cv2.imshow("Room camera", self.Image1)
+            #     cv2.imshow("Robot camera", self.Image2)
+            #     cv2.imshow("Room camera Depth", self.Image3)
+            #     cv2.imshow("Table camera", self.Image_table)
+            #     cv2.waitKey(3)
+
+            if self.ImageRobotLeft is not None and self.ImageRobotRight is not None:
+                cv2.imshow("Robot camera left", self.ImageRobotLeft)
+                cv2.imshow("Robot camera right", self.ImageRobotRight)
                 cv2.waitKey(3)
+
 
             if self.Image1 is not None:
                 img = self.cv_bridge.cv2_to_imgmsg(self.Image1)
