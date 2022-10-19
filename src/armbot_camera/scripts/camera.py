@@ -53,13 +53,23 @@ class Camera():
         self.permissible_error = 0.0005
         self.joint_1, self.joint_2, self.joint_3, self.joint_4 = 0, 0, 0, 0
         
-        rospy.Subscriber("/image_raw", Image, self.camera_test)
+        # rospy.Subscriber("/camera/left/image_raw", Image, self.camera_test)
 
         rospy.Subscriber("/armbot/camera1/image_raw", Image, self.camera_cb)
         rospy.Subscriber("/armbot/camera3/image_raw", Image, self.camera_cb_depth)
-        rospy.Subscriber("/armbot/camera_robot_left/image_raw", Image, self.camera_robot_left)
-        rospy.Subscriber("/armbot/camera_robot_right/image_raw", Image, self.camera_robot_right)
-        rospy.Subscriber("/armbot/camera_robot_right/image_raw", Image, self.robot_camera_depth)
+
+        # only for Gazebo
+        # rospy.Subscriber("/armbot/camera_robot_left/image_raw", Image, self.camera_robot_left)
+        # rospy.Subscriber("/armbot/camera_robot_right/image_raw", Image, self.camera_robot_right)
+        # rospy.Subscriber("/armbot/camera_robot_right/image_raw", Image, self.robot_camera_depth)
+
+
+        # only for real robot
+        rospy.Subscriber("/camera/left/image_raw", Image, self.camera_robot_left)
+        rospy.Subscriber("/camera/right/image_raw", Image, self.camera_robot_right)
+        rospy.Subscriber("/camera/right/image_raw", Image, self.robot_camera_depth)
+
+
         rospy.Subscriber("/armbot/camera_table/image_raw", Image, self.camera_table)
         rospy.Subscriber("/return_default_position", String, self.return_default_position)
 
@@ -262,15 +272,21 @@ class Camera():
             # stereo = cv2.StereoBM_create(numDisparities=16, blockSize=15)
             # disparity = stereo.compute(img1, img2)
             # disparity = disparity.astype(np.float32)
-            # disparity = (disparity/16.0 - minDisparity)/numDisparities
+            # disparity = (disparity/32.0 - minDisparity)/numDisparities
 
             # self.ImageRobotDepth = disparity
 
-            sbm = cv2.StereoBM_create(numDisparities=0, blockSize=21)
+            stereo = cv2.StereoBM_create(numDisparities=192, blockSize=5)
 
-            disparity = sbm.compute(img1, img2)
+            disparity = stereo.compute(img1, img2)
+            # disparity = disparity.astype(np.float32)
+            # disparity = (disparity/48.0 - 0)/48
+
             local_max = disparity.max()
             local_min = disparity.min()
+
+            # print(str(local_max) + ' ----- ' + str(local_min))
+
             disparity_grayscale = (disparity-local_min)*(65535.0/(local_max-local_min))
             disparity_fixtype = cv2.convertScaleAbs(disparity_grayscale, alpha=(255.0/65535.0))
             disparity_color = cv2.applyColorMap(disparity_fixtype, cv2.COLORMAP_JET)
@@ -292,9 +308,6 @@ class Camera():
             if self.ImageRobotDepth is not None:
                 cv2.imshow("Robot camera depth", self.ImageRobotDepth)
 
-            if self.CameraTest is not None:
-                cv2.imshow("I", self.CameraTest)
-
             cv2.waitKey(3)
 
 
@@ -314,8 +327,9 @@ class Camera():
             # if self.ImageRobotLeft is not None:
             #     self.get_image_from_camera(self.ImageRobotDepth)
 
-            if self.CameraTest is not None:
-                self.get_image_from_camera(self.CameraTest)
+
+            if self.ImageRobotDepth is not None:
+                self.get_image_from_camera(self.ImageRobotDepth)
 
 
     def shutdown(self):
