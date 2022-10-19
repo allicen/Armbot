@@ -27,6 +27,7 @@ class Camera():
         self.ImageRobotLeft = None
         self.ImageRobotRight = None
         self.ImageRobotDepth = None
+        self.CameraTest = None
         self.Image3 = None
         self.Image_table = None
         self.msg_img_default = ImageCamera()
@@ -51,6 +52,8 @@ class Camera():
 
         self.permissible_error = 0.0005
         self.joint_1, self.joint_2, self.joint_3, self.joint_4 = 0, 0, 0, 0
+        
+        rospy.Subscriber("/image_raw", Image, self.camera_test)
 
         rospy.Subscriber("/armbot/camera1/image_raw", Image, self.camera_cb)
         rospy.Subscriber("/armbot/camera3/image_raw", Image, self.camera_cb_depth)
@@ -69,6 +72,14 @@ class Camera():
         self.rate = rospy.Rate(30)
 
         rospy.on_shutdown(self.shutdown)
+
+
+    def camera_test(self, msg):
+        try:
+            cv_image = self.cv_bridge.imgmsg_to_cv2(msg, "bgr8")
+            self.CameraTest = cv_image
+        except CvBridgeError, e:
+            rospy.logerr("CvBridge Error: {0}".format(e))
 
 
     def camera_cb(self, msg):
@@ -281,6 +292,9 @@ class Camera():
             if self.ImageRobotDepth is not None:
                 cv2.imshow("Robot camera depth", self.ImageRobotDepth)
 
+            if self.CameraTest is not None:
+                cv2.imshow("I", self.CameraTest)
+
             cv2.waitKey(3)
 
 
@@ -297,8 +311,11 @@ class Camera():
             #     self.get_image_from_camera(self.Image1)
 
 
-            if self.ImageRobotLeft is not None:
-                self.get_image_from_camera(self.ImageRobotDepth)
+            # if self.ImageRobotLeft is not None:
+            #     self.get_image_from_camera(self.ImageRobotDepth)
+
+            if self.CameraTest is not None:
+                self.get_image_from_camera(self.CameraTest)
 
 
     def shutdown(self):

@@ -65,15 +65,15 @@
                        [expanded]="true">
     <mat-expansion-panel-header>
       <mat-panel-title>
-        Камера глубины
+        Карта глубины
       </mat-panel-title>
       <mat-panel-description>
-        Камера глубины
+        Определить расстояние до объекта при помощи камеры.
       </mat-panel-description>
     </mat-expansion-panel-header>
     <div class="header-row">
       <div>
-        <h2>Камера глубины</h2>
+        <h2>Карта глубины</h2>
       </div>
     </div>
     <div class="camera-content">
@@ -92,6 +92,19 @@
         <span *ngIf="!imageCamera.encoding || !imageCamera.data">
           Необходимо подключить камеру для дальнейшей работы с изображением с камеры
         </span>
+
+
+        <mat-radio-group *ngIf="imagePath">
+          <mat-radio-button *ngFor="let item of cameraDepthActions;let i = index;" [value]="item.key" color="warn"
+                            [checked]="cameraDepthCurrentAction === item.key" (change)="changeAction(item.key)">{{item.value}}</mat-radio-button>
+        </mat-radio-group>
+
+        <div [ngSwitch]="cameraDepthCurrentAction" class="camera-depth-content">
+          <ng-container *ngSwitchCase="'calibration'" ><ng-container *ngTemplateOutlet="calibration"></ng-container></ng-container>
+          <ng-container *ngSwitchCase="'saveMark'" ><ng-container *ngTemplateOutlet="saveMark"></ng-container></ng-container>
+          <ng-container *ngSwitchCase="'getInfo'" ><ng-container *ngTemplateOutlet="getInfo"></ng-container></ng-container>
+        </div>
+
       </div>
     </div>
   </mat-expansion-panel>
@@ -135,3 +148,30 @@
     </table>
   </mat-expansion-panel>
 </mat-accordion>
+
+
+<ng-template #calibration>
+   <h3>Калибровка камеры</h3>
+   <p>Калибровка позволяет выровнять объектив.</p>
+   <p>Нажмите на кнопку и скрипт выполнится автоматически.</p>
+  <button mat-raised-button color="primary"
+          (click)="calibrationCamera()"  class="button">Калибровать камеру</button>
+</ng-template>
+
+
+<ng-template #saveMark>
+  <h3>Запомните размер объекта</h3>
+  <p>Инструкция:</p>
+  <p>1. Наклейте маркер на объект;</p>
+  <p>2. Положите объект перед камерой;</p>
+  <p>3. Посмотрите на монитор, объект должен полностью попасть в камеру;</p>
+  <p>4. Запомните результат.</p>
+  <button mat-raised-button color="primary"
+          (click)="saveMarkCamera()"  class="button">Запомнить результат</button>
+
+</ng-template>
+
+<ng-template #getInfo>
+  <h3>Информация о расстоянии до объекта</h3>
+  <p>20 см</p>
+</ng-template>

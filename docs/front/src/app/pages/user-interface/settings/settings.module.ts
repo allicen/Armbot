@@ -13,6 +13,7 @@ import {DragDropModule} from "@angular/cdk/drag-drop";
 import {MatButtonModule} from "@angular/material/button";
 import {MatInputModule} from "@angular/material/input";
 import {MatExpansionModule} from "@angular/material/expansion";
+import {MatRadioModule} from "@angular/material/radio";
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import {MatExpansionModule} from "@angular/material/expansion";
         MatButtonModule,
         MatInputModule,
         MatExpansionModule,
+        MatRadioModule,
     ],
   exports: [SettingsComponent],
   providers: [],
