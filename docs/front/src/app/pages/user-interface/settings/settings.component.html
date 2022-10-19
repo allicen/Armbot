@@ -59,6 +59,45 @@
       </div>
     </div>
   </mat-expansion-panel>
+
+  <mat-expansion-panel (opened)="cameraImageShow = true"
+                       (closed)="cameraImageShow = false"
+                       [expanded]="true">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Камера глубины
+      </mat-panel-title>
+      <mat-panel-description>
+        Камера глубины
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <div class="header-row">
+      <div>
+        <h2>Камера глубины</h2>
+      </div>
+    </div>
+    <div class="camera-content">
+      <div class="camera-block" [style.width]="imageCamera.width+'px'" [style.height]="imageCamera.height+'px'">
+        <div *ngIf="!imageCamera.encoding || !imageCamera.data" class="info">Камера не подключена</div>
+        <img *ngIf="imagePath"
+             [src]="imagePath"
+             alt="Image from camera"
+             [style.width]="imageCamera.width+'px'" [style.height]="imageCamera.height+'px'"/>
+      </div>
+      <div class="camera-info">
+        <div class="button-info">
+          <div class="message">{{diagnosticMessage}}</div>
+        </div>
+
+        <span *ngIf="!imageCamera.encoding || !imageCamera.data">
+          Необходимо подключить камеру для дальнейшей работы с изображением с камеры
+        </span>
+      </div>
+    </div>
+  </mat-expansion-panel>
+
+
+
   <mat-expansion-panel (opened)="panelOpenState = true"
                        (closed)="panelOpenState = false">
     <mat-expansion-panel-header>

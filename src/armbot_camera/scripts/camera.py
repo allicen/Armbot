@@ -29,7 +29,7 @@ class Camera():
         self.ImageRobotDepth = None
         self.Image3 = None
         self.Image_table = None
-        self.msg_img = ImageCamera()
+        self.msg_img_default = ImageCamera()
 
         #### known sizes --- START
         self.room_camera_distanse_table = 0.73
@@ -209,6 +209,17 @@ class Camera():
         return response
 
 
+    def get_image_from_camera(self, image):
+        img = self.cv_bridge.cv2_to_imgmsg(image)
+
+        _, buffer_img= cv2.imencode('.jpg', image)
+
+        self.msg_img_default.data = base64.b64encode(buffer_img).decode("utf-8")
+        self.msg_img_default.encoding = 'base64'
+        self.msg_img_default.width = img.width
+        self.msg_img_default.height = img.height
+        self.pub.publish(self.msg_img_default)
+
 
     def camera_robot_left(self, msg):
 
@@ -229,22 +240,30 @@ class Camera():
 
         self.ImageRobotRight = cv_image
 
-
-
     def robot_camera_depth(self, msg):
         if self.ImageRobotLeft is not None and self.ImageRobotRight is not None:
             img1 = cv2.cvtColor(self.ImageRobotLeft, cv2.COLOR_BGR2GRAY)
             img2 = cv2.cvtColor(self.ImageRobotRight, cv2.COLOR_BGR2GRAY)
 
-            minDisparity = 0
-            numDisparities = 14
+            # minDisparity = 0
+            # numDisparities = 14
 
-            stereo = cv2.StereoBM_create(numDisparities=16, blockSize=15)
-            disparity = stereo.compute(img1, img2)
-            disparity = disparity.astype(np.float32)
-            disparity = (disparity/16.0 - minDisparity)/numDisparities
+            # stereo = cv2.StereoBM_create(numDisparities=16, blockSize=15)
+            # disparity = stereo.compute(img1, img2)
+            # disparity = disparity.astype(np.float32)
+            # disparity = (disparity/16.0 - minDisparity)/numDisparities
 
-            self.ImageRobotDepth = disparity
+            # self.ImageRobotDepth = disparity
+
+            sbm = cv2.StereoBM_create(numDisparities=0, blockSize=21)
+
+            disparity = sbm.compute(img1, img2)
+            local_max = disparity.max()
+            local_min = disparity.min()
+            disparity_grayscale = (disparity-local_min)*(65535.0/(local_max-local_min))
+            disparity_fixtype = cv2.convertScaleAbs(disparity_grayscale, alpha=(255.0/65535.0))
+            disparity_color = cv2.applyColorMap(disparity_fixtype, cv2.COLORMAP_JET)
+            self.ImageRobotDepth = disparity_color
 
 
 
@@ -265,6 +284,8 @@ class Camera():
             cv2.waitKey(3)
 
 
+
+
             # if self.Image1 is not None and self.Image2 is not None and self.Image3 is not None and self.Image_table is not None:
             #     cv2.imshow("Room camera", self.Image1)
             #     cv2.imshow("Robot camera", self.Image2)
@@ -273,16 +294,11 @@ class Camera():
             #     cv2.waitKey(3)
 
             # if self.Image1 is not None:
-            #     img = self.cv_bridge.cv2_to_imgmsg(self.Image1)
+            #     self.get_image_from_camera(self.Image1)
 
-            #     _, buffer_img= cv2.imencode('.jpg', self.Image1)
 
-            #     self.msg_img.data = base64.b64encode(buffer_img).decode("utf-8")
-            #     self.msg_img.encoding = 'base64'
-            #     self.msg_img.width = img.width
-            #     self.msg_img.height = img.height
-
-            #     self.pub.publish(self.msg_img)
+            if self.ImageRobotLeft is not None:
+                self.get_image_from_camera(self.ImageRobotDepth)
 
 
     def shutdown(self):
