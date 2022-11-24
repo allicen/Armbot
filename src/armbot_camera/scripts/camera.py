@@ -266,17 +266,17 @@ class Camera():
             img1 = cv2.cvtColor(self.ImageRobotLeft, cv2.COLOR_BGR2GRAY)
             img2 = cv2.cvtColor(self.ImageRobotRight, cv2.COLOR_BGR2GRAY)
 
-            # minDisparity = 0
-            # numDisparities = 14
 
-            # stereo = cv2.StereoBM_create(numDisparities=16, blockSize=15)
+            # stereo = cv2.StereoBM_create(numDisparities=192, blockSize=25)
             # disparity = stereo.compute(img1, img2)
+            # minDisparity = 0
+            # numDisparities = 16
             # disparity = disparity.astype(np.float32)
             # disparity = (disparity/32.0 - minDisparity)/numDisparities
 
             # self.ImageRobotDepth = disparity
 
-            stereo = cv2.StereoBM_create(numDisparities=192, blockSize=5)
+            stereo = cv2.StereoBM_create(numDisparities=96, blockSize=9)
 
             disparity = stereo.compute(img1, img2)
             # disparity = disparity.astype(np.float32)
@@ -284,8 +284,6 @@ class Camera():
 
             local_max = disparity.max()
             local_min = disparity.min()
-
-            # print(str(local_max) + ' ----- ' + str(local_min))
 
             disparity_grayscale = (disparity-local_min)*(65535.0/(local_max-local_min))
             disparity_fixtype = cv2.convertScaleAbs(disparity_grayscale, alpha=(255.0/65535.0))

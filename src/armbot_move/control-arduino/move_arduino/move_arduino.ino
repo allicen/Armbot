@@ -69,7 +69,7 @@ ros::NodeHandle nodeHandle;
 #define BUTTON_RETURN_START 27
 
 // Кнопка для запуска робота
-#define BUTTON_ROBOT_START 31
+#define BUTTON_ROBOT_START 29
 
 Button buttonOn(BUTTON_ON_PIN);
 Button buttonPublisher(BUTTON_PUBLISHER_PIN);

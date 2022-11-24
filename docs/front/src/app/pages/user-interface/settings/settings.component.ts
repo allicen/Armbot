@@ -39,8 +39,8 @@ export class SettingsComponent implements OnInit {
 
     cameraDepthActions: any = [
       {key: "calibration", value: "1. Калибровка"},
-      {key: "saveMark", value: "2. Сохранить размер"},
-      {key: "getInfo", value: "3. Узнать расстояние"},
+      {key: "saveMark", value: "2. Карта глубины"},
+      {key: "getInfo", value: "3. Параметры"},
     ];
 
     cameraDepthCurrentAction: string = 'calibration';
