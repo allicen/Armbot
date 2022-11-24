@@ -24,10 +24,13 @@ class Camera():
 
         self.cv_bridge = CvBridge()
         self.Image1 = None
-        self.Image2 = None
+        self.ImageRobotLeft = None
+        self.ImageRobotRight = None
+        self.ImageRobotDepth = None
+        self.CameraTest = None
         self.Image3 = None
         self.Image_table = None
-        self.msg_img = ImageCamera()
+        self.msg_img_default = ImageCamera()
 
         #### known sizes --- START
         self.room_camera_distanse_table = 0.73
@@ -49,10 +52,24 @@ class Camera():
 
         self.permissible_error = 0.0005
         self.joint_1, self.joint_2, self.joint_3, self.joint_4 = 0, 0, 0, 0
+        
+        # rospy.Subscriber("/camera/left/image_raw", Image, self.camera_test)
 
         rospy.Subscriber("/armbot/camera1/image_raw", Image, self.camera_cb)
         rospy.Subscriber("/armbot/camera3/image_raw", Image, self.camera_cb_depth)
-        rospy.Subscriber("/armbot/camera_robot/image_raw", Image, self.camera_cb2)
+
+        # only for Gazebo
+        # rospy.Subscriber("/armbot/camera_robot_left/image_raw", Image, self.camera_robot_left)
+        # rospy.Subscriber("/armbot/camera_robot_right/image_raw", Image, self.camera_robot_right)
+        # rospy.Subscriber("/armbot/camera_robot_right/image_raw", Image, self.robot_camera_depth)
+
+
+        # only for real robot
+        rospy.Subscriber("/camera/left/image_raw", Image, self.camera_robot_left)
+        rospy.Subscriber("/camera/right/image_raw", Image, self.camera_robot_right)
+        rospy.Subscriber("/camera/right/image_raw", Image, self.robot_camera_depth)
+
+
         rospy.Subscriber("/armbot/camera_table/image_raw", Image, self.camera_table)
         rospy.Subscriber("/return_default_position", String, self.return_default_position)
 
@@ -65,6 +82,14 @@ class Camera():
         self.rate = rospy.Rate(30)
 
         rospy.on_shutdown(self.shutdown)
+
+
+    def camera_test(self, msg):
+        try:
+            cv_image = self.cv_bridge.imgmsg_to_cv2(msg, "bgr8")
+            self.CameraTest = cv_image
+        except CvBridgeError, e:
+            rospy.logerr("CvBridge Error: {0}".format(e))
 
 
     def camera_cb(self, msg):
@@ -113,16 +138,6 @@ class Camera():
             self.Image_table = cv_image
         except CvBridgeError, e:
             rospy.logerr("CvBridge Error: {0}".format(e))
-
-
-    def camera_cb2(self, msg):
-
-        try:
-            cv_image = self.cv_bridge.imgmsg_to_cv2(msg, "bgr8")
-        except CvBridgeError, e:
-            rospy.logerr("CvBridge Error: {0}".format(e))
-
-        self.Image2 = cv_image
 
 
     def get_position_arm_tool(self, cv_image):
@@ -215,30 +230,104 @@ class Camera():
         return response
 
 
+    def get_image_from_camera(self, image):
+        img = self.cv_bridge.cv2_to_imgmsg(image)
+
+        _, buffer_img= cv2.imencode('.jpg', image)
+
+        self.msg_img_default.data = base64.b64encode(buffer_img).decode("utf-8")
+        self.msg_img_default.encoding = 'base64'
+        self.msg_img_default.width = img.width
+        self.msg_img_default.height = img.height
+        self.pub.publish(self.msg_img_default)
+
+
+    def camera_robot_left(self, msg):
+
+        try:
+            cv_image = self.cv_bridge.imgmsg_to_cv2(msg, "bgr8")
+        except CvBridgeError, e:
+            rospy.logerr("CvBridge Error: {0}".format(e))
+
+        self.ImageRobotLeft = cv_image
+
+
+    def camera_robot_right(self, msg):
+
+        try:
+            cv_image = self.cv_bridge.imgmsg_to_cv2(msg, "bgr8")
+        except CvBridgeError, e:
+            rospy.logerr("CvBridge Error: {0}".format(e))
+
+        self.ImageRobotRight = cv_image
+
+    def robot_camera_depth(self, msg):
+        if self.ImageRobotLeft is not None and self.ImageRobotRight is not None:
+            img1 = cv2.cvtColor(self.ImageRobotLeft, cv2.COLOR_BGR2GRAY)
+            img2 = cv2.cvtColor(self.ImageRobotRight, cv2.COLOR_BGR2GRAY)
+
+
+            # stereo = cv2.StereoBM_create(numDisparities=192, blockSize=25)
+            # disparity = stereo.compute(img1, img2)
+            # minDisparity = 0
+            # numDisparities = 16
+            # disparity = disparity.astype(np.float32)
+            # disparity = (disparity/32.0 - minDisparity)/numDisparities
+
+            # self.ImageRobotDepth = disparity
+
+            stereo = cv2.StereoBM_create(numDisparities=96, blockSize=9)
+
+            disparity = stereo.compute(img1, img2)
+            # disparity = disparity.astype(np.float32)
+            # disparity = (disparity/48.0 - 0)/48
+
+            local_max = disparity.max()
+            local_min = disparity.min()
+
+            disparity_grayscale = (disparity-local_min)*(65535.0/(local_max-local_min))
+            disparity_fixtype = cv2.convertScaleAbs(disparity_grayscale, alpha=(255.0/65535.0))
+            disparity_color = cv2.applyColorMap(disparity_fixtype, cv2.COLORMAP_JET)
+            self.ImageRobotDepth = disparity_color
+
+
+
     def spin(self):
 
         start_time = time.time()
         while not rospy.is_shutdown():
             self.rate.sleep()
 
-            if self.Image1 is not None and self.Image2 is not None and self.Image3 is not None and self.Image_table is not None:
-                cv2.imshow("Room camera", self.Image1)
-                cv2.imshow("Robot camera", self.Image2)
-                cv2.imshow("Room camera Depth", self.Image3)
-                cv2.imshow("Table camera", self.Image_table)
-                cv2.waitKey(3)
+            if self.ImageRobotLeft is not None and self.ImageRobotRight is not None:
+                cv2.imshow("Robot camera left", self.ImageRobotLeft)
+                cv2.imshow("Robot camera right", self.ImageRobotRight)
+                
 
-            if self.Image1 is not None:
-                img = self.cv_bridge.cv2_to_imgmsg(self.Image1)
+            if self.ImageRobotDepth is not None:
+                cv2.imshow("Robot camera depth", self.ImageRobotDepth)
 
-                _, buffer_img= cv2.imencode('.jpg', self.Image1)
+            cv2.waitKey(3)
 
-                self.msg_img.data = base64.b64encode(buffer_img).decode("utf-8")
-                self.msg_img.encoding = 'base64'
-                self.msg_img.width = img.width
-                self.msg_img.height = img.height
 
-                self.pub.publish(self.msg_img)
+
+
+            # if self.Image1 is not None and self.Image2 is not None and self.Image3 is not None and self.Image_table is not None:
+            #     cv2.imshow("Room camera", self.Image1)
+            #     cv2.imshow("Robot camera", self.Image2)
+            #     cv2.imshow("Room camera Depth", self.Image3)
+            #     cv2.imshow("Table camera", self.Image_table)
+            #     cv2.waitKey(3)
+
+            # if self.Image1 is not None:
+            #     self.get_image_from_camera(self.Image1)
+
+
+            # if self.ImageRobotLeft is not None:
+            #     self.get_image_from_camera(self.ImageRobotDepth)
+
+
+            if self.ImageRobotDepth is not None:
+                self.get_image_from_camera(self.ImageRobotDepth)
 
 
     def shutdown(self):

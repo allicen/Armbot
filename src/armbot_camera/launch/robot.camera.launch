@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+    <arg name="device_left" default="/dev/video4" />
+    <arg name="device_right" default="/dev/video2" />
+
+
+    <node ns="/camera" pkg="uvc_camera" type="uvc_stereo_node" name="uvc_camera_stereo" output="screen">
+        <!--  <param name="width" type="int" value="960" />
+        <param name="height" type="int" value="544" />
+        <param name="fps" type="int" value="30" />
+        <param name="frame" type="string" value="wide_stereo" />
+        <param name="auto_focus" type="bool" value="False" />
+        <param name="focus_absolute" type="int" value="0" /> -->
+        <param name="left/device" type="string" value="$(arg device_left)" />
+        <param name="right/device" type="string" value="$(arg device_right)" />
+        <!--  <param name="left/camera_info_url" type="string"
+        value="file://$(find stereo_webcam)/config/left.yaml" />
+        <param name="right/camera_info_url" type="string"
+        value="file://$(find stereo_webcam)/config/right.yaml" /> -->
+    </node>
+
+    <node name="camera_node" pkg="armbot_camera" type="camera.py" output="screen" />
+</launch>

@@ -3,7 +3,7 @@ import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 import {HttpService} from "../../../serviсes/http.service";
 import {Config} from "../../../config/config";
 import {ArmbotService} from "../../../serviсes/armbot.service";
-import {CameraImage, RobotInfoFromCamera} from "../../../model/models";
+import {CameraImage, Motor, RobotInfoFromCamera} from "../../../model/models";
 import { DomSanitizer } from '@angular/platform-browser';
 import {StorageService} from "../../../serviсes/storage.service";
 import {RosArmbotService} from "../../../serviсes/roslib.service";
@@ -36,6 +36,14 @@ export class SettingsComponent implements OnInit {
     robotDiagnosticInfo: RobotInfoFromCamera | undefined;
     diagnosticMessage: string | undefined;
     returnDefaultPosition: boolean = false;
+
+    cameraDepthActions: any = [
+      {key: "calibration", value: "1. Калибровка"},
+      {key: "saveMark", value: "2. Карта глубины"},
+      {key: "getInfo", value: "3. Параметры"},
+    ];
+
+    cameraDepthCurrentAction: string = 'calibration';
 
     ngOnInit(): void {
         this.httpService.getArmbotConfigs().pipe(untilDestroyed(this)).subscribe(data => this.loadConfig(data));
@@ -91,4 +99,16 @@ export class SettingsComponent implements OnInit {
         }
         return Math.round(val * 10000) / 10000;
     }
+
+    changeAction(key: string) {
+        this.cameraDepthCurrentAction = key;
+    }
+
+  calibrationCamera() {
+
+  }
+
+  saveMarkCamera() {
+
+  }
 }
